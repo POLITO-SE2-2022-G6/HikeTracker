@@ -1,24 +1,32 @@
 import express from "express";
+import { hikesList, getPList } from "./visitorDao"
 
 const app = express();
 const port = 3001;
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}.`);
-  });
+  console.log(`Server is running on port ${port}.`);
+});
 
-  //HOME
-  //Add check if logged in
-app.get("/", (req: express.Request, res: express.Response) => {
+//HOME
+//Add check if logged in
+app.get("/", async (req: express.Request, res: express.Response) => {
+  const { latitude, longitude, elevation, address, difficulty, length, ascent, expected_time } = req.query as Record<string, string>;
 
-})  
+  const pList = getPList({latitude: parseFloat(latitude), longitude: parseFloat(longitude), elevation: parseFloat(elevation)})
 
-  //add Auth check
-app.get("/visitors", (req: express.Request, res: express.Response) => {
-    //checkBody and creation of list of filters
-    //get from dao
-    //Filter
-    //return list
+    //filter pList with address if present in req.query
 
+  const hList = hikesList({
+    difficulty: difficulty,
+    length: parseFloat(length),
+    ascent: parseFloat(ascent),
+    expected_time: parseFloat(expected_time)}
+    );
+
+    //filter hlist with plist to have the final list to output
+
+  res.send(hList);
 })
+
 

@@ -7,5 +7,52 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./database.db"
+}
+
+model Point {
+  id          Int     @id @default(autoincrement())
+  Label       String?
+  Latitude    Float?
+  Longitude   Float?
+  Elevation   Float?
+  Address     String?
+  Type        String?
+  Description String?
+  startOf     Hike[]  @relation("start")
+  endOf       Hike[]  @relation("end")
+  hikes       Hike[]
+}
+
+model Hike {
+  id               Int     @id @default(autoincrement())
+  Title            String
+  Length           Float
+  Expected_time    Int
+  Ascent           Float
+  Difficulty       String
+  Start_point      Point   @relation(fields: [StartPointId], references: [id], name: "start")
+  StartPointId     Int
+  End_point        Point   @relation(fields: [EndPointId], references: [id], name: "end")
+  EndPointId       Int
+  Reference_points Point[]
+  Description      String
+  GpsTrack         String?
+}
+
+model Performance {
+  id       Int   @id @default(autoincrement())
+  duration Int
+  altitude Float
+  user     User  @relation(fields: [UserId], references: [id])
+  UserId   Int
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  type        String
+  email       String
+  username    String
+  phoneNumber String
+  performance Performance[]
 }
