@@ -16,7 +16,9 @@ model Point {
   Latitude    Float?
   Longitude   Float?
   Elevation   Float?
-  Address     String?
+  City        String?
+  Region      String?
+  Province    String?
   Type        String?
   Description String?
   startOf     Hike[]  @relation("start")
@@ -51,8 +53,8 @@ model Performance {
 model User {
   id          Int           @id @default(autoincrement())
   type        String
-  email       String
+  email       String        @unique
   username    String
-  phoneNumber String
+  phoneNumber String        @unique
   performance Performance[]
 }

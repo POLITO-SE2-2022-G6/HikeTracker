@@ -1,5 +1,6 @@
 import express from "express";
-import { hikesList, getPList } from "./visitorDao"
+import { stringify } from "querystring";
+import { hikesList } from "./visitorDao"
 
 const app = express();
 const port = 3001;
@@ -9,24 +10,19 @@ app.listen(port, () => {
 });
 
 //HOME
-//Add check if logged in
-app.get("/", async (req: express.Request, res: express.Response) => {
-  const { latitude, longitude, elevation, address, difficulty, length, ascent, expected_time } = req.query as Record<string, string>;
+//Add check if logged in and middleware to validate data in req.query
+app.get("/", /*queryValidationCheck,*/ async (req: express.Request, res: express.Response) => {
+  const { city, province, region, difficulty, length, ascent, expected_time } = req.query as Record<string, string | undefined>;
 
-  const pList = getPList({latitude: parseFloat(latitude), longitude: parseFloat(longitude), elevation: parseFloat(elevation)})
-
-    //filter pList with address if present in req.query
-
-  const hList = hikesList({
-    difficulty: difficulty,
-    length: parseFloat(length),
-    ascent: parseFloat(ascent),
-    expected_time: parseFloat(expected_time)}
-    );
-
-    //filter hlist with plist to have the final list to output
-
-  res.send(hList);
+  res.send(await hikesList({
+    difficulty,
+    city,
+    province,
+    region,
+    length: length ? parseFloat(length) : undefined,
+    ascent: ascent ? parseFloat(ascent) : undefined,
+    expected_time: expected_time ? parseFloat(expected_time) : undefined
+  }));
 })
 
 
