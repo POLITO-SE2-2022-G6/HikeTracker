@@ -19,7 +19,7 @@ const Layout: React.FC = (props) => {
               <Button onClick={() => { }}>LOG-OUT <BiLogOutCircle size="20px" /></Button> :
               <Button onClick={() => { }}>LOG-IN <BiLogInCircle size="20px" /></Button>
             }
-              <Button type="button" className="btn btn-primary" onClick={() => { }}>Area Utente <BsPersonCircle color='white' size='20px' /></Button>
+              <Button type="button" className="btn btn-primary" onClick={() => { }}>USER AREA <BsPersonCircle color='white' size='20px' /></Button>
             </div>
           </div>
         </Container>
