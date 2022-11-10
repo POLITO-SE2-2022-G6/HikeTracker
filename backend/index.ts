@@ -2,9 +2,14 @@ import express from "express";
 const { validationResult, query } = require('express-validator');
 import { stringify } from "querystring";
 import { hikesList } from "./visitorDao"
+import cors from "cors";
 
 const app = express();
 const port = 3001;
+
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);
