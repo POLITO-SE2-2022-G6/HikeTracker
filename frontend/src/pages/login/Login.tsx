@@ -5,38 +5,31 @@ import {
   Title,
   Text,
   Container,
-  Group,
   Button,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
 import s from './Login.module.css';
-
-/* Regex email format validation */
-function isEmailValid(mail: string): boolean {
-  if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
-    return (true)
-  }
-  return (false)
-}
 
 const Login: React.FC = (props) => {
 
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [errorMsg, setErrorMsg] = useState(false);
 
-  const handleSubmit = () => {
+  const form = useForm({
+    initialValues: { email: '' },
 
-    setErrorMsg(false);
+    // functions will be used to validate values at corresponding key
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+    },
 
-    if (!isEmailValid(email)) {
-      setErrorMsg(true);
-      return;
-    }
+  });
 
-    console.log(email);
-    //props.login(email) 
+
+  const handleSubmit = (values: any) => {
+
+    console.log(values.email);
+    //props.login(values.email) 
 
   }
 
@@ -50,11 +43,10 @@ const Login: React.FC = (props) => {
         <Anchor<'a'> href="#" size="sm" onClick={() => { navigate("/register") }}> Create account</Anchor>
       </Text>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        {errorMsg ?
-          <TextInput error="Invalid email" onChange={() => setErrorMsg(false)} label="Email" required/> :
-          <TextInput value={email} onChange={(event) => setEmail(event.currentTarget.value)} label="Email" placeholder="example@gmail.com" required />}
-        <Group position="apart" mt="md"></Group>
-        <Button fullWidth mt="xl" type="submit" onClick={() => handleSubmit()}>Sign in</Button>
+        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+          <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} required />
+          <Button fullWidth mt="xl" type="submit" >Sign in</Button>
+        </form>
         <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
       </Paper>
     </Container>

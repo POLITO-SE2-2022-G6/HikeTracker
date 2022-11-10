@@ -4,65 +4,39 @@ import {
   Paper,
   Title,
   Container,
-  Group,
   Button,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
 import s from './Register.module.css';
-
-/* Regex email format validation */
-function isEmailValid(mail: string): boolean {
-  if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
-    return (true)
-  }
-  return (false)
-}
 
 const Register: React.FC = () => {
 
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [type, setType] = useState('');
-  const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [errorEmail, setErrorEmail] = useState(false);
-  const [errorUsername, setErrorUsername] = useState(false);
-  const [errorType, setErrorType] = useState(false);
-  const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
 
-  const handleSubmit = () => {
+  const form = useForm({
+    initialValues: { email: '', type: '', username: '', phoneNumber: '' },
 
-    setErrorEmail(false);
-    setErrorUsername(false);
-    setErrorType(false);
-    setErrorPhoneNumber(false);
+    // functions will be used to validate values at corresponding key
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      type: (value) => (!value ? 'Type must not be empty' : null),
+      username: (value) => (value.length < 3 ? 'Username must have at least 2 letters' : null),
+      phoneNumber: (value) => (isNaN(Number(value)) ? 'Phone number must be a number' : null),
+    },
 
-    let errors: boolean = false;
 
-    if (!isEmailValid(email)) {
-      setErrorEmail(true);
-      errors = true;
-    }
-    if (!errorType) {
-      setErrorType(true);
-      errors = true;
-    }
-    if (!errorUsername) {
-      setErrorUsername(true);
-      errors = true;
-    }
-    if (!errorPhoneNumber) {
-      setErrorPhoneNumber(true);
-      errors = true;
-    }
+  });
 
-    if (errors)
-      return;
+  const handleSubmit = (values:any) => {
 
-    //props.login(email) 
+    console.log("Handle Submit")
+    //api che registra l'utente passando values.email, values.type, values.username, values.phoneNumber
+    //props.login(values.email) si logga col nuovo utente
+    //navigate('/')
 
   }
+
 
   return (
     <Container size={420} my={40}>
@@ -70,26 +44,10 @@ const Register: React.FC = () => {
         Create an account!
       </Title>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        {errorEmail ?
-          <TextInput error="Invalid email" onChange={() => setErrorEmail(false)} label="Email" required /> :
-          <TextInput value={email} onChange={(event) => setEmail(event.currentTarget.value)} label="Email" placeholder="example@gmail.com" required />}
-
-        {errorUsername ?
-          <TextInput error="Invalid username" onChange={() => setErrorUsername(false)} label="Username" required /> :
-          <TextInput value={username} onChange={(event) => setUsername(event.currentTarget.value)} label="Username" placeholder="example" required />}
-
-        {errorType ?
-          <Select error="Invalid Type" onChange={() => setErrorType(false)} label="Type" required
-            value={type}
-            placeholder="Pick one"
-            data={[
-              { value: 'Hiker', label: 'Hiker' },
-              { value: 'Guide', label: 'Guide' },
-
-            ]}
-          /> :
+        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+          <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} required />
+          <TextInput label="Username" placeholder="Username" {...form.getInputProps('username')} required />
           <Select
-            value={type} onChange={() => setType}
             label="Type"
             placeholder="Pick one"
             data={[
@@ -97,14 +55,12 @@ const Register: React.FC = () => {
               { value: 'Guide', label: 'Guide' },
 
             ]}
-          />}
-
-        {errorPhoneNumber ?
-          <TextInput error="Invalid phone number" onChange={() => setErrorPhoneNumber(false)} label="phoneNumber" required /> :
-          <TextInput value={phoneNumber} onChange={(event) => setPhoneNumber(event.currentTarget.value)} label="phoneNumber" placeholder="0123456789" required />}
-
-        <Group position="apart" mt="md"></Group>
-        <Button fullWidth mt="xl" type="submit" onClick={() => handleSubmit()}>Register</Button>
+            {...form.getInputProps('type')}
+            required
+          />
+          <TextInput label="Phone number" placeholder="Phone number" {...form.getInputProps('phoneNumber')} required />
+          <Button fullWidth mt="xl" type="submit">Register</Button>
+        </form>
         <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
       </Paper>
     </Container>
