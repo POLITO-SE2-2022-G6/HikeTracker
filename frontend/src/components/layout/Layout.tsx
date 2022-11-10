@@ -1,10 +1,13 @@
-import { createStyles, Header, Container, Button, Title } from '@mantine/core';
+import { createStyles, Header, Container, Button, Title , Footer} from '@mantine/core';
 import { GiHiking } from "react-icons/gi"
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi"
 import { BsPersonCircle } from "react-icons/bs"
+import { useNavigate } from 'react-router-dom';
 import s from './layout.module.css';
 const Layout: React.FC = (props) => {
+
   const { classes } = useStyles();
+  const navigate = useNavigate();
 
   let loggedIn: boolean = false; //provvisory
 
@@ -17,7 +20,7 @@ const Layout: React.FC = (props) => {
             <div>
             {loggedIn ?
               <Button onClick={() => { }}>LOG-OUT <BiLogOutCircle size="20px" /></Button> :
-              <Button onClick={() => { }}>LOG-IN <BiLogInCircle size="20px" /></Button>
+              <Button onClick={() => { navigate("/login"); }}>LOG-IN <BiLogInCircle size="20px" /></Button>
             }
               <Button type="button" className="btn btn-primary" onClick={() => { }}>USER AREA <BsPersonCircle color='white' size='20px' /></Button>
             </div>
@@ -33,6 +36,10 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: theme.fn.variant({ variant: 'filled', color: theme.primaryColor }).background,
     borderBottom: 0,
   },
+
+  /*footer: {
+    backgroundColor: theme.fn.variant({ variant: 'filled', color: theme.primaryColor }).background,
+  },*/
 
   inner: {
     height: 56,
