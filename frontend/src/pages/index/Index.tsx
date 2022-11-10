@@ -32,6 +32,9 @@ const Index: React.FC = () => {
       )
   }*/
 
+  //deve esserci una funzione di register doRegistration
+
+
   /*const doLogOut = async () => {
     if (loggedIn) {
       await API.logOut(); API che fa il logout
@@ -39,7 +42,6 @@ const Index: React.FC = () => {
     setLoggedIn(false);
     setUser({});
   }*/
-
 
   return (
     <Router>
@@ -59,4 +61,5 @@ export default Index;
 /*
 A '/' bisogna passare loggedIn user, setFlag1 e doLogOut
 A '/login' bisogna passare doLogIn
+A '/register' bisogna passare doRegistration
 */
