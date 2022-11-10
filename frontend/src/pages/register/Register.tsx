@@ -31,9 +31,8 @@ const Register: React.FC = () => {
   const [errorType, setErrorType] = useState(false);
   const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = () => {
 
-    event.preventDefault();
     setErrorEmail(false);
     setErrorUsername(false);
     setErrorType(false);
@@ -90,7 +89,7 @@ const Register: React.FC = () => {
             ]}
           /> :
           <Select
-            value={type}
+            value={type} onChange={() => setType}
             label="Type"
             placeholder="Pick one"
             data={[
@@ -105,7 +104,7 @@ const Register: React.FC = () => {
           <TextInput value={phoneNumber} onChange={(event) => setPhoneNumber(event.currentTarget.value)} label="phoneNumber" placeholder="0123456789" required />}
 
         <Group position="apart" mt="md"></Group>
-        <Button fullWidth mt="xl" type="submit" onClick={handleSubmit}>Register</Button>
+        <Button fullWidth mt="xl" type="submit" onClick={() => handleSubmit()}>Register</Button>
         <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
       </Paper>
     </Container>

@@ -26,9 +26,8 @@ const Login: React.FC = (props) => {
   const [email, setEmail] = useState('');
   const [errorMsg, setErrorMsg] = useState(false);
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = () => {
 
-    event.preventDefault();
     setErrorMsg(false);
 
     if (!isEmailValid(email)) {
@@ -36,6 +35,7 @@ const Login: React.FC = (props) => {
       return;
     }
 
+    console.log(email);
     //props.login(email) 
 
   }
@@ -54,7 +54,7 @@ const Login: React.FC = (props) => {
           <TextInput error="Invalid email" onChange={() => setErrorMsg(false)} label="Email" required/> :
           <TextInput value={email} onChange={(event) => setEmail(event.currentTarget.value)} label="Email" placeholder="example@gmail.com" required />}
         <Group position="apart" mt="md"></Group>
-        <Button fullWidth mt="xl" type="submit" onClick={handleSubmit}>Sign in</Button>
+        <Button fullWidth mt="xl" type="submit" onClick={() => handleSubmit()}>Sign in</Button>
         <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
       </Paper>
     </Container>
