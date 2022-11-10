@@ -60,8 +60,6 @@ export type Hike = {
 export const createHike = async (hike:Hike) => {
   const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_point, description, gpstrack } = hike;
 
-  //how to handle refPoints?
-
   const point_s = await prisma.point.create({
       data: {
         Label: start_point.Label,
@@ -99,7 +97,12 @@ export const createHike = async (hike:Hike) => {
               Ascent : ascent,
               Difficulty : difficulty, 
               StartPointId: point_s.id, 
-              EndPointId: point_e.id,            
+              EndPointId: point_e.id,
+              Reference_points: {
+                create: [
+                  reference_point
+                ]
+              },            
               Description : description, 
               GpsTrack : gpstrack,
           },
