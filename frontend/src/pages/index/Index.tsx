@@ -1,16 +1,25 @@
 import s from './Index.module.css';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+
 import Layout from '../../components/layout/Layout';
 import Login from '../login/Login';
 import Register from '../register/Register';
+import HikesSearchPage from '../hikes/HikesSearchPage';
+
+import { UserContext, UserContextWrapper } from '../../context/userContext';
+import { useContext } from 'react';
+
 
 const Index: React.FC = () => {
 
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState({});
-  const [hikesList, setHikesList] = useState({});
-  const [flag1, setFlag1] = useState(true);
+  const { state, setState } = useContext(UserContext);
+
+  const { loggedIn } = state;
+  // const [loggedIn, setLoggedIn] = useState(false);
+  // const [user, setUser] = useState({});
+  // const [hikesList, setHikesList] = useState({});
+  // const [flag1, setFlag1] = useState(true);
 
   /*useEffect(() => {
     API.getHikes() API che prende tutte le hikes
@@ -43,17 +52,23 @@ const Index: React.FC = () => {
     setUser({});
   }*/
 
-  
+
   return (
-    <Router>
-      <Routes>
-        <Route path='/' element={<Layout></Layout>} />
-        <Route path='/login' element={loggedIn
-          ? <Navigate to='/' />
-          : <Login/>} />
-        <Route path='/register' element={<Register></Register>} />
-      </Routes>
-    </Router>
+    <>
+      <UserContextWrapper>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/hikes' element={<HikesSearchPage />} />
+            <Route path='/' element={<Layout></Layout>} />
+            <Route path='/login' element={loggedIn
+              ? <Navigate to='/' />
+              : <Login />} />
+            <Route path='/register' element={<Register></Register>} />
+          </Routes>
+        </BrowserRouter>
+
+      </UserContextWrapper>
+    </>
   );
 };
 
