@@ -9,6 +9,7 @@ import HikesSearchPage from '../hikes/HikesSearchPage';
 
 import { UserContext, UserContextWrapper } from '../../context/userContext';
 import { useContext } from 'react';
+import { Landing } from '../landing/Landing';
 
 
 const Index: React.FC = () => {
@@ -58,8 +59,11 @@ const Index: React.FC = () => {
       <UserContextWrapper>
         <BrowserRouter>
           <Routes>
-            <Route path='/hikes' element={<HikesSearchPage />} />
-            <Route path='/' element={<Layout></Layout>} />
+            <Route path='/' element={<Layout />} >
+              <Route path='hikes' element={<HikesSearchPage />} />
+              <Route path='' element={<Landing />} />
+
+            </Route>
             <Route path='/login' element={loggedIn
               ? <Navigate to='/' />
               : <Login />} />

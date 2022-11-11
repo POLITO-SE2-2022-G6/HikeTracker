@@ -1,10 +1,13 @@
-import { createStyles, Header, Container, Button, Title , Footer} from '@mantine/core';
+import { createStyles, Header, Container, Button, Title, Footer } from '@mantine/core';
 import { GiHiking } from "react-icons/gi"
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi"
 import { BsPersonCircle } from "react-icons/bs"
-import { useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import s from './layout.module.css';
-const Layout: React.FC = (props) => {
+import React from 'react';
+
+
+const Layout = () => {
 
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -13,20 +16,23 @@ const Layout: React.FC = (props) => {
 
   return (
     <>
-      <Header height={56} className={classes.header} mb={120}>
+      <Header height={56} className={classes.header} mb={20}>
         <Container>
           <div className={classes.inner}>
-            <Title order={4} color="white">Hike Tracks <GiHiking size="20px"></GiHiking> - Group 6, SE II</Title>
+            <Link to={'/'}>
+              <Title order={4} color="white" >Hike Tracks <GiHiking size="20px"></GiHiking> - Group 6, SE II</Title>
+            </Link>
             <div>
-            {loggedIn ?
-              <Button onClick={() => { }}>LOG-OUT <BiLogOutCircle size="20px" /></Button> :
-              <Button onClick={() => { navigate("/login"); }}>LOG-IN <BiLogInCircle size="20px" /></Button>
-            }
+              {loggedIn ?
+                <Button onClick={() => { }}>LOG-OUT <BiLogOutCircle size="20px" /></Button> :
+                <Button onClick={() => { navigate("/login"); }}>LOG-IN <BiLogInCircle size="20px" /></Button>
+              }
               <Button type="button" className="btn btn-primary" onClick={() => { }}>USER AREA <BsPersonCircle color='white' size='20px' /></Button>
             </div>
           </div>
         </Container>
       </Header>
+      <Outlet />
     </>
   );
 };
