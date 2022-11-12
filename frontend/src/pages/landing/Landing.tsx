@@ -1,5 +1,6 @@
 import { Button, Container } from "@mantine/core";
 import { Link } from "react-router-dom";
+import HikesList from "../../components/hikesList/HikesList";
 
 export const Landing = () => {
   return (
@@ -9,6 +10,7 @@ export const Landing = () => {
       <Link to="hikes">
         <Button> Search Hikes</Button>
       </Link>
+      <HikesList/>
     </Container>
   );
 };
