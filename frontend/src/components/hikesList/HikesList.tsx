@@ -14,15 +14,15 @@ const HikesList:React.FC = () => {
   useEffect(() => {getAllHikes() ;}, []);
 
   interface Hike  {
-    id: number,
-    title: string,
-    length: number,
-    expected_time: number,
-    ascent: number,
-    difficulty: string, 
-    start_point: number, 
-    end_point: number, 
-    description: string, 
+    id?: number,
+    title?: string,
+    length?: number,
+    expected_time?: number,
+    ascent?: number,
+    difficulty?: string, 
+    start_point?: number, 
+    end_point?: number, 
+    description?: string, 
   }
 
   const getHikes = async () => {
@@ -30,13 +30,11 @@ const HikesList:React.FC = () => {
     });
     const hikesJson = await response.json();
     if(response.ok) {    
-     return hikesJson.map((h:any) => h as Hike);  
+    return hikesJson.map((h:any) => h as Hike); 
     }
     else
       throw hikesJson;
   };
-
- // console.log(hikes);
 
   return (
     <> 
@@ -54,9 +52,9 @@ const HikesList:React.FC = () => {
           <th>Description</th>
         </tr>
       </thead>
-      <tbody>{
-        hikes.map((h) => <HikeData hikes ={h} key={h['id']}/>)} 
-   </tbody>
+  <tbody>{
+  hikes?.map((h) => <HikeData hike ={h} key={h['id']}/>)} 
+</tbody>
     </Table>
     </>
   );
@@ -66,14 +64,14 @@ function HikeData(props:any) {
   return(
     <>         
   <tr>
-      <td>{props.hikes.title}</td>    
-      <td>{props.hikes.length}</td> 
-      <td>{props.hikes.expected_time}</td>  
-      <td>{props.hikes.ascent}</td>   
-      <td>{props.hikes.difficulty}</td>  
-      <td>{props.hikes.start_point}</td> 
-      <td>{props.hikes.end_point}</td>    
-      <td>{props.hikes.description}</td>                   
+      <td>{props.hike['Title']}</td>    
+      <td>{props.hike['Length']}</td> 
+      <td>{props.hike['Expected_time']}</td>  
+      <td>{props.hike['Ascent']}</td>   
+      <td>{props.hike['Difficulty']}</td>  
+      <td>{props.hike['StartPointId']}</td> 
+      <td>{props.hike['EndPointId']}</td>    
+      <td>{props.hike['Description']}</td>                   
   </tr>
   </>
   );
