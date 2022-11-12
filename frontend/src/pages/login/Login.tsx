@@ -8,12 +8,16 @@ import {
   Button,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import axios from 'axios';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../context/userContext';
 import s from './Login.module.css';
 
 const Login: React.FC = (props) => {
 
   const navigate = useNavigate();
+  const { state, setState } = useContext(UserContext)
 
   const form = useForm({
     initialValues: { email: '' },
@@ -26,10 +30,23 @@ const Login: React.FC = (props) => {
   });
 
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = async (values: any) => {
 
-    console.log(values.email);
-    //props.login(values.email) 
+    const res = await axios.post('http://localhost:3001/api/sessions', {
+      email: values.email,
+      password: 'password'
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    })
+    if (res.status === 200) {
+      setState({ loggedIn: true, data: res.data })
+      navigate('/');
+    }
+
+
 
   }
 

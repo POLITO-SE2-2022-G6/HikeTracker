@@ -5,6 +5,8 @@ import { BsPersonCircle } from "react-icons/bs"
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import s from './layout.module.css';
 import React from 'react';
+import { UserContext } from '../../context/userContext';
+import axios from 'axios';
 
 
 const Layout = () => {
@@ -12,7 +14,13 @@ const Layout = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
 
-  let loggedIn: boolean = false; //provvisory
+  const { state, setState } = React.useContext(UserContext)
+  const { loggedIn } = state;
+
+  const handleLogout = async () => {
+    setState({ loggedIn: false, data: undefined })
+    await axios.delete('http://localhost:3001/api/sessions/current', { withCredentials: true })
+  }
 
   return (
     <>
@@ -24,7 +32,7 @@ const Layout = () => {
             </Link>
             <div>
               {loggedIn ?
-                <Button onClick={() => { }}>LOG-OUT <BiLogOutCircle size="20px" /></Button> :
+                <Button onClick={() => { handleLogout() }}>LOG-OUT <BiLogOutCircle size="20px" /></Button> :
                 <Button onClick={() => { navigate("/login"); }}>LOG-IN <BiLogInCircle size="20px" /></Button>
               }
               <Button type="button" className="btn btn-primary" onClick={() => { }}>USER AREA <BsPersonCircle color='white' size='20px' /></Button>

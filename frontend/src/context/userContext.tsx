@@ -32,8 +32,16 @@ export const UserContextWrapper = ({ children }: Props) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data } = await axios.get('/api/user');
-      setUser(data);
+      const { data } = await axios.get('http://localhost:3001/api/sessions/current',
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        });
+      if (data) {
+        setUser({ loggedIn: true, data });
+      }
       setLoading(false);
     };
 
