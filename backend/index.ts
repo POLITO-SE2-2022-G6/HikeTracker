@@ -1,8 +1,9 @@
 import express from "express";
 const { validationResult, query } = require('express-validator');
 import { stringify } from "querystring";
-import { hikesList } from "./visitorDao"
+import { hikesList, createHike, editHike } from "./visitorDao"
 import cors from "cors";
+
 
 const app = express();
 const port = 3001;
@@ -41,5 +42,34 @@ app.get("/", validateParameters(query()) , async (req: express.Request, res: exp
     expected_time: expected_time ? parseFloat(expected_time) : undefined
   }));
 })
+
+
+//New Hike in Body
+app.post("/", /*queryValidation*/async (req: express.Request, res: express.Response) => {
+
+  try {
+    const hike = req.body;
+    const newHike = await createHike(hike);
+    return res.status(201).json(newHike);
+  } catch (error: any) {
+    return res.status(500).json(error);
+  }
+  
+})
+
+//Edit Hike
+app.put("/:id", /*queryValidation*/async (req: express.Request, res: express.Response) => {
+
+  const id: number = parseInt(req.params.id, 10);
+  try {
+    const params = req.body;
+    const modifiedHike = await editHike(id,params);
+    return res.status(201).json(modifiedHike);
+  } catch (error: any) {
+    return res.status(500).json(error);
+  }
+  
+})
+
 
 
