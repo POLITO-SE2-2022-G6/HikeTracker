@@ -4,10 +4,11 @@ import { useForm } from '@mantine/form'
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
+import HikesList from '../../components/hikesList/HikesList';
 
 const HikesSearchPage: React.FC = () => {
   const [params, setParams] = useSearchParams()
-  const [result, setResult] = useState({})
+  const [result, setResult] = useState([])
   const [loading, setLoading] = useState(false)
 
   type Fields = {
@@ -105,7 +106,7 @@ const HikesSearchPage: React.FC = () => {
             <Button fullWidth type='submit'>Cerca</Button>
           </form>
         </Paper>
-        <Paper withBorder radius={'md'} m={'md'} sx={
+        <Paper withBorder radius={'md'} m={'md'} p={'md'} sx={
           (t) => {
             return {
               flexGrow: 3,
@@ -114,7 +115,7 @@ const HikesSearchPage: React.FC = () => {
             }
           }
         }>
-          <pre>{JSON.stringify(result, null, 2)}</pre>
+          <HikesList data={result}></HikesList >
 
         </Paper>
       </Container >
