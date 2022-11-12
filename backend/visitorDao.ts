@@ -60,6 +60,7 @@ export type Hike = {
 export const createHike = async (hike:Hike) => {
   const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_point, description, gpstrack } = hike;
 
+  //we have to update the point?
   const point_s = await prisma.point.create({
       data: {
         Label: start_point.Label,
@@ -109,4 +110,34 @@ export const createHike = async (hike:Hike) => {
       }
   );
   
+};
+
+export const editHike = async (idp:number, params: Hike) => {
+  const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_point, description, gpstrack } = params;
+
+  //with || undefined shoueld update the field only if the value if present 
+  //check what happens with points
+  return prisma.hike.update({
+    where: {
+      id : idp,
+    },
+    data: {
+      Title : title || undefined,
+      Length: length || undefined, 
+      Expected_time: expected_time || undefined, 
+      Ascent: ascent || undefined, 
+      Difficulty: difficulty || undefined,
+      StartPointId: start_point.id, 
+      EndPointId: end_point.id, 
+      Reference_points: {
+        create :[
+        reference_point || undefined
+      ]},
+      Description: description || undefined,
+      GpsTrack: gpstrack || undefined,
+    }
+  })
+
+  
+
 };
