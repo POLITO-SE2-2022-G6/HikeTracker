@@ -1,9 +1,69 @@
+import {
+  TextInput,
+  Select,
+  Paper,
+  Title,
+  Container,
+  Button,
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useNavigate } from 'react-router-dom';
 import s from './Register.module.css';
 
 const Register: React.FC = () => {
+
+  const navigate = useNavigate();
+
+  const form = useForm({
+    initialValues: { email: '', type: '', username: '', phoneNumber: '' },
+
+    // functions will be used to validate values at corresponding key
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      type: (value) => (!value ? 'Type must not be empty' : null),
+      username: (value) => (value.length < 3 ? 'Username must have at least 2 letters' : null),
+      phoneNumber: (value) => (isNaN(Number(value)) ? 'Phone number must be a number' : null),
+    },
+
+
+  });
+
+  const handleSubmit = (values:any) => {
+
+    console.log("Handle Submit")
+    //api che registra l'utente passando values.email, values.type, values.username, values.phoneNumber
+    //props.login(values.email) si logga col nuovo utente
+    //navigate('/')
+
+  }
+
+
   return (
-    <>
-    </>
+    <Container size={420} my={40}>
+      <Title align="center" sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900 })}>
+        Create an account!
+      </Title>
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+          <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} required />
+          <TextInput label="Username" placeholder="Username" {...form.getInputProps('username')} required />
+          <Select
+            label="Type"
+            placeholder="Pick one"
+            data={[
+              { value: 'Hiker', label: 'Hiker' },
+              { value: 'Guide', label: 'Guide' },
+
+            ]}
+            {...form.getInputProps('type')}
+            required
+          />
+          <TextInput label="Phone number" placeholder="Phone number" {...form.getInputProps('phoneNumber')} required />
+          <Button fullWidth mt="xl" type="submit">Register</Button>
+        </form>
+        <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
+      </Paper>
+    </Container>
   );
 };
 
