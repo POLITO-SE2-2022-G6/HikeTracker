@@ -1,14 +1,26 @@
 import s from './HikesList.module.css';
 import { Table } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type HikeProps = {
   data?: any
 }
+interface Hike {
+  id?: number,
+  Title?: string,
+  Length?: number,
+  Expected_time?: number,
+  Ascent?: number,
+  Difficulty?: string,
+  Start_point?: number,
+  End_point?: number,
+  Description?: string,
+}
 
 const HikesList = ({ data }: HikeProps) => {
 
-  const [hikes, setHikes] = useState([]);
+  const [hikes, setHikes] = useState<Hike[]>([]);
 
   const getAllHikes = async () => {
     const hikes = await getHikes();
@@ -24,17 +36,8 @@ const HikesList = ({ data }: HikeProps) => {
   }, [data]);
 
 
-  interface Hike {
-    id?: number,
-    title?: string,
-    length?: number,
-    expected_time?: number,
-    ascent?: number,
-    difficulty?: string,
-    start_point?: number,
-    end_point?: number,
-    description?: string,
-  }
+
+
 
   const getHikes = async () => {
     const response = await fetch('http://localhost:3001/hike', {
@@ -71,15 +74,16 @@ const HikesList = ({ data }: HikeProps) => {
   );
 }
 
-function HikeData(props: any) {
+function HikeData({ hike }: { hike: Hike }) {
+  const navigate = useNavigate()
   return (
     <>
-      <tr>
-        <td>{props.hike['Title']}</td>
-        <td>{props.hike['Length']}</td>
-        <td>{props.hike['Expected_time']}</td>
-        <td>{props.hike['Ascent']}</td>
-        <td>{props.hike['Difficulty']}</td>
+      <tr onClick={() => navigate(`/hike/${hike.id}`)}>
+        <td>{hike.Title}</td>
+        <td>{hike.Length}</td>
+        <td>{hike.Expected_time}</td>
+        <td>{hike.Ascent}</td>
+        <td>{hike.Difficulty}</td>
         {/* <td>{props.hike['StartPointId']}</td>
         <td>{props.hike['EndPointId']}</td> */}
         {/* <td>{props.hike['Description']}</td> */}

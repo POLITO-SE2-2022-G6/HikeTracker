@@ -3,7 +3,7 @@ import passport from "passport";
 import passportLocal from "passport-local";
 import session from "express-session";
 import { validationResult, query, body, checkSchema } from 'express-validator';
-import { hikesList, createHike, editHike,hikeById } from "./visitorDao"
+import { hikesList, createHike, editHike, hikeById } from "./visitorDao"
 import cors from "cors";
 import { getUserById, getUserByEmail, createUsr } from "./auth";
 import bodyParser from "body-parser";
@@ -62,6 +62,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const isLoggedIn: RequestHandler = (req, res, next) => {
+  console.log("is logged in", req.isAuthenticated());
   if (req.isAuthenticated()) return next();
 
   return res.status(401).json({ error: "not authenticated" });
@@ -164,11 +165,11 @@ app.get("/hike",
     }));
   })
 //Get hike by id
-  app.get("/hike/:id",isLoggedIn,async(req:express:Request,res:express.Response)=>{
-    const id: number = parseInt(req.params.id, 10);
-    const hike  = await hikeById(id);
-    return res.status(201).json(hike);
-  })
+app.get("/hike/:id", isLoggedIn, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const hike = await hikeById(id);
+  return res.status(200).json(hike);
+})
 
 
 //New Hike in Body
