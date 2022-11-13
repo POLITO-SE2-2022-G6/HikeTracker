@@ -76,6 +76,11 @@ const isLoggedIn: RequestHandler = (req, res, next) => {
   return res.status(401).json({ error: "not authenticated" });
 };
 
+const isGuide: RequestHandler = (req, res, next) => { 
+  if (req.isAuthenticated() && (req.user as User).type === "Guide") return next();
+  return res.status(401).json({ error: "not authenticated" });
+}
+
 app.use("/gpstracks", isLoggedIn, express.static(path.join(__dirname, "gpstracks")));
 
 /*** Users APIs ***/
@@ -183,7 +188,7 @@ app.get("/hike/:id", isLoggedIn, async (req, res) => {
 
 
 //New Hike in Body
-app.post("/hike", isLoggedIn,
+app.post("/hike", isGuide,
   body("title").exists().notEmpty(), body("length").exists().notEmpty(), body("expected_time").exists().isInt(),
   body("ascent").exists().isFloat(), body("difficulty").exists().isInt(), body("description").optional().notEmpty(),
   body("gpstrack").optional().notEmpty(), body("start_point").optional().isInt(), body("end_point").optional().isInt(), checkSchema({
@@ -209,7 +214,7 @@ app.post("/hike", isLoggedIn,
   })
 
 //Edit Hike
-app.put("/hike/:id", isLoggedIn,
+app.put("/hike/:id", isGuide,
   body("title").optional().notEmpty(), body("length").optional().notEmpty(), body("expected_time").optional().isInt(),
   body("ascent").optional().isFloat(), body("difficulty").optional().isInt(), body("description").optional().notEmpty(),
   body("gpstrack").optional().notEmpty(), body("start_point").optional().isInt(), body("end_point").optional().isInt(), checkSchema({

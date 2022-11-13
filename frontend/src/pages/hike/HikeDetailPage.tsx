@@ -66,7 +66,7 @@ const HikeDetailPage: React.FC = () => {
         <Paper p={'md'} radius={'md'} shadow={'md'} withBorder>
           <Group position='apart'>
             <Title order={1}>{hike?.Title}</Title>
-            {loggedIn && <Button onClick={() => navigate(`/hike/edit/${id}`)}>Edit Hike</Button>}
+            {loggedIn && state.data?.type == 'Guide' && <Button onClick={() => navigate(`/hike/edit/${id}`)}>Edit Hike</Button>}
           </Group>
           <Space h={'md'} />
 

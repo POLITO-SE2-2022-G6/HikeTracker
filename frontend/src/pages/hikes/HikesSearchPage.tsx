@@ -16,7 +16,7 @@ const HikesSearchPage: React.FC = () => {
     province?: string;
     difficulty?: number;
     length?: number;
-    duration?: number;
+    expected_time?: number;
   }
   const form = useForm<Fields>({
     initialValues: {
@@ -24,7 +24,7 @@ const HikesSearchPage: React.FC = () => {
       province: params.get('province') || '',
       difficulty: parseInt(params.get('difficulty') || '') || undefined,
       length: parseInt(params.get('length') || '') || undefined,
-      duration: parseInt(params.get('duration') || '') || undefined,
+      expected_time: parseInt(params.get('duration') || '') || undefined,
     },
   })
 
@@ -36,14 +36,16 @@ const HikesSearchPage: React.FC = () => {
       province: values.province || '',
       difficulty: values.difficulty?.toString() || '',
       length: values.length?.toString() || '',
-      duration: values.duration?.toString() || '',
+      duration: values.expected_time?.toString() || '',
     })
 
 
 
     const res = await axios.get('http://localhost:3001/hike', {
       params: {
-        ...values,
+        difficulty: values.difficulty || undefined,
+        length: values.length || undefined,
+        expected_time: values.expected_time || undefined,
         region: values.region || undefined,
         province: values.province || undefined
       }
@@ -99,8 +101,8 @@ const HikesSearchPage: React.FC = () => {
             <TextInput
               label="Duration"
               placeholder="2"
-              name="duration"
-              {...form.getInputProps('duration')}
+              name="expected_time"
+              {...form.getInputProps('expected_time')}
             />
             <Space h={'md'} />
             <Button fullWidth type='submit'>Cerca</Button>
