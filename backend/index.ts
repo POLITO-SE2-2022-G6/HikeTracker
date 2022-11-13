@@ -3,7 +3,7 @@ import passport from "passport";
 import passportLocal from "passport-local";
 import session from "express-session";
 import { validationResult, query, body, checkSchema } from 'express-validator';
-import { hikesList, createHike, editHike } from "./visitorDao"
+import { hikesList, createHike, editHike,hikeById } from "./visitorDao"
 import cors from "cors";
 import { getUserById, getUserByEmail, createUsr } from "./auth";
 import bodyParser from "body-parser";
