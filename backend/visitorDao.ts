@@ -51,6 +51,8 @@ export async function hikesList(fields: HikeQuery) {
     }
   })
 }
+export async function hikeById(id: number) {
+  return prisma.hike.findUnique( where:{id:id})}
 
 export type Hike = {
   title: string,
