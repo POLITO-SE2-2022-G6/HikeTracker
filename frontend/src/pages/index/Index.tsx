@@ -62,6 +62,9 @@ const Index: React.FC = () => {
             <Route path='/' element={<Layout />} >
               <Route path='hikes' element={<HikesSearchPage />} />
               <Route path='' element={<Landing />} />
+              <Route path='/hike/:id' element={<></>}/>
+              <Route path='/hike/edit/:id' element={<></>}/>
+              <Route path='/hike/edit/' element={<></>}/>
 
             </Route>
             <Route path='/login' element={loggedIn
