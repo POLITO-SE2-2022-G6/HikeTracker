@@ -150,4 +150,5 @@ export const editHike = async (idp: number, params: Record<string, string>) => {
 
 
 
+
 };
