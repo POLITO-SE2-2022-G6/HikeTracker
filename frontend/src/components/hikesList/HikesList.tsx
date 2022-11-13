@@ -1,7 +1,8 @@
 import s from './HikesList.module.css';
 import { Table } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../context/userContext';
 
 type HikeProps = {
   data?: any
@@ -21,6 +22,7 @@ interface Hike {
 const HikesList = ({ data }: HikeProps) => {
 
   const [hikes, setHikes] = useState<Hike[]>([]);
+
 
   const getAllHikes = async () => {
     const hikes = await getHikes();
@@ -76,9 +78,11 @@ const HikesList = ({ data }: HikeProps) => {
 
 function HikeData({ hike }: { hike: Hike }) {
   const navigate = useNavigate()
+  const { state, setState } = useContext(UserContext)
+
   return (
     <>
-      <tr onClick={() => navigate(`/hike/${hike.id}`)}>
+      <tr onClick={() => { if (state.loggedIn) navigate(`/hike/${hike.id}`) }}>
         <td>{hike.Title}</td>
         <td>{hike.Length}</td>
         <td>{hike.Expected_time}</td>
