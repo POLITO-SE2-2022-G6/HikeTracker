@@ -85,7 +85,7 @@ async function putP(p: Point) {
   })
 }
 
-export const createHike = async (hike: Hike) => {
+export const createHike = async (hike: Record<string, string>) => {
   const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = hike;
   /*
   const point_s = await putP(start_point);
@@ -102,10 +102,10 @@ export const createHike = async (hike: Hike) => {
     {
       data: {
         Title: title,
-        Length: length,
-        Expected_time: expected_time,
-        Ascent: ascent,
-        Difficulty: difficulty,
+        Length: parseFloat(length),
+        Expected_time: parseInt(expected_time),
+        Ascent: parseFloat(ascent),
+        Difficulty: parseInt(difficulty),
         /*
         StartPointId: point_s.id, 
         EndPointId: point_e.id,
@@ -122,7 +122,7 @@ export const createHike = async (hike: Hike) => {
 
 };
 
-export const editHike = async (idp: number, params: Hike) => {
+export const editHike = async (idp: number, params: Record<string, string>) => {
   const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = params;
 
   return prisma.hike.update({
@@ -130,11 +130,11 @@ export const editHike = async (idp: number, params: Hike) => {
       id: idp,
     },
     data: {
-      Title: title || undefined,
-      Length: length || undefined,
-      Expected_time: expected_time || undefined,
-      Ascent: ascent || undefined,
-      Difficulty: difficulty || undefined,
+      Title: title,
+      Length: parseFloat(length),
+      Expected_time: parseInt(expected_time),
+      Ascent: parseFloat(ascent),
+      Difficulty: parseInt(difficulty),
       /*
       StartPointId: start_point?.id || undefined, 
       EndPointId: end_point?.id || undefined, 

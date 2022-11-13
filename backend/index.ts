@@ -7,9 +7,17 @@ import { hikesList, createHike, editHike, hikeById } from "./visitorDao"
 import cors from "cors";
 import { getUserById, getUserByEmail, createUsr } from "./auth";
 import bodyParser from "body-parser";
+import fileUpload from 'express-fileupload'
+import path from "path";
 
 const app = express();
 app.use(bodyParser.json());
+
+app.use(fileUpload({
+  createParentPath: true,
+}));
+
+
 
 const port = 3001;
 const LocalStrategy = passportLocal.Strategy;
@@ -67,6 +75,8 @@ const isLoggedIn: RequestHandler = (req, res, next) => {
 
   return res.status(401).json({ error: "not authenticated" });
 };
+
+app.use("/gpstracks", isLoggedIn, express.static(path.join(__dirname, "gpstracks")));
 
 /*** Users APIs ***/
 // signup
@@ -190,7 +200,10 @@ app.post("/hike", isLoggedIn,
   }),
   async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
+
     const hike = req.body;
+    hike.gpstrack = await gpsUpload(req, res);
+
     const newHike = await createHike(hike);
     return res.status(201).json(newHike);
   })
@@ -215,6 +228,25 @@ app.put("/hike/:id", isLoggedIn,
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const id: number = parseInt(req.params.id, 10);
     const params = req.body;
+    params.gpstrack = await gpsUpload(req, res);
     const modifiedHike = await editHike(id, params);
     return res.status(201).json(modifiedHike);
   })
+
+
+async function gpsUpload(req: express.Request, res: express.Response) {
+  let file = undefined
+  if (req.files) {
+    const track = req.files.gpstrack
+    if (!(track instanceof Array)) {
+      const rand = (Math.random() + 1).toString(36).substring(7)
+      const trackPath = path.join(__dirname, 'gpstracks',rand, track.name);
+      track.mv(trackPath, (err) => {
+        if (err) return res.status(500).send(err);
+      });
+      file = `gpstracks/${rand}/${track.name}`;
+    }
+  }
+  return file;
+}
+
