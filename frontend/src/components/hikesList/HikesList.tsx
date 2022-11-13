@@ -58,8 +58,8 @@ const HikesList = ({ data }: HikeProps) => {
             <th>Expected Time</th>
             <th>Ascent</th>
             <th>Difficulty</th>
-            <th>Start Point</th>
-            <th>End Point</th>
+            {/* <th>Start Point</th>
+            <th>End Point</th> */}
             {/* <th>Description</th> */}
           </tr>
         </thead>
@@ -80,8 +80,8 @@ function HikeData(props: any) {
         <td>{props.hike['Expected_time']}</td>
         <td>{props.hike['Ascent']}</td>
         <td>{props.hike['Difficulty']}</td>
-        <td>{props.hike['StartPointId']}</td>
-        <td>{props.hike['EndPointId']}</td>
+        {/* <td>{props.hike['StartPointId']}</td>
+        <td>{props.hike['EndPointId']}</td> */}
         {/* <td>{props.hike['Description']}</td> */}
       </tr>
     </>

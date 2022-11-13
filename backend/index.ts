@@ -72,23 +72,39 @@ const isLoggedIn: RequestHandler = (req, res, next) => {
 app.post("/signup", checkSchema({
   type: {
     in: "body",
-    isString: true
+    isString: true,
+    errorMessage: "type must be a string",
   },
   username: {
     in: "body",
-    isString: true
+    isString: true,
+    errorMessage: "username must be a string",
   },
   email: {
     in: "body",
-    isEmail: true
+    isEmail: true,
+    errorMessage: "email must be a valid email",
   },
   phoneNumber: {
     in: "body",
-    isMobilePhone: true
+    isMobilePhone: true,
+    errorMessage: "phoneNumber must be a valid phone number",
   }
 }), async (req: express.Request, res: express.Response) => {
-  const { type, username, email, phoneNumber } = req.query as Record<string, string>;
-  createUsr(type, username, email, phoneNumber).then(() => { res.end() }).catch((err) => { res.status(500).json({ error: err }) });
+  const { type, username, email, phoneNumber } = req.body as Record<string, string>;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const user = await createUsr(type, username, email, phoneNumber)
+    res.status(200).json(user);
+  }
+  catch (err) {
+    return res.status(400).json(err);
+  }
 })
 
 // Login --> POST /sessions
@@ -136,7 +152,7 @@ app.get("/hike",
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
 
     const { city, province, region, difficulty, length, ascent, expected_time } = req.query as Record<string, string | undefined>;
-    
+
     res.send(await hikesList({
       difficulty: difficulty ? parseInt(difficulty) : undefined,
       city,
@@ -150,11 +166,11 @@ app.get("/hike",
 
 
 //New Hike in Body
-app.post("/hike", isLoggedIn, 
+app.post("/hike", isLoggedIn,
   body("title").exists().notEmpty(), body("length").exists().notEmpty(), body("expected_time").exists().isInt(),
   body("ascent").exists().isFloat(), body("difficulty").exists().isInt(), body("description").optional().notEmpty(),
   body("gpstrack").optional().notEmpty(), body("start_point").optional().isInt(), body("end_point").optional().isInt(), checkSchema({
-    reference_points:{
+    reference_points: {
       optional: true,
       in: "body",
       isArray: true
@@ -173,11 +189,11 @@ app.post("/hike", isLoggedIn,
   })
 
 //Edit Hike
-app.put("/hike/:id", isLoggedIn, 
+app.put("/hike/:id", isLoggedIn,
   body("title").optional().notEmpty(), body("length").optional().notEmpty(), body("expected_time").optional().isInt(),
   body("ascent").optional().isFloat(), body("difficulty").optional().isInt(), body("description").optional().notEmpty(),
   body("gpstrack").optional().notEmpty(), body("start_point").optional().isInt(), body("end_point").optional().isInt(), checkSchema({
-    reference_points:{
+    reference_points: {
       optional: true,
       in: "body",
       isArray: true

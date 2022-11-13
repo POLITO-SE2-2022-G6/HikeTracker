@@ -5,14 +5,19 @@ import {
   Title,
   Container,
   Button,
+  Alert,
+  Space,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import axios from 'axios';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import s from './Register.module.css';
 
 const Register: React.FC = () => {
 
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm({
     initialValues: { email: '', type: '', username: '', phoneNumber: '' },
@@ -24,16 +29,19 @@ const Register: React.FC = () => {
       username: (value) => (value.length < 3 ? 'Username must have at least 2 letters' : null),
       phoneNumber: (value) => (isNaN(Number(value)) ? 'Phone number must be a number' : null),
     },
-
-
   });
 
-  const handleSubmit = (values:any) => {
+  const handleSubmit = async (values: typeof form.values) => {
+    console.log(values);
 
-    console.log("Handle Submit")
-    //api che registra l'utente passando values.email, values.type, values.username, values.phoneNumber
-    //props.login(values.email) si logga col nuovo utente
-    //navigate('/')
+    try {
+      const res = await axios.post('http://localhost:3001/signup', values)
+      navigate('/login');
+
+    } catch (err) {
+      setError('Something went wrong');
+    }
+
 
   }
 
@@ -44,7 +52,7 @@ const Register: React.FC = () => {
         Create an account!
       </Title>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+        <form onSubmit={form.onSubmit(handleSubmit)}>
           <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} required />
           <TextInput label="Username" placeholder="Username" {...form.getInputProps('username')} required />
           <Select
@@ -59,9 +67,19 @@ const Register: React.FC = () => {
             required
           />
           <TextInput label="Phone number" placeholder="Phone number" {...form.getInputProps('phoneNumber')} required />
+
+          {
+            error && <>
+              <Space h={'md'}/>
+              <Alert title="Errore" color={'red'}>
+                {error}
+              </Alert>
+            </>
+
+          }
           <Button fullWidth mt="xl" type="submit">Register</Button>
         </form>
-        <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
+        <Button fullWidth mt="xl" onClick={() => navigate('/')}>Proceed as a visitor</Button>
       </Paper>
     </Container>
   );
