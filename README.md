@@ -144,7 +144,7 @@ Team members:
   ```
 
 ## Database 
-* Tables
+Tables
 
 - Table `Hike` - Contains (id, Title, Length, Expected_time, Ascent, Difficulty, StartPointId, EndPointId, Description, GpsTrack)
 
@@ -154,9 +154,10 @@ Team members:
 
 - Table `User` - Contains (id, type, email, username, phoneNumber) with email being unique 
 
-* Relationships
+Relationships
 
-User -n Performance
+- User -n Performance
 
-Point -n Hike.StartPoint
-Point -n Hike.EndPoint
+- Point -n Hike.StartPoint
+
+- Point -n Hike.EndPoint
