@@ -33,9 +33,6 @@ app.use(cors(
 ));
 
 passport.deserializeUser((usr: User, done) => {
-  // const usr = getUserById(id);
-  // if (!usr) done("User not found", undefined);
-  // else 
   done(undefined, usr);
 });
 
@@ -44,8 +41,6 @@ passport.use(new LocalStrategy({
   passwordField: "password"
 },
   async (email, p, done) => {
-    console.log("LocalStrategy", email, p);
-
     const usr = await getUserByEmail(email);
     if (!usr) done("User not found", undefined);
     else done(undefined, usr);
@@ -76,19 +71,19 @@ const isLoggedIn: RequestHandler = (req, res, next) => {
 // signup
 app.post("/signup", checkSchema({
   type: {
-    in: "query",
+    in: "body",
     isString: true
   },
   username: {
-    in: "query",
+    in: "body",
     isString: true
   },
   email: {
-    in: "query",
+    in: "body",
     isEmail: true
   },
   phoneNumber: {
-    in: "query",
+    in: "body",
     isMobilePhone: true
   }
 }), async (req: express.Request, res: express.Response) => {
@@ -98,9 +93,7 @@ app.post("/signup", checkSchema({
 
 // Login --> POST /sessions
 app.post("/api/sessions", function (req, res, next) {
-  console.log("POST /api/sessions", req.body);
   passport.authenticate("local", (err, user, info) => {
-    console.log("passport.authenticate", err, user, info);
     if (err) return next(err);
     if (!user) return res.status(401).json(info);
 
@@ -136,16 +129,16 @@ app.listen(port, () => {
 
 //HOME
 //Add check if logged in
-app.get("/",
+app.get("/hike",
   query("city").optional().notEmpty(), query("province").optional().notEmpty(), query("region").optional().notEmpty(),
-  query("difficulty").optional().notEmpty(), query("length").optional().isFloat(), query("ascent").optional().isFloat(),
+  query("difficulty").optional().isInt(), query("length").optional().isFloat(), query("ascent").optional().isFloat(),
   query("expected_time").optional().isFloat(), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
 
     const { city, province, region, difficulty, length, ascent, expected_time } = req.query as Record<string, string | undefined>;
-
+    
     res.send(await hikesList({
-      difficulty,
+      difficulty: difficulty ? parseInt(difficulty) : undefined,
       city,
       province,
       region,
@@ -157,10 +150,21 @@ app.get("/",
 
 
 //New Hike in Body
-app.post("/",
+app.post("/hike", isLoggedIn, 
   body("title").exists().notEmpty(), body("length").exists().notEmpty(), body("expected_time").exists().isInt(),
-  body("ascent").exists().isFloat(), body("difficulty").exists().notEmpty(), body("description").exists().notEmpty(),
-  body("gpstrack").optional().notEmpty(),
+  body("ascent").exists().isFloat(), body("difficulty").exists().isInt(), body("description").optional().notEmpty(),
+  body("gpstrack").optional().notEmpty(), body("start_point").optional().isInt(), body("end_point").optional().isInt(), checkSchema({
+    reference_points:{
+      optional: true,
+      in: "body",
+      isArray: true
+    },
+    "reference_points.*": {
+      optional: true,
+      in: 'body',
+      isInt: true
+    }
+  }),
   async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const hike = req.body;
@@ -169,13 +173,24 @@ app.post("/",
   })
 
 //Edit Hike
-app.put("/:id",
+app.put("/hike/:id", isLoggedIn, 
   body("title").optional().notEmpty(), body("length").optional().notEmpty(), body("expected_time").optional().isInt(),
-  body("ascent").optional().isFloat(), body("difficulty").optional().notEmpty(), body("description").optional().notEmpty(),
-  body("gpstrack").optional().notEmpty(),
-  async (req, res) => {
+  body("ascent").optional().isFloat(), body("difficulty").optional().isInt(), body("description").optional().notEmpty(),
+  body("gpstrack").optional().notEmpty(), body("start_point").optional().isInt(), body("end_point").optional().isInt(), checkSchema({
+    reference_points:{
+      optional: true,
+      in: "body",
+      isArray: true
+    },
+    "reference_points.*": {
+      optional: true,
+      in: 'body',
+      isInt: true
+    }
+  }),
+  async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const id: number = parseInt(req.params!.id, 10);
+    const id: number = parseInt(req.params.id, 10);
     const params = req.body;
     const modifiedHike = await editHike(id, params);
     return res.status(201).json(modifiedHike);

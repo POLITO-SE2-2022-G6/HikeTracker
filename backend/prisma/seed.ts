@@ -50,7 +50,7 @@ const hikes: Prisma.HikeCreateInput[] = Array(20).fill(0).map(e => {
     Title: faker.commerce.productName(),
     Description: faker.lorem.paragraph(),
     Ascent: Math.floor(Math.random() * 1000) - 500,
-    Difficulty: faker.random.numeric(5),
+    Difficulty: Math.floor(Math.random() * 5),
     Length: Math.floor(Math.random() * 10000),
     Expected_time: Math.floor(Math.random() * 500),
     Start_point: {

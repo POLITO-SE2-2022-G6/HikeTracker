@@ -4,7 +4,7 @@ import { checkPrime } from 'crypto'
 const prisma = new PrismaClient()
 
 export type HikeQuery = {
-  difficulty?: string,
+  difficulty?: number,
   city?: string,
   region?: string,
   province?: string,
@@ -17,16 +17,24 @@ export async function hikesList(fields: HikeQuery) {
     where: {
       AND: [
         {
-          Difficulty: fields.difficulty,
-          Length: fields.length,
-          Ascent: fields.ascent,
-          Expected_time: fields.expected_time
+          Difficulty: {
+            lt: fields.difficulty
+          },
+          Length: {
+            lt: fields.length
+          },
+          Ascent: {
+            lt: fields.ascent
+          },
+          Expected_time: {
+            lt: fields.expected_time
+          }
         },
         {
           OR: [
             {
               Start_point: {
-                City: fields.city,
+                City: fields.city,                
                 Region: fields.region,
                 Province: fields.province
               }
@@ -49,45 +57,42 @@ export type Hike = {
   length: number,
   expected_time: number,
   ascent: number,
-  difficulty: string, 
+  difficulty: number, 
   start_point: Point, 
   end_point: Point, 
-  reference_point: Point[],
+  reference_points: Point[],
   description: string, 
   gpstrack?: string
 }
 
-export const createHike = async (hike:Hike) => {
-  const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_point, description, gpstrack } = hike;
-
-  //we have to update the point?
-  const point_s = await prisma.point.create({
-      data: {
-        Label: start_point.Label,
-        Latitude: start_point.Latitude, 
-        Longitude: start_point.Longitude,
-        Elevation: start_point.Elevation, 
-        City: start_point.City,
-        Region: start_point.Region, 
-        Province: start_point.Province,
-        Type: start_point.Type,
-        Description: start_point.Description,
-      }
-  })
-
-  const point_e = await prisma.point.create({
+async function putP(p: Point) {
+  return prisma.point.create({
     data: {
-      Label: end_point.Label,
-      Latitude: end_point.Latitude, 
-      Longitude: end_point.Longitude,
-      Elevation: end_point.Elevation, 
-      City: end_point.City,
-      Region: end_point.Region, 
-      Province: end_point.Province,
-      Type: end_point.Type,
-      Description: end_point.Description,
+      Label: p.Label,
+      Latitude: p.Latitude, 
+      Longitude: p.Longitude,
+      Elevation: p.Elevation, 
+      City: p.City,
+      Region: p.Region, 
+      Province: p.Province,
+      Type: p.Type,
+      Description: p.Description,
     }
 })
+}
+
+export const createHike = async (hike:Hike) => {
+  const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = hike;
+  /*
+  const point_s = await putP(start_point);
+
+  const point_e = await putP(end_point);
+  */
+  /*let point_r:int[];
+  reference_points.forEach(async(p) =>{
+    const pp = await getP(p);
+    point_r =[...point_r,pp.id];
+  })*/
  
   return prisma.hike.create(
       {
@@ -97,13 +102,14 @@ export const createHike = async (hike:Hike) => {
               Expected_time : expected_time, 
               Ascent : ascent,
               Difficulty : difficulty, 
+              /*
               StartPointId: point_s.id, 
               EndPointId: point_e.id,
               Reference_points: {
-                create: [
-                  reference_point
-                ]
-              },            
+                connect: {   
+                }
+              },
+              */            
               Description : description, 
               GpsTrack : gpstrack,
           },
@@ -113,10 +119,8 @@ export const createHike = async (hike:Hike) => {
 };
 
 export const editHike = async (idp:number, params: Hike) => {
-  const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_point, description, gpstrack } = params;
+  const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = params;
 
-  //with || undefined shoueld update the field only if the value if present 
-  //check what happens with points
   return prisma.hike.update({
     where: {
       id : idp,
@@ -127,12 +131,14 @@ export const editHike = async (idp:number, params: Hike) => {
       Expected_time: expected_time || undefined, 
       Ascent: ascent || undefined, 
       Difficulty: difficulty || undefined,
-      StartPointId: start_point.id, 
-      EndPointId: end_point.id, 
+      /*
+      StartPointId: start_point?.id || undefined, 
+      EndPointId: end_point?.id || undefined, 
       Reference_points: {
         create :[
-        reference_point || undefined
+        reference_points || undefined
       ]},
+      */
       Description: description || undefined,
       GpsTrack: gpstrack || undefined,
     }

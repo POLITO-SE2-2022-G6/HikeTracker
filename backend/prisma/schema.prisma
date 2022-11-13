@@ -32,13 +32,13 @@ model Hike {
   Length           Float
   Expected_time    Int
   Ascent           Float
-  Difficulty       String
-  Start_point      Point   @relation(fields: [StartPointId], references: [id], name: "start")
-  StartPointId     Int
-  End_point        Point   @relation(fields: [EndPointId], references: [id], name: "end")
-  EndPointId       Int
+  Difficulty       Int
+  Start_point      Point?   @relation(fields: [StartPointId], references: [id], name: "start")
+  StartPointId     Int?
+  End_point        Point?   @relation(fields: [EndPointId], references: [id], name: "end")
+  EndPointId       Int?
   Reference_points Point[]
-  Description      String
+  Description      String?
   GpsTrack         String?
 }
 
