@@ -37,7 +37,7 @@ const HikesList = ({ data }: HikeProps) => {
   }
 
   const getHikes = async () => {
-    const response = await fetch('http://localhost:3001/', {
+    const response = await fetch('http://localhost:3001/hike', {
     });
     const hikesJson = await response.json();
     if (response.ok) {

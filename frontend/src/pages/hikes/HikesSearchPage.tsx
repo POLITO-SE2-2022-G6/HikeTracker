@@ -41,7 +41,7 @@ const HikesSearchPage: React.FC = () => {
 
 
 
-    const res = await axios.get('http://localhost:3001/', {
+    const res = await axios.get('http://localhost:3001/hike', {
       params: {
         ...values,
         region: values.region || undefined,
