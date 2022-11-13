@@ -163,6 +163,12 @@ app.get("/hike",
       expected_time: expected_time ? parseFloat(expected_time) : undefined
     }));
   })
+//Get hike by id
+  app.get("/hike/:id",isLoggedIn,async(req:express:Request,res:express.Response)=>{
+    const id: number = parseInt(req.params.id, 10);
+    const hike  = await hikeById(id);
+    return res.status(201).json(hike);
+  })
 
 
 //New Hike in Body
