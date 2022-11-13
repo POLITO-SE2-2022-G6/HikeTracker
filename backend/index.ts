@@ -256,4 +256,3 @@ async function gpsUpload(req: express.Request, res: express.Response) {
   }
   return file;
 }
-

@@ -107,7 +107,7 @@ const HikeForm: React.FC = () => {
             'Content-Type': 'multipart/form-data'
           }
         })
-      //    navigate('/');
+         navigate('/');
 
     } catch (err) {
       setError('Error - creating a new hike');

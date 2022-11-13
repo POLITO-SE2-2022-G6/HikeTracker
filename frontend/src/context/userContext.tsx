@@ -9,7 +9,7 @@ export type UserInfo = {
   loggedIn: boolean;
   data?: {
     id: number;
-    type: 'hiker' | 'guide';
+    type: 'Hiker' | 'Guide';
     email: string;
     username: string;
     phoneNumber: string;

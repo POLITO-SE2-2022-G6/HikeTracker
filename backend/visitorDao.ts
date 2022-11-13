@@ -35,15 +35,15 @@ export async function hikesList(fields: HikeQuery) {
           OR: [
             {
               Start_point: {
-                City: fields.city,
-                Region: fields.region,
-                Province: fields.province
+                City: fields.city && { startsWith: fields.city },
+                Region: fields.region && { startsWith: fields.region },
+                Province: fields.province && { startsWith: fields.province }
               }
             }, {
               End_point: {
-                City: fields.city,
-                Region: fields.region,
-                Province: fields.province
+                City: fields.city && { startsWith: fields.city },
+                Region: fields.region && { startsWith: fields.region },
+                Province: fields.province && { startsWith: fields.province }
               }
             }
           ]
@@ -83,11 +83,6 @@ async function putP(p: Point) {
       Description: p.Description,
     }
   })
-}
-
-
-export async function hikeById(id: number) {
-  return prisma.hike.findUnique({ where: { id: id } })
 }
 
 export const createHike = async (hike: Record<string, string>) => {
