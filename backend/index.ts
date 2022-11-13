@@ -233,6 +233,13 @@ app.put("/hike/:id", isLoggedIn,
     return res.status(201).json(modifiedHike);
   })
 
+  
+app.get("/hike/:id", isLoggedIn, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const hike = await hikeById(id);
+  return res.status(200).json(hike);
+})
+
 
 async function gpsUpload(req: express.Request, res: express.Response) {
   let file = undefined

@@ -85,6 +85,11 @@ async function putP(p: Point) {
   })
 }
 
+
+export async function hikeById(id: number) {
+  return prisma.hike.findUnique({ where: { id: id } })
+}
+
 export const createHike = async (hike: Record<string, string>) => {
   const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = hike;
   /*

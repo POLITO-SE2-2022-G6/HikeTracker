@@ -29,8 +29,9 @@ const Index: React.FC = () => {
               <Route path='hikes' element={<HikesSearchPage />} />
               <Route path='' element={<Landing />} />
               <Route path='/hike/:id' element={<HikeDetailPage />} />
-              <Route path='/hike/edit/:id' element={<></>} />
               <Route path='/hike/edit/' element={<HikeForm />} />
+              <Route path='/hike/edit/:id' element={<HikeForm/>}/>
+              <Route path='/hike/edit/' element={<HikeForm/>}/>
 
             </Route>
             <Route path='/login' element={loggedIn
