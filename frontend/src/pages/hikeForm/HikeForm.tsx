@@ -20,8 +20,8 @@ const HikeForm: React.FC = () => {
     expected_time?: number;
     ascent?: number;
     difficulty?: number;
-    start_point?: number;
-    end_point?: number;
+    // start_point?: number;
+    // end_point?: number;
     description?: string;
     gpstrack?: File;
   }
@@ -33,8 +33,8 @@ const HikeForm: React.FC = () => {
       expected_time: undefined,
       ascent: undefined,
       difficulty: undefined,
-      start_point: undefined,
-      end_point: undefined,
+      // start_point: undefined,
+      // end_point: undefined,
       description: '',
       gpstrack: undefined,
     },
@@ -45,8 +45,8 @@ const HikeForm: React.FC = () => {
       expected_time: (value: number) => (!value ? 'Expected time must not be empty' : null),
       ascent: (value: number) => (!value ? 'Ascent must not be empty' : null),
       difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
-      start_point: (value: number) => (!value ? 'Start point must not be empty' : null),
-      end_point: (value: number) => (!value ? 'End point must not be empty' : null),
+      // start_point: (value: number) => (!value ? 'Start point must not be empty' : null),
+      // end_point: (value: number) => (!value ? 'End point must not be empty' : null),
       description: (value: string) => (!value ? 'Difficult must not be empty' : null),
     },
   });
@@ -65,8 +65,8 @@ const HikeForm: React.FC = () => {
           expected_time: hike.data.Expected_time,
           ascent: hike.data.Ascent,
           difficulty: hike.data.Difficulty,
-          start_point: hike.data.StartPoint,
-          end_point: hike.data.EndPoint,
+          // start_point: hike.data.StartPoint,
+          // end_point: hike.data.EndPoint,
           description: hike.data.Description,
         })
       }
@@ -170,7 +170,7 @@ const HikeForm: React.FC = () => {
               min={0}
               max={4}
               {...form.getInputProps('difficulty')} />
-            <NumberInput
+            {/* <NumberInput
               label="Start Point"
               placeholder="1"
               min={1}
@@ -182,7 +182,7 @@ const HikeForm: React.FC = () => {
               min={1}
               max={40}
               {...form.getInputProps('end_point')}
-            />
+            /> */}
             <FileInput
               label="Gps Track"
               placeholder=""

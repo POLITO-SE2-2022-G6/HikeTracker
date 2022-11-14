@@ -6,6 +6,9 @@ import {
   Text,
   Container,
   Button,
+  Box,
+  Center,
+  Flex,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import axios from 'axios';
@@ -51,22 +54,28 @@ const Login: React.FC = (props) => {
   }
 
   return (
-    <Container size={420} my={40}>
-      <Title align="center" sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900 })}>
-        Welcome back!
-      </Title>
-      <Text color="dimmed" size="sm" align="center" mt={5}>
-        Do not have an account yet?{' '}
-        <Anchor<'a'> href="#" size="sm" onClick={() => { navigate("/register") }}> Create account</Anchor>
-      </Text>
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-          <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} required />
-          <Button fullWidth mt="xl" type="submit" >Sign in</Button>
-        </form>
-        <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
-      </Paper>
+    <Container size={420} h="100vh">
+      <Flex justify='center' align='center' h={'100%'} >
+        <Box w="400px">
+
+          <Title align="center" sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900 })}>
+            Welcome back!
+          </Title>
+          <Text color="dimmed" size="sm" align="center" mt={5}>
+            Do not have an account yet?{' '}
+            <Anchor<'a'> href="#" size="sm" onClick={() => { navigate("/register") }}> Create account</Anchor>
+          </Text>
+          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+            <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+              <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} required />
+              <Button fullWidth mt="xl" type="submit" >Sign in</Button>
+            </form>
+            <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
+          </Paper>
+        </Box>
+      </Flex>
     </Container>
+
   );
 };
 

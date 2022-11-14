@@ -23,8 +23,8 @@ const Layout = () => {
   }
 
   return (
-    <>
-      <Header height={56} className={classes.header} mb={20}>
+    <div style={{ height: '100 vh' }}>
+      <Header height={56} className={classes.header}>
         <Container>
           <div className={classes.inner}>
             <Link to={'/'}>
@@ -41,7 +41,7 @@ const Layout = () => {
         </Container>
       </Header>
       <Outlet />
-    </>
+    </div>
   );
 };
 
