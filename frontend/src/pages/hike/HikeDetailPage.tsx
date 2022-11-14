@@ -4,8 +4,9 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import s from './HikeDetailPage.module.css';
 import { MapContainer, TileLayer, useMap, Polyline } from 'react-leaflet'
-import * as track from './rocciamelone.json'
+// import * as defaultTrack from './rocciamelone.json'
 import { UserContext } from '../../context/userContext';
+import { useInterval } from '@mantine/hooks';
 
 
 
@@ -26,19 +27,28 @@ const HikeDetailPage: React.FC = () => {
   const [hike, setHike] = useState<Hike | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [track, setTrack] = useState<[number, number][] | undefined>(undefined)
+  const [center, setCenter] = useState<[number, number] | undefined>([41.8, 12.4])
+  const [offset, setOffset] = useState(0)
   const { id } = useParams()
 
-  const {state, setState} = useContext(UserContext)
-  const {loggedIn} = state
+  const { start } = useInterval(() => {
+    setOffset((o) => o - 1)
+  }, 16 * 2)
+  
+  
+  
+  const { state, setState } = useContext(UserContext)
+  const { loggedIn } = state
 
   const navigate = useNavigate()
-  
 
+  
   const fetchHike = async (id: string) => {
     const res = await axios.get(`http://localhost:3001/hike/${id}`, { withCredentials: true })
     return res.data
   }
-
+  
   useEffect(() => {
     if (!id) {
       setError('Invalid Hike')
@@ -49,6 +59,16 @@ const HikeDetailPage: React.FC = () => {
       try {
         const hike = await fetchHike(id)
         setHike(hike)
+        if (hike.GpsTrack) {
+          console.log("Download track")
+          const xml = await axios.get(`http://localhost:3001/` + hike.GpsTrack, { withCredentials: true })
+          console.log("Extract track")
+          const points = extrackPoints(xml.data)
+          console.log("Set points")
+          setTrack(points)
+          setCenter(points[0])
+          start()
+        }
       } catch (error) {
         setError("There was an error fetching a hike")
       }
@@ -57,12 +77,14 @@ const HikeDetailPage: React.FC = () => {
     run()
 
   }, [id])
+
+  if (loading) {
+    return <Center><Loader size={'xl'} mx={'auto'} /></Center>
+  }
+
   return (
     <>
       <Container>
-        {loading && <Center><Loader size={'xl'} mx={'auto'} /></Center>
-        }
-
         <Paper p={'md'} radius={'md'} shadow={'md'} withBorder>
           <Group position='apart'>
             <Title order={1}>{hike?.Title}</Title>
@@ -96,14 +118,15 @@ const HikeDetailPage: React.FC = () => {
 
         <Space h={'md'} />
         <Box h={'480px'}>
-
-          <MapContainer center={[45.177786, 7.083372]} zoom={12} className={s.map} style={{
+          { }
+          <MapContainer center={center} zoom={12} className={s.map} style={{
             // height: '300px',
           }} >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Polyline pathOptions={{ fillColor: 'red' }} positions={track as [number, number][]} />
+            <Polyline pathOptions={{ dashArray: '10', dashOffset: offset.toString() }} positions={track || []} />
+            <MapSetter center={center} />
 
           </MapContainer>
         </Box>
@@ -113,3 +136,30 @@ const HikeDetailPage: React.FC = () => {
 };
 
 export default HikeDetailPage;
+
+function extrackPoints(data: any): [number, number][] {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(data, "text/xml");
+  const points = xmlDoc.getElementsByTagName("trkpt")
+  const pointsArray = Array.from(points)
+  const pointsCoordinates = pointsArray.map((point) => {
+    return [parseFloat(point.getAttribute('lat') || ''), parseFloat(point.getAttribute('lon') || '')] as [number, number]
+  })
+  return pointsCoordinates
+}
+
+const MapSetter = ({ center }: { center: [number, number] | undefined }) => {
+
+  const map = useMap()
+
+  useEffect(() => {
+    // setTimeout(() => {
+    if (center)
+      map.flyTo(center, 13)
+    // }, 1000)
+  }, [center])
+
+  return (
+    <></>
+  )
+}
