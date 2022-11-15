@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function getUserById(id: number) {
@@ -19,3 +19,4 @@ export async function createUsr(type: string, username: string, email: string, p
         }
     })
 }
+

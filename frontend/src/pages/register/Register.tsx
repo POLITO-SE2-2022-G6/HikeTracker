@@ -35,7 +35,7 @@ const Register: React.FC = () => {
     console.log(values);
 
     try {
-      const res = await axios.post('http://localhost:3001/signup', values)
+      const res = await axios.post('http://localhost:3001/api/sessions/signup', values)
       navigate('/login');
 
     } catch (err) {

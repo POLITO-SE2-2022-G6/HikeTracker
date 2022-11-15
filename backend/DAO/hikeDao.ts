@@ -1,6 +1,4 @@
 import { Point, PrismaClient } from '@prisma/client'
-import { checkPrime } from 'crypto'
-
 
 const prisma = new PrismaClient()
 
@@ -119,7 +117,6 @@ export const createHike = async (hike: Record<string, string>) => {
       },
     }
   );
-
 };
 
 export const editHike = async (idp: number, params: Record<string, string>) => {
@@ -147,8 +144,4 @@ export const editHike = async (idp: number, params: Record<string, string>) => {
       GpsTrack: gpstrack || undefined,
     }
   })
-
-
-
-
 };
