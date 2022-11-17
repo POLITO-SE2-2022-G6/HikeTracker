@@ -1,38 +1,71 @@
 import express from "express";
 import path from "path";
 import { RequestHandler, Router } from 'express';
-import { body, checkSchema, query, validationResult  } from 'express-validator';
+import { checkSchema, validationResult } from 'express-validator';
 import { createHike, editHike, hikeById, hikesList } from "../DAO/hikeDao";
 import { User, isLoggedIn } from "./authApi";
 
 export const hRouter = Router();
 
 const isGuide: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "Guide") return next();
-    return res.status(401).json({ error: "not authenticated" });
-  }
+  if (req.isAuthenticated() && (req.user as User).type === "Guide") return next();
+  return res.status(401).json({ error: "not authenticated" });
+}
 
 
 //HOME
 //Add check if logged in
-hRouter.get("",
-  query("city").optional().notEmpty(), query("province").optional().notEmpty(), query("region").optional().notEmpty(),
-  query("difficulty").optional().isInt(), query("length").optional().isFloat(), query("ascent").optional().isFloat(),
-  query("expected_time").optional().isFloat(), async (req: express.Request, res: express.Response) => {
-    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
+hRouter.get("", checkSchema({
+  city: {
+    in: ['query'],
+    optional: true,
+    notEmpty: true
+  },
+  province: {
+    in: ['query'],
+    optional: true,
+    notEmpty: true
+  },
+  region: {
+    in: ['query'],
+    optional: true,
+    notEmpty: true
+  },
+  difficulty: {
+    in: ['query'],
+    optional: true,
+    isInt: true
+  },
+  length: {
+    in: ['query'],
+    optional: true,
+    isFloat: true
+  },
+  ascent: {
+    in: ['query'],
+    optional: true,
+    isFloat: true
+  },
+  expected_time: {
+    in: ['query'],
+    optional: true,
+    isInt: true
+  }
+}), async (req: express.Request, res: express.Response) => {
+  if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
 
-    const { city, province, region, difficulty, length, ascent, expected_time } = req.query as Record<string, string | undefined>;
+  const { city, province, region, difficulty, length, ascent, expected_time } = req.query as Record<string, string | undefined>;
 
-    res.send(await hikesList({
-      difficulty: difficulty ? parseInt(difficulty) : undefined,
-      city,
-      province,
-      region,
-      length: length ? parseFloat(length) : undefined,
-      ascent: ascent ? parseFloat(ascent) : undefined,
-      expected_time: expected_time ? parseFloat(expected_time) : undefined
-    }));
-  })
+  res.send(await hikesList({
+    difficulty: difficulty ? parseInt(difficulty) : undefined,
+    city,
+    province,
+    region,
+    length: length ? parseFloat(length) : undefined,
+    ascent: ascent ? parseFloat(ascent) : undefined,
+    expected_time: expected_time ? parseFloat(expected_time) : undefined
+  }));
+})
 //Get hike by id
 hRouter.get("/:id", isLoggedIn, async (req, res) => {
   const id = parseInt(req.params.id, 10);
@@ -42,22 +75,53 @@ hRouter.get("/:id", isLoggedIn, async (req, res) => {
 
 
 //New Hike in Body
-hRouter.post("", isGuide,
-  body("title").exists().notEmpty(), body("length").exists().notEmpty(), body("expected_time").exists().isInt(),
-  body("ascent").exists().isFloat(), body("difficulty").exists().isInt(), body("description").optional().notEmpty(),
-  body("gpstrack").optional().notEmpty(), body("start_point").optional().isInt(), body("end_point").optional().isInt(), checkSchema({
-    reference_points: {
-      optional: true,
-      in: "body",
-      isArray: true
-    },
-    "reference_points.*": {
-      optional: true,
-      in: 'body',
-      isInt: true
-    }
-  }),
-  async (req: express.Request, res: express.Response) => {
+hRouter.post("", isGuide, checkSchema({
+  title: {
+    in: ['body'],
+    notEmpty: true
+  },
+  length: {
+    in: ['body'],
+    notEmpty: true
+  },
+  ascent: {
+    in: ['body'],
+    isFloat: true
+  },
+  difficulty: {
+    in: ['body'],
+    isInt: true
+  },
+  description: {
+    in: ['body'],
+    optional: true,
+    notEmpty: true
+  },
+  gpstrack: {
+    in: ['body'],
+    optional: true,
+    isFloat: true
+  },
+  start_point: {
+    in: ['body'],
+    isInt: true
+  },
+  end_point: {
+    in: ['body'],
+    optional: true,
+    isInt: true
+  },
+  reference_points: {
+    optional: true,
+    in: "body",
+    isArray: true
+  },
+  "reference_points.*": {
+    optional: true,
+    in: 'body',
+    isInt: true
+  }
+}),  async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
 
     const hike = req.body;
@@ -69,29 +133,80 @@ hRouter.post("", isGuide,
 
 
 //Edit Hike
-hRouter.put("/:id", isGuide,
-  body("title").optional().notEmpty(), body("length").optional().notEmpty(), body("expected_time").optional().isInt(),
-  body("ascent").optional().isFloat(), body("difficulty").optional().isInt(), body("description").optional().notEmpty(),
-  body("gpstrack").optional().notEmpty(), body("start_point").optional().isInt(), body("end_point").optional().isInt(), checkSchema({
-    reference_points: {
-      optional: true,
-      in: "body",
-      isArray: true
-    },
-    "reference_points.*": {
-      optional: true,
-      in: 'body',
-      isInt: true
-    }
-  }),
-  async (req: express.Request, res: express.Response) => {
+hRouter.put("/:id", isGuide, checkSchema({
+  title: {
+    in: ['body'],
+    optional: true,
+    notEmpty: true
+  },
+  length: {
+    in: ['body'],
+    optional: true,
+    notEmpty: true
+  },
+  expected_time: {
+    in: ['body'],
+    optional: true,
+    isInt: true
+  },
+  ascent: {
+    in: ['body'],
+    optional: true,
+    isFloat: true
+  },
+  difficulty: {
+    in: ['body'],
+    optional: true,
+    isInt: true
+  },
+  description: {
+    in: ['body'],
+    optional: true,
+    notEmpty: true
+  },
+  gpstrack: {
+    in: ['body'],
+    optional: true,
+    notEmpty: true
+  },
+  start_point: {
+    in: ['body'],
+    optional: true,
+    isObject: true
+  },
+  "start_point.id":{
+    in: ['body'],
+    optional: true,
+    isInt: true
+  },
+  end_point: {
+    in: ['body'],
+    optional: true,
+    isObject: true
+  },
+  "end_point.id":{
+    in: ['body'],
+    optional: true,
+    isInt: true
+  },
+  reference_points: {
+    optional: true,
+    in: "body",
+    isArray: true
+  },
+  "reference_points.*": {
+    optional: true,
+    in: 'body',
+    isInt: true
+  }
+}),  async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const id: number = parseInt(req.params.id, 10);
     const params = req.body;
     params.gpstrack = await gpsUpload(req, res);
     const modifiedHike = await editHike(id, params);
     return res.status(201).json(modifiedHike);
-})
+  })
 
 
 hRouter.get("/:id", isLoggedIn, async (req, res) => {
