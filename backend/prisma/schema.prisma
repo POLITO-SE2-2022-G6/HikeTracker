@@ -39,7 +39,7 @@ model Point {
   ParkingLotId Int?        @unique
   startOf      Hike[]      @relation("start")
   endOf        Hike[]      @relation("end")
-  hikes        Hike[]
+  hikes        Hike[]      @relation("hikes")
 }
 
 model Hike {
@@ -53,8 +53,7 @@ model Hike {
   StartPointId     Int?
   End_point        Point?  @relation(fields: [EndPointId], references: [id], name: "end")
   EndPointId       Int?
-  Reference_points Point[]
-  Description      String?
+  Reference_points Point[] @relation("hikes")
   GpsTrack         String?
   LocalGuide       User?   @relation(fields: [LocalGuideId], references: [id], name: "guide")
   LocalGuideId     Int?

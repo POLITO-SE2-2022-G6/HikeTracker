@@ -1,4 +1,5 @@
-import { Point, PrismaClient } from '@prisma/client'
+import { Point, PrismaClient, Hike } from '@prisma/client'
+import { PointQuery } from './pointDao'
 
 const prisma = new PrismaClient()
 
@@ -50,11 +51,32 @@ export async function hikesList(fields: HikeQuery) {
     }
   })
 }
-export async function hikeById(id: number) {
-  return prisma.hike.findUnique({ where: { id: id } })
+
+export async function hikeById(id: number, field: PointQuery) {
+  const hike = await prisma.hike.findUnique({where: {id}});
+  if (!hike) return null;
+
+  const points = await prisma.point.findMany({
+    include: {
+      hikes: {
+        where: {
+          id: hike.id
+      }
+    }
+  }/*,
+    where: {
+      HutId: field.hut? {
+        not: null
+      }
+        HutId: true}
+         : undefined,  
+    }
+}*/})
+  return {hike, points}
 }
 
-export type Hike = {
+
+/*export type Hike = {
   title: string,
   length: number,
   expected_time: number,
@@ -64,10 +86,11 @@ export type Hike = {
   end_point: Point,
   reference_points: Point[],
   description: string,
-  gpstrack?: string
-}
+  gpstrack?: string,
+  localguideid?: number
+}*/
 
-async function putP(p: Point) {
+/*async function putP(p: Point) {
   return prisma.point.create({
     data: {
       Label: p.Label,
@@ -81,7 +104,7 @@ async function putP(p: Point) {
       Description: p.Description,
     }
   })
-}
+}*/
 
 export const createHike = async (hike: Record<string, string>) => {
   const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = hike;
@@ -119,7 +142,7 @@ export const createHike = async (hike: Record<string, string>) => {
   );
 };
 
-export const editHike = async (idp: number, params: Record<string, string>) => {
+export const editHike = async (idp: number, params: Record<string, string>, idH: number) => {
   const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = params;
 
   return prisma.hike.update({
@@ -142,6 +165,7 @@ export const editHike = async (idp: number, params: Record<string, string>) => {
       */
       Description: description || undefined,
       GpsTrack: gpstrack || undefined,
+      LocalGuideId: idH || undefined
     }
   })
 };

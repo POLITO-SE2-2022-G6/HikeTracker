@@ -3,7 +3,7 @@ import path from "path";
 import { Router } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
 import { createHike, editHike, hikeById, hikesList } from "../DAO/hikeDao";
-import { isGuide, isLoggedIn } from "./authApi";
+import { isGuide, isLoggedIn, getID } from "./authApi";
 
 export const hRouter = Router();
 
@@ -61,9 +61,20 @@ hRouter.get("", checkSchema({
   }));
 })
 //Get hike by id
-hRouter.get("/:id", isLoggedIn, async (req, res) => {
+hRouter.get("/:id", isLoggedIn, checkSchema({
+  hut: {
+    in: ['query'],
+    optional: true,
+    isBoolean: true
+  },
+  parking_lot: {
+    in: ['query'],
+    optional: true,
+    isBoolean: true
+  }
+}), async (req: express.Request, res: express.Response) => {
   const id = parseInt(req.params.id, 10);
-  const hike = await hikeById(id);
+  const hike = await hikeById(id, req.query);
   if (!hike) return res.status(404).json({ error: "Hike not found" });
   return res.status(200).json(hike);
 })
@@ -198,15 +209,24 @@ hRouter.put("/:id", isGuide, checkSchema({
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const id: number = parseInt(req.params.id, 10);
     const params = req.body;
+    const idHiker = getID(req);
+    if (!idHiker) return res.status(401).json({ error: "Unauthorized" });
     params.gpstrack = await gpsUpload(req, res);
-    const modifiedHike = await editHike(id, params/*, req.user.id*/);
+    const modifiedHike = await editHike(id, params, idHiker);
     return res.status(201).json(modifiedHike);
   })
 
 
-hRouter.get("/:id", isLoggedIn, async (req, res) => {
+hRouter.get("/:id", isLoggedIn, /*checkSchema(
+  hut:{
+    in: ['query'],
+    optional: true,
+    isBoolean: true
+  },
+
+),*/ async (req: express.Request, res:express.Response) => {
   const id = parseInt(req.params.id, 10);
-  const hike = await hikeById(id);
+  const hike = await hikeById(id, req.query);
   return res.status(200).json(hike);
 })
 
