@@ -1,5 +1,5 @@
-import { Point, PrismaClient, Hike } from '@prisma/client'
-import { PointQuery } from './pointDao'
+import { Point, PrismaClient } from '@prisma/client'
+import { PointQuery, createPoint, editPoint } from './pointDao'
 
 const prisma = new PrismaClient()
 
@@ -63,61 +63,23 @@ export async function hikeById(id: number, field: PointQuery) {
           id: hike.id
       }
     }
-  }/*,
-    where: {
-      HutId: field.hut? {
-        not: null
-      }
-        HutId: true}
-         : undefined,  
+  },
+  where: {
+    OR: [
+      {
+        HutId: field.parking_lot? field.hut? { gte: 0 } : -1 : {gte:0}
+      },
+      {
+        ParkingLotId: field.hut? field.parking_lot? { gte: 0 } : -1 : {gte:0}
+      } 
+      ]
     }
-}*/})
+  })
   return {hike, points}
 }
 
-
-/*export type Hike = {
-  title: string,
-  length: number,
-  expected_time: number,
-  ascent: number,
-  difficulty: number,
-  start_point: Point,
-  end_point: Point,
-  reference_points: Point[],
-  description: string,
-  gpstrack?: string,
-  localguideid?: number
-}*/
-
-/*async function putP(p: Point) {
-  return prisma.point.create({
-    data: {
-      Label: p.Label,
-      Latitude: p.Latitude,
-      Longitude: p.Longitude,
-      Elevation: p.Elevation,
-      City: p.City,
-      Region: p.Region,
-      Province: p.Province,
-      Type: p.Type,
-      Description: p.Description,
-    }
-  })
-}*/
-
 export const createHike = async (hike: Record<string, string>) => {
-  const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = hike;
-  /*
-  const point_s = await putP(start_point);
-
-  const point_e = await putP(end_point);
-  */
-  /*let point_r:int[];
-  reference_points.forEach(async(p) =>{
-    const pp = await getP(p);
-    point_r =[...point_r,pp.id];
-  })*/
+  const { title, length, expected_time, ascent, difficulty, gpstrack } = hike;
 
   return prisma.hike.create(
     {
@@ -127,15 +89,6 @@ export const createHike = async (hike: Record<string, string>) => {
         Expected_time: parseInt(expected_time),
         Ascent: parseFloat(ascent),
         Difficulty: parseInt(difficulty),
-        /*
-        StartPointId: point_s.id, 
-        EndPointId: point_e.id,
-        Reference_points: {
-          connect: {   
-          }
-        },
-        */
-        Description: description,
         GpsTrack: gpstrack,
       },
     }
@@ -163,7 +116,6 @@ export const editHike = async (idp: number, params: Record<string, string>, idH:
         reference_points || undefined
       ]},
       */
-      Description: description || undefined,
       GpsTrack: gpstrack || undefined,
       LocalGuideId: idH || undefined
     }

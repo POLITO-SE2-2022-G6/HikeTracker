@@ -19,31 +19,79 @@ export async function pointById(id: number) {
     return prisma.point.findUnique({ where: { id: id } })
 }
 
-export async function createPoint(point: Point) {
-    return prisma.point.create({ data: point })
+type newPoint = Point & {
+    Hut: {Description: string},
+    ParkingLot: {Description: string}, }
+
+export async function createPoint(point: newPoint) {
+    return prisma.point.create({ data: {
+        Label: point.Label || undefined,
+        Latitude: point.Latitude,
+        Longitude: point.Longitude,
+        Elevation: point.Elevation,
+        City: point.City,
+        Region: point.Region,
+        Province: point.Province,
+        Hut: point.Hut?{
+            create:{
+                Description: point.Hut.Description
+            }
+        } : undefined,
+        ParkingLot: point.ParkingLot?{
+            create:{
+                Description: point.ParkingLot.Description
+            }
+        } : undefined
+    } })
 }
 
 export async function deletePoint(id: number) {
     return prisma.point.delete({ where: { id: id } })
 }
 
-export async function editPoint(id: number, point: Point) {
-    return prisma.point.update({ where: { id: id }, data: point })
+export async function editPoint(id: number, point: newPoint) {
+    return prisma.point.update({ where: { id: id }, data: {
+        Label: point.Label || undefined,
+        Latitude: point.Latitude,
+        Longitude: point.Longitude,
+        Elevation: point.Elevation,
+        City: point.City,
+        Region: point.Region,
+        Province: point.Province,
+        Hut: point.Hut?{
+            create:{
+                Description: point.Hut.Description
+            }
+        } : undefined,
+        ParkingLot: point.ParkingLot?{
+            create:{
+                Description: point.ParkingLot.Description
+            }
+        } : undefined
+    } })
 }
 
 export async function fullList(fields: PointQuery) {
     return prisma.point.findMany({
         where: {
-                    /*Label: fields.label && { startsWith: fields.label },
-                    Latitude: fields.latitude && { lt: fields.latitude },
-                    Longitude: fields.longitude && { lt: fields.longitude },
-                    Elevation: fields.elevation && { lt: fields.elevation },
-                    City: fields.city && { startsWith: fields.city },
-                    Region: fields.region && { startsWith: fields.region },
-                    Province: fields.province && { startsWith: fields.province },*/
-                    //Description: fields.description && { startsWith: fields.description },
-                    /*HutId: fields.hut ? fields.hut : false,
-                    Parking_lot: fields.parking_lot*/
+            OR: [
+                {
+                    HutId: fields.parking_lot ? fields.hut ? { gte: 0 } : -1 : { gte: 0 }
+                },
+                {
+                    ParkingLotId: fields.hut ? fields.parking_lot ? { gte: 0 } : -1 : { gte: 0 }
                 }
+            ]
+            /*Label: fields.label && { startsWith: fields.label },
+            Latitude: fields.latitude && { lt: fields.latitude },
+            Longitude: fields.longitude && { lt: fields.longitude },
+            Elevation: fields.elevation && { lt: fields.elevation },
+            City: fields.city && { startsWith: fields.city },
+            Region: fields.region && { startsWith: fields.region },
+            Province: fields.province && { startsWith: fields.province },*/
+            //Description: fields.description && { startsWith: fields.description },
+            /*HutId: fields.hut ? fields.hut : false,
+            Parking_lot: fields.parking_lot*/
+        }
     })
 }
