@@ -3,7 +3,6 @@ import { Router } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
 import { isGuide } from "./authApi";
 import { createPoint, editPoint, pointById, fullList } from "../DAO/pointDao";
-import { hRouter } from "./hikeApi";
 
 export const pRouter = Router();
 
@@ -62,20 +61,25 @@ pRouter.put("/:id", checkSchema({
         optional: true,
         notEmpty: true
     },
-    description: {
+    hut:{
+        in: ['body'],
+        optional: true,
+        isObject: true
+    },
+    "hut.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    hut: {
+    parking_lot:{
         in: ['body'],
         optional: true,
-        isBoolean: true
+        isObject: true
     },
-    parking_lot: {
+    "parking_lot.description": {
         in: ['body'],
         optional: true,
-        isBoolean: true
+        notEmpty: true
     }
 }), isGuide, async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
