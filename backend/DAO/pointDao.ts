@@ -19,9 +19,33 @@ export async function pointById(id: number) {
     return prisma.point.findUnique({ where: { id: id } })
 }
 
-export async function createPoint(point: Point) {
-    return prisma.point.create({ data: point })
-}
+type newPoint = Point & {
+    Hut: {Description: string},
+    ParkingLot: {Description: string}, }
+
+    export async function createPoint(point: newPoint) {
+        return prisma.point.create({ data: {
+            Label: point.Label || undefined,
+            Latitude: point.Latitude,
+            Longitude: point.Longitude,
+            Elevation: point.Elevation,
+            City: point.City,
+            Region: point.Region,
+            Province: point.Province,
+            Hut: point.Hut?{
+                create:{
+                    Description: point.Hut.Description,
+                    //mettere id del punto che si sta creando
+                }
+            } : undefined,
+            ParkingLot: point.ParkingLot?{
+                create:{
+                    Description: point.ParkingLot.Description,
+                    PointId : point.id,
+                }
+            } : undefined
+        } })
+    }
 
 export async function deletePoint(id: number) {
     return prisma.point.delete({ where: { id: id } })

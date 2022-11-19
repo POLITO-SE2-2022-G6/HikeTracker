@@ -8,7 +8,7 @@ import { hRouter } from "./hikeApi";
 export const pRouter = Router();
 
 //Get point from id
-hRouter.get("/:id", checkSchema({
+pRouter.get("/:id", checkSchema({
     id: {
         in: ['params'],
         isInt: true
@@ -22,7 +22,7 @@ hRouter.get("/:id", checkSchema({
 });
 
 //Edit Point
-hRouter.put("/:id", checkSchema({
+pRouter.put("/:id", checkSchema({
     id: {
         in: ['params'],
         isInt: true
@@ -86,7 +86,7 @@ hRouter.put("/:id", checkSchema({
 });
 
 //New Point in Body
-hRouter.post("", checkSchema({
+pRouter.post("", checkSchema({
     label: {
         in: ['body'],
         optional: true,
@@ -122,29 +122,34 @@ hRouter.post("", checkSchema({
         optional: true,
         notEmpty: true
     },
-    description: {
+    hut:{
+        in: ['body'],
+        optional: true,
+        isObject: true
+    },
+    "hut.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    hut: {
+    parking_lot:{
         in: ['body'],
         optional: true,
-        isBoolean: true
+        isObject: true
     },
-    parking_lot: {
+    "parking_lot.description": {
         in: ['body'],
         optional: true,
-        isBoolean: true
+        notEmpty: true
     }
 }), isGuide, async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const hike = await createPoint(req.body);
-    res.send(hike);
+    const pont = await createPoint(req.body);
+    res.send(pont);
 });
 
 //Get all points
-hRouter.get("", isGuide, checkSchema({
+pRouter.get("", isGuide, checkSchema({
     hut:{
         in: ['query'],
         optional: true,

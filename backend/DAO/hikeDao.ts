@@ -135,7 +135,7 @@ export const createHike = async (hike: Record<string, string>) => {
           }
         },
         */
-        Description: description,
+        //Description: description,
         GpsTrack: gpstrack,
       },
     }
@@ -163,7 +163,7 @@ export const editHike = async (idp: number, params: Record<string, string>, idH:
         reference_points || undefined
       ]},
       */
-      Description: description || undefined,
+      //Description: description || undefined,
       GpsTrack: gpstrack || undefined,
       LocalGuideId: idH || undefined
     }

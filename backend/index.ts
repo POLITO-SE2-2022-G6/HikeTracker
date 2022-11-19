@@ -26,17 +26,16 @@ app.use(cors(
 import { hRouter } from "./API/hikeApi";
 app.use('/hike', hRouter);
 
+// Point APIs
+import { pRouter } from "./API/pointApi";
+app.use('/point', pRouter);
+
 // Auth APIs
 import { aRouter, isLoggedIn } from "./API/authApi";
 app.use('/api/sessions', aRouter);
 
 // GPS APIs
 app.use("/gpstracks", isLoggedIn, express.static(path.join(__dirname, "gpstracks")));
-
-// Point APIs
-import { pRouter } from "./API/pointApi";
-app.use('/point', pRouter);
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);
