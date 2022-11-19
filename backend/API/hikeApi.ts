@@ -1,17 +1,11 @@
 import express from "express";
 import path from "path";
-import { RequestHandler, Router } from 'express';
+import { Router } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
 import { createHike, editHike, hikeById, hikesList } from "../DAO/hikeDao";
-import { User, isLoggedIn } from "./authApi";
+import { isGuide, isLoggedIn } from "./authApi";
 
 export const hRouter = Router();
-
-const isGuide: RequestHandler = (req, res, next) => {
-  if (req.isAuthenticated() && (req.user as User).type === "Guide") return next();
-  return res.status(401).json({ error: "not authenticated" });
-}
-
 
 //HOME
 //Add check if logged in
@@ -70,6 +64,7 @@ hRouter.get("", checkSchema({
 hRouter.get("/:id", isLoggedIn, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const hike = await hikeById(id);
+  if (!hike) return res.status(404).json({ error: "Hike not found" });
   return res.status(200).json(hike);
 })
 
@@ -204,7 +199,7 @@ hRouter.put("/:id", isGuide, checkSchema({
     const id: number = parseInt(req.params.id, 10);
     const params = req.body;
     params.gpstrack = await gpsUpload(req, res);
-    const modifiedHike = await editHike(id, params);
+    const modifiedHike = await editHike(id, params/*, req.user.id*/);
     return res.status(201).json(modifiedHike);
   })
 

@@ -33,6 +33,10 @@ app.use('/api/sessions', aRouter);
 // GPS APIs
 app.use("/gpstracks", isLoggedIn, express.static(path.join(__dirname, "gpstracks")));
 
+// Point APIs
+import { pRouter } from "./API/pointApi";
+app.use('/point', pRouter);
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);

@@ -24,6 +24,11 @@ export const isLoggedIn: RequestHandler = (req, res, next) => {
     return res.status(401).json({ error: "not authenticated" });
 };
 
+export const isGuide: RequestHandler = (req, res, next) => {
+    if (req.isAuthenticated() && (req.user as User).type === "Guide") return next();
+    return res.status(401).json({ error: "not authenticated" });
+  }
+
 const LocalStrategy = passportLocal.Strategy;
 
 passport.serializeUser<any, any>((req, user, done) => { done(undefined, user); });
