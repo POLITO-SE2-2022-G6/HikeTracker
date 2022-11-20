@@ -1,8 +1,8 @@
 import express from "express";
 import { Router } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
-import { isGuide } from "./authApi";
-import { createPoint, editPoint, pointById, fullList } from "../DAO/pointDao";
+import { isGuide,isHiker } from "./authApi";
+import { createPoint, editPoint, pointById, fullList,hutsByDescription } from "../DAO/pointDao";
 
 export const pRouter = Router();
 
@@ -167,4 +167,16 @@ pRouter.get("", isGuide, checkSchema({
 }), async (req: express.Request, res: express.Response) => {
     const hike = await fullList(req.query);
     res.send(hike);
+});
+
+// Get all hut by description(user==Hiker)
+pRouter.get("/:description", isHiker, checkSchema({
+    hutDescription:{
+        in: ['body'],
+        notEmpty:true,
+    },
+   
+}), async (req: express.Request, res: express.Response) => {
+    const huts = await hutsByDescription(req.body);
+    res.send(huts);
 });

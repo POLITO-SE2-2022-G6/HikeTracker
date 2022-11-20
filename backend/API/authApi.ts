@@ -29,6 +29,13 @@ export const isGuide: RequestHandler = (req, res, next) => {
     return res.status(401).json({ error: "not authenticated" });
 }
 
+export const isHiker: RequestHandler = (req, res, next) => {
+    if (req.isAuthenticated() && (req.user as User).type === "Hiker") return next();
+    return res.status(401).json({ error: "not authenticated" });
+}
+
+
+
 export function getID(req: express.Request): number {
     return (req.user as User).id;
 }

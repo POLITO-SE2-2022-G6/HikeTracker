@@ -1,4 +1,4 @@
-import { Point, PrismaClient } from '@prisma/client'
+import { Point, PrismaClient,Hut } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -94,6 +94,19 @@ export async function fullList(fields: PointQuery) {
             //Description: fields.description && { startsWith: fields.description },
             /*HutId: fields.hut ? fields.hut : false,
             Parking_lot: fields.parking_lot*/
+        }
+    })
+}
+//ritorna tutti gli hut con quella descrizione(tipo Point)
+export async function hutsByDescription(description: string) {
+    return prisma.hut.findMany({
+        where: {
+            Description:{
+                contains: description,
+            },
+        },
+        select:{
+        Point: true,
         }
     })
 }
