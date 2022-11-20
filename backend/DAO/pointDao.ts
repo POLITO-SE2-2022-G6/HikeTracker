@@ -1,4 +1,4 @@
-import { Point, PrismaClient,Hut } from '@prisma/client'
+import { Point, PrismaClient, Hut } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -20,11 +20,13 @@ export async function pointById(id: number) {
 }
 
 type newPoint = Point & {
-    Hut: {Description: string},
-    ParkingLot: {Description: string}, }
+    Hut: { Description: string },
+    ParkingLot: { Description: string },
+}
 
-    export async function createPoint(point: newPoint) {
-        return prisma.point.create({ data: {
+export async function createPoint(point: newPoint) {
+    return prisma.point.create({
+        data: {
             Label: point.Label || undefined,
             Latitude: point.Latitude,
             Longitude: point.Longitude,
@@ -32,45 +34,48 @@ type newPoint = Point & {
             City: point.City,
             Region: point.Region,
             Province: point.Province,
-            Hut: point.Hut?{
-                create:{
+            Hut: point.Hut ? {
+                create: {
                     Description: point.Hut.Description,
                     //mettere id del punto che si sta creando
                 }
             } : undefined,
-            ParkingLot: point.ParkingLot?{
-                create:{
+            ParkingLot: point.ParkingLot ? {
+                create: {
                     Description: point.ParkingLot.Description,
-                    PointId : point.id,
                 }
             } : undefined
-        } })
-    }
+        }
+    })
+}
 
 export async function deletePoint(id: number) {
     return prisma.point.delete({ where: { id: id } })
 }
 
+//here should not be create
 export async function editPoint(id: number, point: newPoint) {
-    return prisma.point.update({ where: { id: id }, data: {
-        Label: point.Label || undefined,
-        Latitude: point.Latitude,
-        Longitude: point.Longitude,
-        Elevation: point.Elevation,
-        City: point.City,
-        Region: point.Region,
-        Province: point.Province,
-        Hut: point.Hut?{
-            create:{
-                Description: point.Hut.Description
-            }
-        } : undefined,
-        ParkingLot: point.ParkingLot?{
-            create:{
-                Description: point.ParkingLot.Description
-            }
-        } : undefined
-    } })
+    return prisma.point.update({
+        where: { id: id }, data: {
+            Label: point.Label || undefined,
+            Latitude: point.Latitude || undefined,
+            Longitude: point.Longitude || undefined,
+            Elevation: point.Elevation || undefined,
+            City: point.City || undefined,
+            Region: point.Region || undefined,
+            Province: point.Province || undefined,
+            Hut: point.Hut ? {
+                update: {
+                    Description: point.Hut.Description
+                }
+            } : undefined,
+            ParkingLot: point.ParkingLot ? {
+                update: {
+                    Description: point.ParkingLot.Description
+                }
+            } : undefined
+        }
+    })
 }
 
 export async function fullList(fields: PointQuery) {
@@ -101,12 +106,12 @@ export async function fullList(fields: PointQuery) {
 export async function hutsByDescription(description: string) {
     return prisma.hut.findMany({
         where: {
-            Description:{
+            Description: {
                 contains: description,
             },
         },
-        select:{
-        Point: true,
+        select: {
+            Point: true,
         }
     })
 }
