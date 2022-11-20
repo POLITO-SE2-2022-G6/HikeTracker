@@ -33,7 +33,6 @@ const Register: React.FC = () => {
   });
 
   const handleSubmit = async (values: typeof form.values) => {
-    console.log(values);
 
     try {
       const res = await API.auth.register(values);
@@ -42,7 +41,6 @@ const Register: React.FC = () => {
     } catch (err) {
       setError('Something went wrong');
     }
-
 
   }
 
