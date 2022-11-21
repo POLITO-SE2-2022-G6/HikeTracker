@@ -32,7 +32,7 @@ describe(" hikeDao err tests", () => {
 function testCreateHike() {
     test("create new Hike", async () => {
         let res;
-        res = await createHike(hiketest); //maybe prisma.hike.create
+        res = await createHike(hiketest); 
         expect(res).toStrictEqual(hiketest);
     });
 }
