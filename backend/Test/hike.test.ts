@@ -64,7 +64,7 @@ describe("Create hike", () => {
         const results2 = await hikesList({});
         const secondLength = results2.length;
         expect (secondLength).toBe(firstLength + 1);
-        const hike = await hikeById(hikeAdded.id);  // returns hike and points
+        const hike = await hikeById(hikeAdded.id);
         expect(hike).toMatchObject(hikeAdded);
 
         await prisma.hike.delete({
