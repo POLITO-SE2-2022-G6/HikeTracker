@@ -3,11 +3,11 @@ const prisma = new PrismaClient();
 import { createHike, hikeById, hikesList, HikeQuery  } from "../DAO/hikeDao";
 
 const hiketest = {
-    Title : "test",
-    Length : "10",
-    Expected_time : "10",
-    Ascent : "102",
-    Difficulty : "10"
+    title : "test",
+    length : "10",
+    expected_time : "10",
+    ascent : "102",
+    difficulty : "10"
     //add start and end point
 }
 
@@ -19,21 +19,22 @@ const hikeQuery : HikeQuery = {
 }
 
 
-describe(" hikeDao err tests", () => {
-    beforeEach(async () => {
-        await prisma.hike.deleteMany();
-    });
+describe("Create hike", () => {
+    test('check addition of hike', async () => {
+        const results = await hikesList({});
+        const firstLength = results.length;
+        const hikeAdded = await createHike(hiketest);
+        const results2 = await hikesList({});
+        const secondLength = results2.length;
+        expect (secondLength).toBe(firstLength + 1);
+        const hike = await hikeById(hikeAdded.id,{});
+        expect(hike?.hike).toEqual(hikeAdded);
 
-    testCreateHike();
+        await prisma.hike.delete({
+            where: {
+                id: hikeAdded.id
+            }
+        })
+    });
 });
-
-
-
-function testCreateHike() {
-    test("create new Hike", async () => {
-        let res;
-        res = await createHike(hiketest); 
-        expect(res).toStrictEqual(hiketest);
-    });
-}
 
