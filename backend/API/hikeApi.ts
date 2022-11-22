@@ -39,7 +39,7 @@ hRouter.get("", checkSchema({
     optional: true,
     isFloat: true
   },
-  expected_time: {
+  Expected_time: {
     in: ['query'],
     optional: true,
     isInt: true
@@ -110,9 +110,24 @@ hRouter.post("", isGuide, checkSchema({
   Reference_points: {
     optional: true,
     in: "body",
+    isObject: true
+  },
+  "Reference_points.created": {
+    optional: true,
+    in: "body",
     isArray: true
   },
-  "reference_points.*": {
+  "Reference_points.created.*": {
+    optional: true,
+    in: 'body',
+    isInt: true
+  },
+  "Reference_points.deleted": {
+    optional: true,
+    in: "body",
+    isArray: true
+  },
+  "Reference_points.deleted.*": {
     optional: true,
     in: 'body',
     isInt: true
@@ -188,12 +203,27 @@ hRouter.put("/:id", isGuide, checkSchema({
   Reference_points: {
     optional: true,
     in: "body",
+    isObject: true
+  },
+  "Reference_points.created": {
+    optional: true,
+    in: "body",
     isArray: true
   },
-  "Reference_points.*": {
+  "Reference_points.created.*": {
     optional: true,
     in: 'body',
-    isInt: true
+    isObject: true
+  },
+  "Reference_points.deleted": {
+    optional: true,
+    in: "body",
+    isArray: true
+  },
+  "Reference_points.deleted.*": {
+    optional: true,
+    in: 'body',
+    isObject: true
   }
 }),  async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });

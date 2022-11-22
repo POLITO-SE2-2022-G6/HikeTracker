@@ -106,26 +106,31 @@ export const editHike = async (idp: number, params: newHike, idH: number) => {
       Ascent: Ascent,
       Difficulty: Difficulty,
       Description: Description,
-      Start_point: {
+      Start_point: StartPointId ? {
         connect: {
-          id: StartPointId || undefined
+          id: StartPointId
         }
-      },
-      End_point: {
+      } : undefined,
+      End_point: EndPointId ? {
         connect: {
-          id: EndPointId || undefined
+          id: EndPointId
         }
-      },
+      } : undefined,
       GpsTrack: GpsTrack || undefined,
       LocalGuide: {
         connect: {
           id: idH
         }
       },
-      Reference_points: {
-        create: Reference_points.created,
+      Reference_points: Reference_points ? {
+        connect: Reference_points.created.map((p) => ({ id: p.id })),
         deleteMany: Reference_points.deleted.map(id => ({ id }))
-      }
+      }: undefined
+    },
+    include:{
+      Reference_points: true,
+      Start_point: true,
+      End_point: true,
     }
-  });
+  })
 };
