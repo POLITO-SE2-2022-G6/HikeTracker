@@ -1,19 +1,7 @@
 import { Point, PrismaClient, Prisma } from '@prisma/client'
+import { textSpanContainsPosition } from 'typescript'
 
 const prisma = new PrismaClient()
-
-export type PointQuery = {
-    label?: string,
-    latitude?: number,
-    longitude?: number,
-    elevation?: number,
-    city?: string,
-    region?: string,
-    province?: string,
-    description?: string,
-    hut?: boolean,
-    parking_lot?: boolean
-}
 
 export async function pointById(id: number) {
     return prisma.point.findUnique({ where: { id: id } })
@@ -22,11 +10,11 @@ export async function pointById(id: number) {
 export type newPoint = Prisma.PointCreateInput & {
     Hut?: {
         Description: string,
-        
+
     },
     ParkingLot?: {
         Description: string,
-        
+
     },
 }
 
@@ -83,31 +71,45 @@ export async function editPoint(id: number, point: newPoint) {
     })
 }
 
-export async function fullList(fields: PointQuery) {
+type pointQuery = Prisma.PointCreateInput & {
+    Hut?: {
+        Description?: string
+    }
+};
+
+export async function fullList(fields: pointQuery) {
     return prisma.point.findMany({
         where: {
             OR: [
                 {
-                    Hut: fields.hut ? {
+                    Hut: fields.Hut ? {
                         isNot: null
+
                     } : undefined
                 },
                 {
-                    ParkingLot: fields.parking_lot ? {
+                    ParkingLot: fields.ParkingLot ? {
                         isNot: null
                     } : undefined
                 }
             ],
-            Label: fields.label && { startsWith: fields.label },
-            Latitude: fields.latitude && { lt: fields.latitude },
-            Longitude: fields.longitude && { lt: fields.longitude },
-            Elevation: fields.elevation && { lt: fields.elevation },
-            City: fields.city && { startsWith: fields.city },
-            Region: fields.region && { startsWith: fields.region },
-            Province: fields.province && { startsWith: fields.province },
-            Hut: {
-                Description: fields.description && { contains: fields.description }
-            }
+            Label: fields.Label && { startsWith: fields.Label },
+            Latitude: fields.Latitude && { lt: fields.Latitude },
+            Longitude: fields.Longitude && { lt: fields.Longitude },
+            Elevation: fields.Elevation && { lt: fields.Elevation },
+            City: fields.City && { startsWith: fields.City },
+            Region: fields.Region && { startsWith: fields.Region },
+            Province: fields.Province && { startsWith: fields.Province },
+            Hut: fields.Hut ? {
+                Description: fields.Hut.Description && { contains: fields.Hut.Description }
+            } : undefined,
+        },
+        include: {
+            Hut: fields.Hut ?{
+                select: {
+                    Description: true,
+                }
+            } : undefined
         }
     })
 }

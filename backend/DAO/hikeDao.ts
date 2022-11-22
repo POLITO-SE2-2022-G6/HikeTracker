@@ -1,5 +1,4 @@
 import { Point, PrismaClient, Hike, Prisma } from '@prisma/client'
-import { PointQuery } from './pointDao'
 
 const prisma = new PrismaClient()
 

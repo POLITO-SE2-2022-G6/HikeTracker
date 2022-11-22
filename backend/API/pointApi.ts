@@ -66,17 +66,17 @@ pRouter.put("/:id", checkSchema({
         optional: true,
         isObject: true
     },
-    "Hut.description": {
+    "Hut.Description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Parking_lot:{
+    ParkingLot:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "Parking_lot.description": {
+    "ParkingLot.Description": {
         in: ['body'],
         optional: true,
         notEmpty: true
@@ -131,17 +131,17 @@ pRouter.post("", checkSchema({
         optional: true,
         isObject: true
     },
-    "Hut.description": {
+    "Hut.Description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Parking_lot:{
+    ParkingLot:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "Parking_lot.description": {
+    "ParkingLot.Description": {
         in: ['body'],
         optional: true,
         notEmpty: true
@@ -155,21 +155,22 @@ pRouter.post("", checkSchema({
 //Get all points
 pRouter.get("", isGuide || isHiker, checkSchema({
     Hut:{
-        in: ['query'],
+        in: ['body'],
         optional: true,
-        isBoolean: true
+        isObject: true
     },
-    "Hut.description": {
-        in: ['query'],
+    "Hut.Description": {
+        in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Parking_lot:{
-        in: ['query'],
+    ParkingLot:{
+        in: ['body'],
         optional: true,
-        isBoolean: true
+        isObject: true
     }
-}), async (req: express.Request, res: express.Response) => {
-    const points = await fullList(req.query);
+}), async (req: express.Request, res: express.Response) => {    
+    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
+    const points = await fullList(req.body);
     res.send(points);
 });

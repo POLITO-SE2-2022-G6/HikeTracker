@@ -110,7 +110,6 @@ describe("Edit Hike", () => {
         };
         const editResponse = await agent.put("hike/" + response.body.id).send(editHike).expect(201);
         expect (editResponse.body).toMatchObject(editHike4Check);
-        console.log(editResponse.body);
         await prisma.hike.delete({
             where: {
                 id: response.body.id
