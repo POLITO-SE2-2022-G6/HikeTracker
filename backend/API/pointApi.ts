@@ -1,8 +1,8 @@
 import express from "express";
 import { Router } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
-import { isGuide,isHiker } from "./authApi";
-import { createPoint, editPoint, pointById, fullList,hutsByDescription } from "../DAO/pointDao";
+import { isGuide, isHiker } from "./authApi";
+import { createPoint, editPoint, pointById, fullList } from "../DAO/pointDao";
 
 export const pRouter = Router();
 
@@ -26,57 +26,57 @@ pRouter.put("/:id", checkSchema({
         in: ['params'],
         isInt: true
     },
-    label: {
+    Label: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    latitude: {
+    Latitude: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    longitude: {
+    Longitude: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    elevation: {
+    Elevation: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    city: {
+    City: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    region: {
+    Region: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    province: {
+    Province: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    hut:{
+    Hut:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "hut.description": {
+    "Hut.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    parking_lot:{
+    Parking_lot:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "parking_lot.description": {
+    "Parking_lot.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
@@ -84,64 +84,64 @@ pRouter.put("/:id", checkSchema({
 }), isGuide, async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const id = parseInt(req.params.id);
-    const hike = await editPoint(id, req.body);
-    if (!hike) return res.status(404).json({ error: "Hike not found" });
-    res.send(hike);
+    const point = await editPoint(id, req.body);
+    if (!point) return res.status(404).json({ error: "Hike not found" });
+    res.send(point);
 });
 
 //New Point in Body
 pRouter.post("", checkSchema({
-    label: {
+    Label: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    latitude: {
+    Latitude: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    longitude: {
+    Longitude: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    elevation: {
+    Elevation: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    city: {
+    City: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    region: {
+    Region: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    province: {
+    Province: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    hut:{
+    Hut:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "hut.description": {
+    "Hut.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    parking_lot:{
+    Parking_lot:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "parking_lot.description": {
+    "Parking_lot.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
@@ -153,30 +153,23 @@ pRouter.post("", checkSchema({
 });
 
 //Get all points
-pRouter.get("", isGuide, checkSchema({
-    hut:{
+pRouter.get("", isGuide || isHiker, checkSchema({
+    Hut:{
         in: ['query'],
         optional: true,
         isBoolean: true
     },
-    parking_lot:{
+    "Hut.description": {
+        in: ['query'],
+        optional: true,
+        notEmpty: true
+    },
+    Parking_lot:{
         in: ['query'],
         optional: true,
         isBoolean: true
     }
 }), async (req: express.Request, res: express.Response) => {
-    const hike = await fullList(req.query);
-    res.send(hike);
-});
-
-// Get all hut by description(user==Hiker)
-pRouter.get("/:description", isHiker, checkSchema({
-    hutDescription:{
-        in: ['body'],
-        notEmpty:true,
-    },
-   
-}), async (req: express.Request, res: express.Response) => {
-    const huts = await hutsByDescription(req.body);
-    res.send(huts);
+    const points = await fullList(req.query);
+    res.send(points);
 });

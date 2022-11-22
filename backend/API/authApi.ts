@@ -25,12 +25,12 @@ export const isLoggedIn: RequestHandler = (req, res, next) => {
 };
 
 export const isGuide: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "Guide") return next();
+    if (req.isAuthenticated() && (req.user as User).type === "guide") return next();
     return res.status(401).json({ error: "not authenticated" });
 }
 
 export const isHiker: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "Hiker") return next();
+    if (req.isAuthenticated() && (req.user as User).type === "hiker") return next();
     return res.status(401).json({ error: "not authenticated" });
 }
 
@@ -112,7 +112,7 @@ aRouter.post("/signup", checkSchema({
 
 
 // Login --> POST /sessions
-aRouter.post("", function (req, res, next) {
+aRouter.post("/login", function (req, res, next) {
     passport.authenticate("local", (err, user, info) => {
         if (err) return next(err);
         if (!user) return res.status(401).json(info);
@@ -129,7 +129,7 @@ aRouter.post("", function (req, res, next) {
 
 
 // Logout --> DELETE /sessions/current 
-aRouter.delete("/current", (req, res) => {
+aRouter.delete("/logout", (req, res) => {
     req.logout(() => {
         res.end();
     });

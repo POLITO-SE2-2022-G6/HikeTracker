@@ -49,6 +49,7 @@ model Hike {
   Expected_time    Int
   Ascent           Float
   Difficulty       Int
+  Description      String?
   Start_point      Point?  @relation(fields: [StartPointId], references: [id], name: "start")
   StartPointId     Int?
   End_point        Point?  @relation(fields: [EndPointId], references: [id], name: "end")

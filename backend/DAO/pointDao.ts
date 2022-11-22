@@ -1,4 +1,4 @@
-import { Point, PrismaClient, Hut } from '@prisma/client'
+import { Point, PrismaClient, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -19,9 +19,15 @@ export async function pointById(id: number) {
     return prisma.point.findUnique({ where: { id: id } })
 }
 
-type newPoint = Point & {
-    Hut: { Description: string },
-    ParkingLot: { Description: string },
+type newPoint = Prisma.PointCreateInput & {
+    Hut?: {
+        Description: string,
+        PointId: number
+    },
+    ParkingLot?: {
+        Description: string,
+        PointId: number
+    },
 }
 
 export async function createPoint(point: newPoint) {
@@ -36,8 +42,7 @@ export async function createPoint(point: newPoint) {
             Province: point.Province,
             Hut: point.Hut ? {
                 create: {
-                    Description: point.Hut.Description,
-                    //mettere id del punto che si sta creando
+                    Description: point.Hut.Description
                 }
             } : undefined,
             ParkingLot: point.ParkingLot ? {
@@ -83,35 +88,26 @@ export async function fullList(fields: PointQuery) {
         where: {
             OR: [
                 {
-                    HutId: fields.parking_lot ? fields.hut ? { gte: 0 } : -1 : { gte: 0 }
+                    Hut: fields.hut ? {
+                        isNot: null
+                    } : undefined
                 },
                 {
-                    ParkingLotId: fields.hut ? fields.parking_lot ? { gte: 0 } : -1 : { gte: 0 }
+                    ParkingLot: fields.parking_lot ? {
+                        isNot: null
+                    } : undefined
                 }
-            ]
-            /*Label: fields.label && { startsWith: fields.label },
+            ],
+            Label: fields.label && { startsWith: fields.label },
             Latitude: fields.latitude && { lt: fields.latitude },
             Longitude: fields.longitude && { lt: fields.longitude },
             Elevation: fields.elevation && { lt: fields.elevation },
             City: fields.city && { startsWith: fields.city },
             Region: fields.region && { startsWith: fields.region },
-            Province: fields.province && { startsWith: fields.province },*/
-            //Description: fields.description && { startsWith: fields.description },
-            /*HutId: fields.hut ? fields.hut : false,
-            Parking_lot: fields.parking_lot*/
-        }
-    })
-}
-//ritorna tutti gli hut con quella descrizione(tipo Point)
-export async function hutsByDescription(description: string) {
-    return prisma.hut.findMany({
-        where: {
-            Description: {
-                contains: description,
-            },
-        },
-        select: {
-            Point: true,
+            Province: fields.province && { startsWith: fields.province },
+            Hut: {
+                Description: fields.description && { contains: fields.description }
+            }
         }
     })
 }
