@@ -19,14 +19,14 @@ export async function pointById(id: number) {
     return prisma.point.findUnique({ where: { id: id } })
 }
 
-type newPoint = Prisma.PointCreateInput & {
+export type newPoint = Prisma.PointCreateInput & {
     Hut?: {
         Description: string,
-        PointId: number
+        
     },
     ParkingLot?: {
         Description: string,
-        PointId: number
+        
     },
 }
 

@@ -15,9 +15,9 @@ pRouter.get("/:id", checkSchema({
 }), isGuide, async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const id = parseInt(req.params.id);
-    const hike = await pointById(id);
-    if (!hike) return res.status(404).json({ error: "Hike not found" });
-    res.send(hike);
+    const point = await pointById(id);
+    if (!point) return res.status(404).json({ error: "Point not found" });
+    res.send(point);
 });
 
 //Edit Point
@@ -85,7 +85,7 @@ pRouter.put("/:id", checkSchema({
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const id = parseInt(req.params.id);
     const point = await editPoint(id, req.body);
-    if (!point) return res.status(404).json({ error: "Hike not found" });
+    if (!point) return res.status(404).json({ error: "Point not found" });
     res.send(point);
 });
 
