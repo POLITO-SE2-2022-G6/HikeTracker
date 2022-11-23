@@ -1,5 +1,4 @@
 import { Point, PrismaClient, Prisma } from '@prisma/client'
-import { textSpanContainsPosition } from 'typescript'
 
 const prisma = new PrismaClient()
 
@@ -80,7 +79,7 @@ type pointQuery = Prisma.PointCreateInput & {
 export async function fullList(fields: pointQuery) {
     return prisma.point.findMany({
         where: {
-            OR: [
+            /*OR: [
                 {
                     Hut: fields.Hut ? {
                         isNot: null
@@ -92,7 +91,7 @@ export async function fullList(fields: pointQuery) {
                         isNot: null
                     } : undefined
                 }
-            ],
+            ],*/
             Label: fields.Label && { startsWith: fields.Label },
             Latitude: fields.Latitude && { lt: fields.Latitude },
             Longitude: fields.Longitude && { lt: fields.Longitude },
@@ -108,6 +107,11 @@ export async function fullList(fields: pointQuery) {
             Hut: fields.Hut ?{
                 select: {
                     Description: true,
+                }
+            } : undefined,
+            ParkingLot: fields.ParkingLot ? {
+                select: {
+                    Description: true
                 }
             } : undefined
         }

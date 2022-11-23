@@ -1,4 +1,4 @@
-import { PrismaClient,Prisma, PrismaPromise } from "@prisma/client"; 
+import { PrismaClient,Prisma, Point, PrismaPromise } from "@prisma/client"; 
 const prisma = new PrismaClient(); 
 import { pointById, createPoint, deletePoint, editPoint, fullList, newPoint} from "../DAO/pointDao"; 
 import request from 'supertest' 
@@ -32,7 +32,10 @@ describe("Get List of point", () => {
         const response = await agent.post("point").send(pointtest).expect(200); 
  
         const idResponse = await agent.get("point").send(pointFilter).expect(200); 
-        expect (idResponse.body).toContainEqual(response.body); 
+        
+        const prod = idResponse.body.find((p: Point) => p.Label !== "pointtest");
+        const res = idResponse.body.find((p: Point) => p.id === response.body.id);
+        expect (res).toMatchObject(pointtest);
          
         await prisma.point.delete({ 
             where: { 
