@@ -1,6 +1,9 @@
-import { Badge, Card, Group, Image, Title, Text } from "@mantine/core";
+import { Badge, Card, Group, Image, Text, Title } from "@mantine/core";
+import { useContext } from "react";
 import { BsClockHistory } from "react-icons/bs";
 import { GiMountains, GiPathDistance } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/userContext";
 import { Hike } from "../../utilities/api/types";
 
 
@@ -10,6 +13,8 @@ interface HikeCardProps {
 
 const difficultyColor = ['', 'green', 'yellow', 'red', 'black'];
 export const HikeCard = (props: HikeCardProps) => {
+  const { state } = useContext(UserContext)
+  const navigate = useNavigate()
   const { hike } = props;
 
   return (
@@ -19,8 +24,10 @@ export const HikeCard = (props: HikeCardProps) => {
         p="lg"
         radius="md"
         withBorder
-        maw={400}
+        maw={600}
         miw={350}
+
+        onClick={() => { if (state.loggedIn) navigate(`/hike/${hike.id}`) }}
       >
         <Card.Section>
           <Image
