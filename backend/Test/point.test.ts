@@ -14,6 +14,14 @@ const pointtest: newPoint = {
         Description:"suda"
     } 
 }  
+
+const newpointtest: newPoint = { 
+    Label : "pointtest", 
+    Latitude : 10, 
+    Longitude : 10, 
+    Elevation : 10
+}  
+
 const pointFilter={ 
     Hut: { 
         Description:"su" 
@@ -33,7 +41,6 @@ describe("Get List of point", () => {
  
         const idResponse = await agent.get("point").send(pointFilter).expect(200); 
         
-        const prod = idResponse.body.find((p: Point) => p.Label !== "pointtest");
         const res = idResponse.body.find((p: Point) => p.id === response.body.id);
         expect (res).toMatchObject(pointtest);
          
@@ -43,7 +50,35 @@ describe("Get List of point", () => {
             } 
         }) 
          
-    }); 
+    });
+    
+    test('Check filter of points with no filters for hut and pl', async () => { 
+        const agent = request.agent(baseURL);  
+        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
+        const response = await agent.post("point").send(newpointtest).expect(200); 
+        const responseHut = await agent.post("point").send(pointtest).expect(200);  
+        const idResponse = await agent.get("point").send(newpointtest).expect(200); 
+        //console.log(idResponse.body);
+        const res2 = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
+        const res = idResponse.body.find((p: Point) => p.id === response.body.id);
+        
+        expect(res2).toMatchObject(pointtest);
+        expect (res).toMatchObject(newpointtest);
+         
+        await prisma.point.delete({ 
+            where: { 
+                id: response.body.id 
+            } 
+        });
+        
+        await prisma.point.delete({ 
+            where: { 
+                id: responseHut.body.id 
+            } 
+        }) 
+         
+    });
+
 }); 
  
 describe("Create point", () => { 

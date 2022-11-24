@@ -1,4 +1,4 @@
-import { Point, PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -7,14 +7,12 @@ export async function pointById(id: number) {
 }
 
 export type newPoint = Prisma.PointCreateInput & {
-    Hut?: {
+   Hut?: {
         Description: string,
-
     },
     ParkingLot?: {
         Description: string,
-
-    },
+    }
 }
 
 export async function createPoint(point: newPoint) {
@@ -70,50 +68,23 @@ export async function editPoint(id: number, point: newPoint) {
     })
 }
 
-type pointQuery = Prisma.PointCreateInput & {
-    Hut?: {
-        Description?: string
-    }
-};
-
-export async function fullList(fields: pointQuery) {
+export async function fullList(fields: newPoint) {
     return prisma.point.findMany({
         where: {
-            /*OR: [
-                {
-                    Hut: fields.Hut ? {
-                        isNot: null
-
-                    } : undefined
-                },
-                {
-                    ParkingLot: fields.ParkingLot ? {
-                        isNot: null
-                    } : undefined
-                }
-            ],*/
             Label: fields.Label && { startsWith: fields.Label },
-            Latitude: fields.Latitude && { lt: fields.Latitude },
-            Longitude: fields.Longitude && { lt: fields.Longitude },
-            Elevation: fields.Elevation && { lt: fields.Elevation },
+            Latitude: fields.Latitude && { lte: fields.Latitude },
+            Longitude: fields.Longitude && { lte: fields.Longitude },
+            Elevation: fields.Elevation && { lte: fields.Elevation },
             City: fields.City && { startsWith: fields.City },
             Region: fields.Region && { startsWith: fields.Region },
             Province: fields.Province && { startsWith: fields.Province },
-            Hut: fields.Hut ? {
-                Description: fields.Hut.Description && { contains: fields.Hut.Description }
+            Hut: (fields.Hut)? {
+                Description: fields.Hut.Description && { contains: fields.Hut.Description } || undefined
             } : undefined,
         },
         include: {
-            Hut: fields.Hut ?{
-                select: {
-                    Description: true,
-                }
-            } : undefined,
-            ParkingLot: fields.ParkingLot ? {
-                select: {
-                    Description: true
-                }
-            } : undefined
+            Hut: fields.Hut ? true : undefined,
+            ParkingLot: fields.ParkingLot ? true : undefined
         }
     })
 }

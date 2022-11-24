@@ -2,7 +2,6 @@ import { PrismaClient, Prisma } from "@prisma/client";
 import request from 'supertest'
 const prisma = new PrismaClient();
 import { createHike, hikeById, hikesList, HikeQuery  } from "../DAO/hikeDao";
-import * as expr from '../index'
 
 const baseURL = "http://localhost:3001/api/";
 const baseLoginURL = "http://localhost:3001/api/auth";
