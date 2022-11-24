@@ -27,7 +27,13 @@ const pointFilter={
         Description:"su" 
     } 
 } 
- 
+
+const pointFilterEmpty={ 
+    Hut: { 
+         
+    } 
+} 
+
 const pointEdit  = { 
     Label : "pointedit" 
 } 
@@ -37,12 +43,34 @@ describe("Get List of point", () => {
     test('Check filter of points', async () => { 
         const agent = request.agent(baseURL);  
         await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
-        const response = await agent.post("point").send(pointtest).expect(200); 
- 
+        const response = await agent.post("point").send(newpointtest).expect(200); 
+        const responseHut = await agent.post("point").send(pointtest).expect(200);  
         const idResponse = await agent.get("point").send(pointFilter).expect(200); 
-        
+        const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
         const res = idResponse.body.find((p: Point) => p.id === response.body.id);
-        expect (res).toMatchObject(pointtest);
+
+        expect(resHut).toMatchObject(pointtest);
+        expect (res).toBeUndefined();
+         
+        await prisma.point.delete({ 
+            where: { 
+                id: response.body.id 
+            } 
+        }) 
+         
+    });
+
+    test('Check filter of points with empty hut', async () => { 
+        const agent = request.agent(baseURL);  
+        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
+        const response = await agent.post("point").send(newpointtest).expect(200); 
+        const responseHut = await agent.post("point").send(pointtest).expect(200);  
+        const idResponse = await agent.get("point").send(pointFilterEmpty).expect(200); 
+        const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
+        const res = idResponse.body.find((p: Point) => p.id === response.body.id);
+
+        expect(resHut).toMatchObject(pointtest);
+        expect (res).toBeUndefined();
          
         await prisma.point.delete({ 
             where: { 
@@ -58,11 +86,10 @@ describe("Get List of point", () => {
         const response = await agent.post("point").send(newpointtest).expect(200); 
         const responseHut = await agent.post("point").send(pointtest).expect(200);  
         const idResponse = await agent.get("point").send(newpointtest).expect(200); 
-        //console.log(idResponse.body);
-        const res2 = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
+        const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
         const res = idResponse.body.find((p: Point) => p.id === response.body.id);
         
-        expect(res2).toMatchObject(pointtest);
+        expect(resHut).toMatchObject(pointtest);
         expect (res).toMatchObject(newpointtest);
          
         await prisma.point.delete({ 

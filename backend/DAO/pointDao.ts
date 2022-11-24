@@ -78,9 +78,10 @@ export async function fullList(fields: newPoint) {
             City: fields.City && { startsWith: fields.City },
             Region: fields.Region && { startsWith: fields.Region },
             Province: fields.Province && { startsWith: fields.Province },
-            Hut: (fields.Hut)? {
-                Description: fields.Hut.Description && { contains: fields.Hut.Description } || undefined
-            } : undefined,
+            Hut: fields.Hut? fields.Hut.Description ? {
+                Description: fields.Hut.Description && { contains: fields.Hut.Description }
+            } : { isNot:null } : undefined,  
+            ParkingLot: fields.ParkingLot
         },
         include: {
             Hut: fields.Hut ? true : undefined,

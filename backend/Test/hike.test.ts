@@ -31,7 +31,7 @@ describe("Get List of hike", () => {
         const idResponse = await agent.get("hike").send(hikeFilter).expect(200);
         expect (idResponse.body).toContainEqual(response.body);
         
-        await prisma.hike.delete({
+        prisma.hike.delete({
             where: {
                 id: response.body.id
             }
@@ -49,7 +49,7 @@ describe("Create hike", () => {
         const idResponse = await agent.get("hike/" + response.body.id).expect(200);
         expect (idResponse.body).toMatchObject(response.body);
         
-        await prisma.hike.delete({
+        prisma.hike.delete({
             where: {
                 id: response.body.id
             }
@@ -66,7 +66,7 @@ describe("Create hike", () => {
         const hike = await hikeById(hikeAdded.id);
         expect(hike).toMatchObject(hikeAdded);
 
-        await prisma.hike.delete({
+        prisma.hike.delete({
             where: {
                 id: hikeAdded.id
             }
@@ -81,7 +81,7 @@ describe("Edit Hike", () => {
         const response = await agent.post("hike").send(hiketest).expect(201);
         const editResponse = await agent.put("hike/" + response.body.id).send(hikeEdit).expect(201);
         expect (editResponse.body).toMatchObject(hikeEdit);
-        await prisma.hike.delete({
+        prisma.hike.delete({
             where: {
                 id: response.body.id
             }
@@ -109,17 +109,17 @@ describe("Edit Hike", () => {
         };
         const editResponse = await agent.put("hike/" + response.body.id).send(editHike).expect(201);
         expect (editResponse.body).toMatchObject(editHike4Check);
-        await prisma.hike.delete({
+        prisma.hike.delete({
             where: {
                 id: response.body.id
             }
         })
-        await prisma.point.delete({
+        prisma.point.delete({
             where: {
                 id: stPoint.body.id
             }
         })
-        await prisma.point.delete({
+        prisma.point.delete({
             where: {
                 id: enPoint.body.id
             }
