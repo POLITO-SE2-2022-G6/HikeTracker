@@ -7,6 +7,8 @@ import Login from '../login/Login';
 import Register from '../register/Register';
 import HikesSearchPage from '../hikes/HikesSearchPage';
 import HikeForm from '../hikeForm/HikeForm';
+import HikerPage from '../userarea/hikerPage/HikerPage';
+import GuidePage from '../userarea/guidePage/GuidePage';
 
 import { UserContext, UserContextWrapper } from '../../context/userContext';
 import { useContext } from 'react';
@@ -30,8 +32,10 @@ const Index: React.FC = () => {
               <Route path='' element={<Landing />} />
               <Route path='/hike/:id' element={<HikeDetailPage />} />
               <Route path='/hike/edit/' element={<HikeForm />} />
-              <Route path='/hike/edit/:id' element={<HikeForm/>}/>
-
+              <Route path='/hike/edit/:id' element={<HikeForm />} />
+              <Route path='/userarea' element={((state.data?.type === 'Hiker'))
+              ? <HikerPage />
+              : <GuidePage />}/>
             </Route>
             <Route path='/login' element={loggedIn
               ? <Navigate to='/' />
@@ -46,9 +50,3 @@ const Index: React.FC = () => {
 };
 
 export default Index;
-
-/*
-A '/' bisogna passare loggedIn user, setFlag1 e doLogOut
-A '/login' bisogna passare doLogIn
-A '/register' bisogna passare doRegistration
-*/
