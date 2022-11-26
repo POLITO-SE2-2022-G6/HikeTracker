@@ -1,4 +1,4 @@
-import s from './HutForm.module.css';
+import s from './ParkingLotForm.module.css';
 import { useForm } from '@mantine/form'
 import axios from 'axios';
 import { Button, Container, Paper, TextInput, Title, Group, Textarea } from '@mantine/core';
@@ -7,7 +7,7 @@ import { useState } from 'react';
 //import { IconUpload } from '@tabler/icons';
 //import { useParams } from 'react-router-dom';
 
-const HutForm: React.FC = () => {
+const ParkingLotForm: React.FC = () => {
 
   const navigate = useNavigate();
   const [error, setError] = useState('');
@@ -41,7 +41,7 @@ const HutForm: React.FC = () => {
   const addHut = async (values: Fields) => {
     try {
       console.log(values);
-      /*const res = await axios.post('http://localhost:3001/hut', values, QUI AGGIUNGI NUOVO HUT
+      /*const res = await axios.post('http://localhost:3001/parkinglot', values, QUI AGGIUNGI NUOVO PARKINGLOT
         {
           withCredentials: true,
           headers: {
@@ -51,13 +51,13 @@ const HutForm: React.FC = () => {
          navigate('/');
 
     } catch (err) {
-      setError('Error - creating a new hut');
+      setError('Error - creating a new parking lot');
     }
   }
 
   return (
     <Container>
-      <Title align="center">Add a new Hut</Title>
+      <Title align="center">Add a new Parking Lot</Title>
       <Container sx={(t) => {
         return {
           display: "flex",
@@ -95,4 +95,4 @@ const HutForm: React.FC = () => {
   )
 }
 
-export default HutForm;
+export default ParkingLotForm;
