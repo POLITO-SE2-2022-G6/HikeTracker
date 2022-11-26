@@ -3,7 +3,7 @@ import { Resource } from "./resource";
 
 export class HikeApi extends Resource {
 
-  protected path = "/hikes";
+  protected path = "/hike";
 
   async getHikes() {
     return this.client.request({

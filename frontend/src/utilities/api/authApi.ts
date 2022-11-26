@@ -21,7 +21,7 @@ export class AuthApi extends Resource {
 
   async logout() {
     return this.client.request({
-      method: Methods.POST,
+      method: Methods.DELETE,
       path: `${this.path}/logout`,
     });
   }
