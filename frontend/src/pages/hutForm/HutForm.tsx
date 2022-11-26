@@ -1,16 +1,14 @@
-import s from './HikeForm.module.css';
+import s from './HutForm.module.css';
 import { useForm } from '@mantine/form'
 import axios from 'axios';
 import { Button, Container, Paper, TextInput, Title, NumberInput, FileInput, Group, Textarea } from '@mantine/core';
 import { useNavigate, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { IconUpload } from '@tabler/icons';
-import { useParams } from 'react-router-dom';
-import { API } from '../../utilities/api/api';
+import { useState } from 'react';
+//import { IconUpload } from '@tabler/icons';
+//import { useParams } from 'react-router-dom';
 
-const HikeForm: React.FC = () => {
+const HutForm: React.FC = () => {
 
-  const { id } = useParams()
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
@@ -46,70 +44,36 @@ const HikeForm: React.FC = () => {
       expected_time: (value: number) => (!value ? 'Expected time must not be empty' : null),
       ascent: (value: number) => (!value ? 'Ascent must not be empty' : null),
       difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
-      // start_point: (value: number) => (!value ? 'Start point must not be empty' : null),
-      // end_point: (value: number) => (!value ? 'End point must not be empty' : null),
       description: (value: string) => (!value ? 'Description must not be empty' : null),
     },
   });
 
-  useEffect(() => {
-    const fetchHike = async () => {
-      if (id) {
-        const hike = await API.hike.getHike(parseInt(id))
-        if (!hike) return
-        form.setValues({
-          title: hike.Title,
-          length: hike.Length,
-          expected_time: hike.Expected_time,
-          ascent: hike.Ascent,
-          difficulty: hike.Difficulty,
-          // start_point: hike.StartPoint,
-          // end_point: hike.EndPoint,
-          description: hike.Description!,
-        })
-      }
-    }
-    fetchHike()
-  }, [])
-
-
-
   const handleSubmit = async (values: Fields) => {
-    if (id) {
-      editHike(values)
-    } else {
-      addHike(values)
-    }
+    
+    addHut(values)
 
   }
 
-  const editHike = async (values: Fields) => {
-    try {
-      const response = await API.hike.updateHike(parseInt(id!), values)
-      navigate('/hike/' + id)
-
-    } catch (error) {
-      setError("Error while editing hike")
-    }
-  }
-
-  const addHike = async (values: Fields) => {
+  const addHut = async (values: Fields) => {
     try {
       console.log(values);
-
-      const res = await API.hike.createHike(values)
-      navigate('/');
+      /*const res = await axios.post('http://localhost:3001/hut', values, QUI AGGIUNGI NUOVO HUT
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })*/
+         navigate('/');
 
     } catch (err) {
-      setError('Error - creating a new hike');
+      setError('Error - creating a new hut');
     }
   }
 
   return (
     <Container>
-      <Title align="center">
-        {id ? 'Edit a hike' : 'Add a New Hike'}
-      </Title>
+      <Title align="center">Add a new Hut</Title>
       <Container sx={(t) => {
         return {
           display: "flex",
@@ -161,30 +125,8 @@ const HikeForm: React.FC = () => {
               min={0}
               max={4}
               {...form.getInputProps('difficulty')} />
-            {/* <NumberInput
-              label="Start Point"
-              placeholder="1"
-              min={1}
-              max={40}
-              {...form.getInputProps('start_point')} />
-            <NumberInput
-              label="End Point"
-              placeholder="1"
-              min={1}
-              max={40}
-              {...form.getInputProps('end_point')}
-            /> */}
-            <FileInput
-              label="Gps Track"
-              placeholder=""
-              accept=".gpx"
-              icon={<IconUpload size={14} />}
-              {...form.getInputProps('gpstrack')}
-
-            />
-
             <Group position="center">
-              <Button mt="xl" type='submit'>Add Hike</Button>
+              <Button mt="xl" type='submit'>Add Hut</Button>
               <Link to="/">
                 <Button mt="xl" color="red">Cancel</Button>
               </Link>
@@ -192,9 +134,8 @@ const HikeForm: React.FC = () => {
           </form>
         </Paper>
       </Container>
-
     </Container>
   )
 }
 
-export default HikeForm;
+export default HutForm;
