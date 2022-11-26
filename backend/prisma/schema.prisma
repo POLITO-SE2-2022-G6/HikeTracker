@@ -4,6 +4,10 @@
 generator client {
   provider = "prisma-client-js"
 }
+generator frontend {
+  provider = "prisma-client-js"
+  output = "../../frontend/src/generated/prisma-client"
+}
 
 datasource db {
   provider = "sqlite"
