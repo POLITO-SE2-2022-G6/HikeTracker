@@ -18,7 +18,14 @@ root.render(
         colors: {
           hike: ['#e5fde4', '#bdf3be', '#95ea99', '#6ce175', '#45d853', '#2dbf3f', '#219534', '#156a27', '#094013', '#001700',]
         },
-        primaryColor: 'hike'
+        primaryColor: 'hike',
+        components: {
+          Container: {
+            defaultProps: {
+              size: 'lg'
+            }
+          }
+        }
       }}>
       <Index />
     </MantineProvider>
