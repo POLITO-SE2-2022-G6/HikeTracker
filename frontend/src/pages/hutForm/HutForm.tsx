@@ -15,35 +15,19 @@ const HutForm: React.FC = () => {
 
   type Fields = {
     title?: string;
-    length?: number;
-    expected_time?: number;
-    ascent?: number;
-    difficulty?: number;
-    // start_point?: number;
-    // end_point?: number;
     description?: string;
-    gpstrack?: File;
+    //gpstrack?: File;
   }
 
   const form = useForm<Fields>({
     initialValues: {
       title: '',
-      length: undefined,
-      expected_time: undefined,
-      ascent: undefined,
-      difficulty: undefined,
-      // start_point: undefined,
-      // end_point: undefined,
       description: '',
-      gpstrack: undefined,
+      //gpstrack: undefined,
     },
 
     validate: {
       title: (value: string) => (!value ? 'Title must not be empty' : null),
-      length: (value: number) => (!value ? 'Length must not be empty' : null),
-      expected_time: (value: number) => (!value ? 'Expected time must not be empty' : null),
-      ascent: (value: number) => (!value ? 'Ascent must not be empty' : null),
-      difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
       description: (value: string) => (!value ? 'Description must not be empty' : null),
     },
   });
@@ -92,42 +76,15 @@ const HutForm: React.FC = () => {
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <TextInput
               label="Title"
-              placeholder="Title of the hike"
+              placeholder="Title of the hut"
               {...form.getInputProps('title')} />
             <Textarea
               label="Description"
-              placeholder="Description of the hike"
+              placeholder="Description of the hut"
               {...form.getInputProps('description')} />
-            <NumberInput
-              label="Length"
-              description="In kilometers"
-              precision={1}
-              step={0.5}
-              placeholder="2"
-              min={1}
-              {...form.getInputProps('length')} />
-            <NumberInput
-              label="Expected Time"
-              placeholder="10"
-              min={1}
-              {...form.getInputProps('expected_time')} />
-            <NumberInput
-              label="Ascent"
-              description="In meters"
-              precision={1}
-              step={0.5}
-              placeholder="Ascent of the hike"
-              {...form.getInputProps('ascent')}
-            />
-            <NumberInput
-              label="Difficulty"
-              placeholder="0"
-              min={0}
-              max={4}
-              {...form.getInputProps('difficulty')} />
             <Group position="center">
               <Button mt="xl" type='submit'>Add Hut</Button>
-              <Link to="/">
+              <Link to="/userarea">
                 <Button mt="xl" color="red">Cancel</Button>
               </Link>
             </Group>

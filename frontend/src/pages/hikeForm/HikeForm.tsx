@@ -180,9 +180,7 @@ const HikeForm: React.FC = () => {
               accept=".gpx"
               icon={<IconUpload size={14} />}
               {...form.getInputProps('gpstrack')}
-
             />
-
             <Group position="center">
               <Button mt="xl" type='submit'>Add Hike</Button>
               <Link to="/">
