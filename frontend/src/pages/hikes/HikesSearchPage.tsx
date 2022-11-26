@@ -1,15 +1,20 @@
 import s from './HikesSearchPage.module.css';
-import { Box, Button, Container, Paper, Space, TextInput, Title } from '@mantine/core';
+import { Box, Button, Center, Container, Pagination, Paper, Space, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form'
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import HikesList from '../../components/hikesList/HikesList';
+import { HikeCardGrid } from '../../components/hikeCardGrid/hikeCardGrid';
+import { Hike } from '../../generated/prisma-client/index';
+
+const elementsPerPage = 5;
 
 const HikesSearchPage: React.FC = () => {
   const [params, setParams] = useSearchParams()
-  const [result, setResult] = useState([])
+  const [result, setResult] = useState<Hike[]>([])
   const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(1)
 
   type Fields = {
     region?: string;
@@ -56,9 +61,9 @@ const HikesSearchPage: React.FC = () => {
     console.log(res.data)
   }
   return (
-    <Container>
+    <Container size="lg">
       <Title >Search a Hike</Title>
-      <Container sx={(t) => {
+      <Box sx={(t) => {
         return {
           display: "flex",
           flexWrap: "wrap",
@@ -117,11 +122,18 @@ const HikesSearchPage: React.FC = () => {
             }
           }
         }>
-          <HikesList data={result}></HikesList >
-
+          {/* <HikesList data={result}></HikesList > */}
+          <HikeCardGrid hikes={result.slice((page - 1) * elementsPerPage, elementsPerPage * page)} />
+          <Center>
+            <Pagination
+              total={result.length / elementsPerPage + (result.length % elementsPerPage ? 1 : 0)}
+              page={page}
+              onChange={setPage}
+            />
+          </Center>
         </Paper>
-      </Container >
-    </Container>
+      </Box >
+    </Container >
   );
 };
 
