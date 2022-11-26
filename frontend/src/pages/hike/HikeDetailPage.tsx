@@ -7,23 +7,13 @@ import { MapContainer, TileLayer, useMap, Polyline } from 'react-leaflet'
 // import * as defaultTrack from './rocciamelone.json'
 import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
+import { API } from '../../utilities/api/api';
+import { Hike } from '../../generated/prisma-client';
 
 
 
 const HikeDetailPage: React.FC = () => {
 
-  type Hike = {
-    Title: string;
-    Length: number;
-    Expected_time: number;
-    Ascent: number;
-    Difficulty: number;
-    // start_point: Point;
-    // end_point: Point;
-    // reference_points: Point[];
-    Description: string;
-    GpsTrack?: string | undefined;
-  }
   const [hike, setHike] = useState<Hike | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -35,20 +25,19 @@ const HikeDetailPage: React.FC = () => {
   const { start } = useInterval(() => {
     setOffset((o) => o - 1)
   }, 16 * 2)
-  
-  
-  
+
+
+
   const { state, setState } = useContext(UserContext)
   const { loggedIn } = state
 
   const navigate = useNavigate()
 
-  
+
   const fetchHike = async (id: string) => {
-    const res = await axios.get(`http://localhost:3001/hike/${id}`, { withCredentials: true })
-    return res.data
+    return await API.hike.getHike(parseInt(id))
   }
-  
+
   useEffect(() => {
     if (!id) {
       setError('Invalid Hike')
@@ -58,6 +47,7 @@ const HikeDetailPage: React.FC = () => {
     const run = async () => {
       try {
         const hike = await fetchHike(id)
+        if (!hike) return
         setHike(hike)
         if (hike.GpsTrack) {
           console.log("Download track")

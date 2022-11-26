@@ -12,6 +12,7 @@ import { useForm } from '@mantine/form';
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API } from '../../utilities/api/api';
 import s from './Register.module.css';
 
 const Register: React.FC = () => {
@@ -35,7 +36,7 @@ const Register: React.FC = () => {
     console.log(values);
 
     try {
-      const res = await axios.post('http://localhost:3001/api/sessions/signup', values)
+      const res = await API.auth.register(values);
       navigate('/login');
 
     } catch (err) {

@@ -30,6 +30,7 @@ app.use('/api/hike', hRouter);
 import { pRouter } from "./API/pointApi";
 app.use('/api/point', pRouter);
 
+
 // Auth APIs
 import { aRouter, isLoggedIn } from "./API/authApi";
 app.use('/api/auth', aRouter);

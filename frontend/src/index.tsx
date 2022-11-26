@@ -8,9 +8,25 @@ import Index from './pages/index/Index';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <MantineProvider  withNormalizeCSS withGlobalStyles>
+    <MantineProvider
+      withNormalizeCSS
+      withGlobalStyles
+      theme={{
+        colors: {
+          hike: ['#e5fde4', '#bdf3be', '#95ea99', '#6ce175', '#45d853', '#2dbf3f', '#219534', '#156a27', '#094013', '#001700',]
+        },
+        primaryColor: 'hike',
+        components: {
+          Container: {
+            defaultProps: {
+              size: 'lg'
+            }
+          }
+        }
+      }}>
       <Index />
     </MantineProvider>
   </React.StrictMode>

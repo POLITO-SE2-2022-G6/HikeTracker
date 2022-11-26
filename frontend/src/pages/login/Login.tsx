@@ -15,6 +15,7 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
+import { API } from '../../utilities/api/api';
 import s from './Login.module.css';
 
 const Login: React.FC = (props) => {
@@ -34,18 +35,21 @@ const Login: React.FC = (props) => {
 
 
   const handleSubmit = async (values: any) => {
-
-    const res = await axios.post('http://localhost:3001/api/sessions', {
+    const res = await API.auth.login({
       email: values.email,
       password: 'password'
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      withCredentials: true
     })
-    if (res.status === 200) {
-      setState({ loggedIn: true, data: res.data })
+    // const res = await axios.post('http://localhost:3001/api/sessions', {
+    //   email: values.email,
+    //   password: 'password'
+    // }, {
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   withCredentials: true
+    // })
+    if (res) {
+      setState({ loggedIn: true, data: res })
       navigate('/');
     }
 
