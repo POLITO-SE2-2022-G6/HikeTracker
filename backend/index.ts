@@ -24,7 +24,7 @@ app.use(cors(
 
 // Hike APIs
 import { hRouter } from "./API/hikeApi";
-app.use('/hike', hRouter);
+app.use('/api/hike', hRouter);
 
 // Auth APIs
 import { aRouter, isLoggedIn } from "./API/authApi";
