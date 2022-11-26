@@ -1,4 +1,4 @@
-import { Point, PrismaClient } from '@prisma/client'
+import { Point, PrismaClient, Hike, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -50,98 +50,86 @@ export async function hikesList(fields: HikeQuery) {
     }
   })
 }
+
 export async function hikeById(id: number) {
-  return prisma.hike.findUnique({ where: { id: id } })
-}
-
-export type Hike = {
-  title: string,
-  length: number,
-  expected_time: number,
-  ascent: number,
-  difficulty: number,
-  start_point: Point,
-  end_point: Point,
-  reference_points: Point[],
-  description: string,
-  gpstrack?: string
-}
-
-async function putP(p: Point) {
-  return prisma.point.create({
-    data: {
-      Label: p.Label,
-      Latitude: p.Latitude,
-      Longitude: p.Longitude,
-      Elevation: p.Elevation,
-      City: p.City,
-      Region: p.Region,
-      Province: p.Province,
-      Type: p.Type,
-      Description: p.Description,
+  return prisma.hike.findUnique({
+    where: { id },
+    include: {
+      Start_point: {
+        include: {
+          ParkingLot: true,
+          Hut: true
+        }
+      },
+      End_point: {
+        include: {
+          ParkingLot: true,
+          Hut: true
+        }
+      },
+      Reference_points: true
     }
-  })
+  });
 }
 
-export const createHike = async (hike: Record<string, string>) => {
-  const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = hike;
-  /*
-  const point_s = await putP(start_point);
-
-  const point_e = await putP(end_point);
-  */
-  /*let point_r:int[];
-  reference_points.forEach(async(p) =>{
-    const pp = await getP(p);
-    point_r =[...point_r,pp.id];
-  })*/
+export const createHike = async (hike: Prisma.HikeCreateInput) => {
+  const { Title, Length, Expected_time, Ascent, Difficulty, GpsTrack, Description } = hike;
 
   return prisma.hike.create(
     {
       data: {
-        Title: title,
-        Length: parseFloat(length),
-        Expected_time: parseInt(expected_time),
-        Ascent: parseFloat(ascent),
-        Difficulty: parseInt(difficulty),
-        /*
-        StartPointId: point_s.id, 
-        EndPointId: point_e.id,
-        Reference_points: {
-          connect: {   
-          }
-        },
-        */
-        Description: description,
-        GpsTrack: gpstrack,
+        Title: Title,
+        Length: Length,
+        Expected_time: Expected_time,
+        Ascent: Ascent,
+        Difficulty: Difficulty,
+        Description: Description,
+        GpsTrack: GpsTrack,
       },
     }
   );
 };
 
-export const editHike = async (idp: number, params: Record<string, string>) => {
-  const { title, length, expected_time, ascent, difficulty, start_point, end_point, reference_points, description, gpstrack } = params;
+type newHike = Hike & { Reference_points: { created: Point[], deleted: number[] } };
+export const editHike = async (idp: number, params: newHike, idH: number) => {
+  const { Title, Length, Expected_time, Ascent, Difficulty, Description, StartPointId, EndPointId, Reference_points, GpsTrack } = params;
 
   return prisma.hike.update({
     where: {
       id: idp,
     },
     data: {
-      Title: title,
-      Length: parseFloat(length),
-      Expected_time: parseInt(expected_time),
-      Ascent: parseFloat(ascent),
-      Difficulty: parseInt(difficulty),
-      /*
-      StartPointId: start_point?.id || undefined, 
-      EndPointId: end_point?.id || undefined, 
-      Reference_points: {
-        create :[
-        reference_points || undefined
-      ]},
-      */
-      Description: description || undefined,
-      GpsTrack: gpstrack || undefined,
+      Title: Title,
+      Length: Length,
+      Expected_time: Expected_time,
+      Ascent: Ascent,
+      Difficulty: Difficulty,
+      Description: Description,
+      Start_point: StartPointId ? {
+        connect: {
+          id: StartPointId
+        }
+      } : undefined,
+      End_point: EndPointId ? {
+        connect: {
+          id: EndPointId
+        }
+      } : undefined,
+      GpsTrack: GpsTrack || undefined,
+      LocalGuide: {
+        connect: {
+          id: idH
+        }
+      },
+      Reference_points: Reference_points ? {
+        connect: Reference_points.created.map((p) => ({ id: p.id })),
+        deleteMany: Reference_points.deleted.map(id => ({ id }))
+      }: undefined
+    },
+    include:{
+      Reference_points: true,
+      Start_point: true,
+      End_point: true,
     }
   })
 };
