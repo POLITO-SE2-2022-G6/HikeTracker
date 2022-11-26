@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState, useEffect, createContext } from "react";
+import { API } from "../utilities/api/api";
 
 type Props = {
   children: JSX.Element;
@@ -9,7 +10,7 @@ export type UserInfo = {
   loggedIn: boolean;
   data?: {
     id: number;
-    type: 'Hiker' | 'Guide';
+    type: string//'Hiker' | 'Guide';
     email: string;
     username: string;
     phoneNumber: string;
@@ -32,13 +33,7 @@ export const UserContextWrapper = ({ children }: Props) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data } = await axios.get('http://localhost:3001/api/sessions/current',
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        });
+      const data  = await API.auth.check() ;
       if (data) {
         setUser({ loggedIn: true, data });
       }

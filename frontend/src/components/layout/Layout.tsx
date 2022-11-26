@@ -6,7 +6,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import s from './layout.module.css';
 import React from 'react';
 import { UserContext } from '../../context/userContext';
-import axios from 'axios';
+import { API } from '../../utilities/api/api';
 
 
 const Layout = () => {
@@ -19,7 +19,7 @@ const Layout = () => {
 
   const handleLogout = async () => {
     setState({ loggedIn: false, data: undefined })
-    await axios.delete('http://localhost:3001/api/sessions/current', { withCredentials: true })
+    await API.auth.logout()
   }
 
   return (

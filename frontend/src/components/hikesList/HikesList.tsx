@@ -3,21 +3,23 @@ import { Table } from '@mantine/core';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
+import { API } from '../../utilities/api/api';
+import { Hike } from '../../generated/prisma-client';
 
 type HikeProps = {
   data?: any
 }
-interface Hike {
-  id?: number,
-  Title?: string,
-  Length?: number,
-  Expected_time?: number,
-  Ascent?: number,
-  Difficulty?: string,
-  Start_point?: number,
-  End_point?: number,
-  Description?: string,
-}
+// interface Hike {
+//   id?: number,
+//   Title?: string,
+//   Length?: number,
+//   Expected_time?: number,
+//   Ascent?: number,
+//   Difficulty?: string,
+//   Start_point?: number,
+//   End_point?: number,
+//   Description?: string,
+// }
 
 const HikesList = ({ data }: HikeProps) => {
 
@@ -42,14 +44,7 @@ const HikesList = ({ data }: HikeProps) => {
 
 
   const getHikes = async () => {
-    const response = await fetch('http://localhost:3001/hike', {
-    });
-    const hikesJson = await response.json();
-    if (response.ok) {
-      return hikesJson.map((h: any) => h as Hike);
-    }
-    else
-      throw hikesJson;
+    return await API.hike.getHikes() as Hike[];
   };
 
   return (

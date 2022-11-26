@@ -1,4 +1,5 @@
 import axios, { Axios, AxiosInstance, AxiosRequestConfig } from "axios";
+import { AuthApi } from "./authApi";
 import { HikeApi } from "./hikeApi";
 import { HutApi } from "./hutApi";
 import { UserApi } from "./userApi";
@@ -32,9 +33,11 @@ export class Client {
   hike: HikeApi;
   user: UserApi;
   hut: HutApi;
+  auth: AuthApi;
   private ax: AxiosInstance
   constructor(config: Config) {
     this.config = config;
+    this.auth = new AuthApi(this);
     this.hike = new HikeApi(this);
     this.user = new UserApi(this);
     this.hut = new HutApi(this);

@@ -46,7 +46,7 @@ const HikesSearchPage: React.FC = () => {
 
 
 
-    const res = await axios.get('http://localhost:3001/hike', {
+    const res = await axios.get('http://localhost:3001/api/hike', {
       params: {
         difficulty: values.difficulty || undefined,
         length: values.length || undefined,

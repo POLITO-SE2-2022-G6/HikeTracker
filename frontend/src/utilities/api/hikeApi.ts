@@ -1,26 +1,27 @@
+import { Hike } from "../../generated/prisma-client";
 import { Client, Methods } from "./client";
 import { Resource } from "./resource";
 
 export class HikeApi extends Resource {
 
-  protected path = "/hike";
+  protected path = "hike";
 
   async getHikes() {
-    return this.client.request({
+    return this.client.request<Hike[]>({
       method: Methods.GET,
       path: this.path,
     });
   }
 
   async getHike(id: number) {
-    return this.client.request({
+    return this.client.request<Hike>({
       method: Methods.GET,
       path: `${this.path}/${id}`,
     });
   }
 
   async createHike(hike: any) {
-    return this.client.request({
+    return this.client.request<Hike>({
       method: Methods.POST,
       path: this.path,
       body: hike,
@@ -28,7 +29,7 @@ export class HikeApi extends Resource {
   }
 
   async updateHike(id: number, hike: any) {
-    return this.client.request({
+    return this.client.request<Hike>({
       method: Methods.PUT,
       path: `${this.path}/${id}`,
       body: hike,

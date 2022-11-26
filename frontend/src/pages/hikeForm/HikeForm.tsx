@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IconUpload } from '@tabler/icons';
 import { useParams } from 'react-router-dom';
+import { API } from '../../utilities/api/api';
 
 const HikeForm: React.FC = () => {
 
@@ -54,20 +55,17 @@ const HikeForm: React.FC = () => {
   useEffect(() => {
     const fetchHike = async () => {
       if (id) {
-        const hike = await axios.get('http://localhost:3001/hike/' + id, {
-
-          withCredentials: true,
-        })
-        console.log(hike.data)
+        const hike = await API.hike.getHike(parseInt(id))
+        if (!hike) return
         form.setValues({
-          title: hike.data.Title,
-          length: hike.data.Length,
-          expected_time: hike.data.Expected_time,
-          ascent: hike.data.Ascent,
-          difficulty: hike.data.Difficulty,
-          // start_point: hike.data.StartPoint,
-          // end_point: hike.data.EndPoint,
-          description: hike.data.Description,
+          title: hike.Title,
+          length: hike.Length,
+          expected_time: hike.Expected_time,
+          ascent: hike.Ascent,
+          difficulty: hike.Difficulty,
+          // start_point: hike.StartPoint,
+          // end_point: hike.EndPoint,
+          description: hike.Description!,
         })
       }
     }
@@ -87,12 +85,7 @@ const HikeForm: React.FC = () => {
 
   const editHike = async (values: Fields) => {
     try {
-      const response = await axios.put('http://localhost:3001/hike/' + id, values, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      const response = await API.hike.updateHike(parseInt(id!), values)
       navigate('/hike/' + id)
 
     } catch (error) {
@@ -103,13 +96,8 @@ const HikeForm: React.FC = () => {
   const addHike = async (values: Fields) => {
     try {
       console.log(values);
-      const res = await axios.post('http://localhost:3001/hike', values,
-        {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
+
+      const res = await API.hike.createHike(values)
       navigate('/');
 
     } catch (err) {
