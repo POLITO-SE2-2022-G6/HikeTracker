@@ -54,8 +54,8 @@ const HikeForm: React.FC = () => {
   useEffect(() => {
     const fetchHike = async () => {
       if (id) {
-        const hike = await axios.get('http://localhost:3001/hike/'+id, {
-          
+        const hike = await axios.get('http://localhost:3001/hike/' + id, {
+
           withCredentials: true,
         })
         console.log(hike.data)
@@ -82,15 +82,18 @@ const HikeForm: React.FC = () => {
     } else {
       addHike(values)
     }
-    
+
   }
 
-  const editHike = async (values: Fields) => { 
+  const editHike = async (values: Fields) => {
     try {
-      const response = await axios.put('http://localhost:3001/hike/'+id, values, {
+      const response = await axios.put('http://localhost:3001/hike/' + id, values, {
         withCredentials: true,
-        })
-      navigate('/hike/'+id)
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      navigate('/hike/' + id)
 
     } catch (error) {
       setError("Error while editing hike")
@@ -107,7 +110,7 @@ const HikeForm: React.FC = () => {
             'Content-Type': 'multipart/form-data'
           }
         })
-         navigate('/');
+      navigate('/');
 
     } catch (err) {
       setError('Error - creating a new hike');
@@ -117,7 +120,7 @@ const HikeForm: React.FC = () => {
   return (
     <Container>
       <Title align="center">
-        { id ? 'Edit a hike' : 'Add a New Hike'}
+        {id ? 'Edit a hike' : 'Add a New Hike'}
       </Title>
       <Container sx={(t) => {
         return {
