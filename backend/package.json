@@ -31,7 +31,10 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "nodemon index.ts"
+    "start": "nodemon index.ts",
+    "build": "tsc",
+    "execute": "node dist/index.js",
+    "generate": "prisma generate"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
