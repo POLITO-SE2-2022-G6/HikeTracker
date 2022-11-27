@@ -25,7 +25,6 @@ const HikesList = ({ data }: HikeProps) => {
 
   const [hikes, setHikes] = useState<Hike[]>([]);
 
-
   const getAllHikes = async () => {
     const hikes = await getHikes();
     setHikes(hikes);
@@ -38,10 +37,6 @@ const HikesList = ({ data }: HikeProps) => {
       getAllHikes();
     }
   }, [data]);
-
-
-
-
 
   const getHikes = async () => {
     return await API.hike.getHikes() as Hike[];
