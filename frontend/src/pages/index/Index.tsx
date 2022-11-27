@@ -5,8 +5,10 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Layout from '../../components/layout/Layout';
 import Login from '../login/Login';
 import Register from '../register/Register';
+import HikeDetailPage from '../hike/HikeDetailPage';
 import HikesSearchPage from '../hikes/HikesSearchPage';
 import HikeForm from '../hikeForm/HikeForm';
+import HutsSearchPage from '../huts/HutsSearchPage';
 import HutForm from '../hutForm/HutForm';
 import ParkingLotForm from '../parkingLotForm/ParkingLotForm';
 //import HikerPage from '../userarea/hikerPage/HikerPage';
@@ -15,8 +17,6 @@ import ParkingLotForm from '../parkingLotForm/ParkingLotForm';
 import { UserContext, UserContextWrapper } from '../../context/userContext';
 import { useContext } from 'react';
 import { Landing } from '../landing/Landing';
-import HikeDetailPage from '../hike/HikeDetailPage';
-
 
 const Index: React.FC = () => {
 
@@ -36,6 +36,7 @@ const Index: React.FC = () => {
               <Route path='/hike/edit/' element={<HikeForm />} />
               <Route path='/hike/edit/:id' element={<HikeForm />} />
               <Route path='/hut/edit/' element={<HutForm />} />
+              <Route path='huts' element={<HutsSearchPage />} />
               <Route path='/parkinglot/edit/' element={<ParkingLotForm />} />
               <Route path='/userarea' />
             </Route>
