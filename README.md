@@ -207,7 +207,8 @@ Team members:
       
       Or
       {
-         ParkingLot: true
+         ParkingLot: {
+         }
       }
       
    ```
