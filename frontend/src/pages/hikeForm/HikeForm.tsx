@@ -1,7 +1,7 @@
-import s from './HikesSearchPage.module.css';
+import s from './HikeForm.module.css';
 import { useForm } from '@mantine/form'
 import axios from 'axios';
-import { Button, Container, Paper, Space, TextInput, Title, NumberInput, FileInput, Group, Textarea } from '@mantine/core';
+import { Button, Container, Paper, TextInput, Title, NumberInput, FileInput, Group, Textarea } from '@mantine/core';
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IconUpload } from '@tabler/icons';
@@ -48,7 +48,7 @@ const HikeForm: React.FC = () => {
       difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
       // start_point: (value: number) => (!value ? 'Start point must not be empty' : null),
       // end_point: (value: number) => (!value ? 'End point must not be empty' : null),
-      description: (value: string) => (!value ? 'Difficult must not be empty' : null),
+      description: (value: string) => (!value ? 'Description must not be empty' : null),
     },
   });
 
@@ -180,9 +180,7 @@ const HikeForm: React.FC = () => {
               accept=".gpx"
               icon={<IconUpload size={14} />}
               {...form.getInputProps('gpstrack')}
-
             />
-
             <Group position="center">
               <Button mt="xl" type='submit'>Add Hike</Button>
               <Link to="/">

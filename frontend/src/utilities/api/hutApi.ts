@@ -1,25 +1,26 @@
+import { Hut, Point, Prisma } from "../../generated/prisma-client";
 import { Methods } from "./client";
 import { Resource } from "./resource";
 
 export class HutApi extends Resource {
-  protected path = "/huts";
+  protected path = "/hut";
 
   async getHuts() {
-    return this.client.request({
+    return this.client.request<Hut[]>({
       method: Methods.GET,
       path: this.path,
     });
   }
 
   async getHut(id: number) {
-    return this.client.request({
+    return this.client.request<Hut>({
       method: Methods.GET,
       path: `${this.path}/${id}`,
     });
   }
 
-  async createHut(hut: any) {
-    return this.client.request({
+  async createHut(hut: Partial<Hut>) {
+    return this.client.request<Hut>({
       headers: {
         'Content-Type': 'multipart/form-data'
       },
@@ -29,8 +30,8 @@ export class HutApi extends Resource {
     });
   }
 
-  async updateHut(id: number, hut: any) {
-    return this.client.request({
+  async updateHut(id: number, hut: Partial<Hut>) {
+    return this.client.request<Hut>({
       method: Methods.PUT,
       path: `${this.path}/${id}`,
       body: hut,

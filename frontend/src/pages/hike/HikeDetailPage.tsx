@@ -1,4 +1,4 @@
-import { Center, Container, Loader, Paper, Title, Text, Divider, Space, Blockquote, Group, Stack, Box, Button } from '@mantine/core';
+import { Center, Container, Loader, Paper, Title, Text, Space, Blockquote, Group, Stack, Box, Button } from '@mantine/core';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,8 +9,6 @@ import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
 import { API } from '../../utilities/api/api';
 import { Hike } from '../../generated/prisma-client';
-
-
 
 const HikeDetailPage: React.FC = () => {
 
@@ -78,7 +76,7 @@ const HikeDetailPage: React.FC = () => {
         <Paper p={'md'} radius={'md'} shadow={'md'} withBorder>
           <Group position='apart'>
             <Title order={1}>{hike?.Title}</Title>
-            {loggedIn && state.data?.type == 'Guide' && <Button onClick={() => navigate(`/hike/edit/${id}`)}>Edit Hike</Button>}
+            {loggedIn && state.data?.type == 'guide' && <Button onClick={() => navigate(`/hike/edit/${id}`)}>Edit Hike</Button>}
           </Group>
           <Space h={'md'} />
 

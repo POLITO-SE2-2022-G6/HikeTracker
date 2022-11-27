@@ -5,14 +5,18 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Layout from '../../components/layout/Layout';
 import Login from '../login/Login';
 import Register from '../register/Register';
+import HikeDetailPage from '../hike/HikeDetailPage';
 import HikesSearchPage from '../hikes/HikesSearchPage';
 import HikeForm from '../hikeForm/HikeForm';
+import HutsSearchPage from '../huts/HutsSearchPage';
+import HutForm from '../hutForm/HutForm';
+import ParkingLotForm from '../parkingLotForm/ParkingLotForm';
+//import HikerPage from '../userarea/hikerPage/HikerPage';
+//import GuidePage from '../userarea/guidePage/GuidePage';
 
 import { UserContext, UserContextWrapper } from '../../context/userContext';
 import { useContext } from 'react';
 import { Landing } from '../landing/Landing';
-import HikeDetailPage from '../hike/HikeDetailPage';
-
 
 const Index: React.FC = () => {
 
@@ -30,9 +34,13 @@ const Index: React.FC = () => {
               <Route path='' element={<Landing />} />
               <Route path='/hike/:id' element={<HikeDetailPage />} />
               <Route path='/hike/edit/' element={<HikeForm />} />
-              <Route path='/hike/edit/:id' element={<HikeForm/>}/>
-
+              <Route path='/hike/edit/:id' element={<HikeForm />} />
+              <Route path='/hut/edit/' element={<HutForm />} />
+              <Route path='huts' element={<HutsSearchPage />} />
+              <Route path='/parkinglot/edit/' element={<ParkingLotForm />} />
+              <Route path='/userarea' />
             </Route>
+            
             <Route path='/login' element={loggedIn
               ? <Navigate to='/' />
               : <Login />} />
@@ -48,7 +56,7 @@ const Index: React.FC = () => {
 export default Index;
 
 /*
-A '/' bisogna passare loggedIn user, setFlag1 e doLogOut
-A '/login' bisogna passare doLogIn
-A '/register' bisogna passare doRegistration
+element={((state.data?.type === 'Hiker'))
+              ? <HikerPage />
+              : <GuidePage />}
 */

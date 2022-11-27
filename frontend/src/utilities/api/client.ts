@@ -2,6 +2,7 @@ import axios, { Axios, AxiosInstance, AxiosRequestConfig } from "axios";
 import { AuthApi } from "./authApi";
 import { HikeApi } from "./hikeApi";
 import { HutApi } from "./hutApi";
+import { PointApi } from "./pointApi";
 import { UserApi } from "./userApi";
 
 export interface Config {
@@ -34,6 +35,7 @@ export class Client {
   user: UserApi;
   hut: HutApi;
   auth: AuthApi;
+  point: PointApi
   private ax: AxiosInstance
   constructor(config: Config) {
     this.config = config;
@@ -41,6 +43,7 @@ export class Client {
     this.hike = new HikeApi(this);
     this.user = new UserApi(this);
     this.hut = new HutApi(this);
+    this.point = new PointApi(this);
     this.ax = axios.create(config.axios);
   }
 

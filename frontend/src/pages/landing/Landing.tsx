@@ -12,13 +12,13 @@ export const Landing = () => {
     <div className={s.main}>
 
       <Container >
-        <h1>Welcome to HikeTracker!</h1>
+        <h1>Welcome to HikeTracker, {(state.loggedIn? <>{state.data?.username}!</>: <> visitor!</> )}</h1>
 
         <Link to="hikes">
           <Button> Search Hikes</Button>
         </Link>
         <HikesList />
-        {(state.data?.type === 'Guide') ? <NewHikeButton /> : ''}
+        {(state.data?.type === 'guide') ? <NewHikeButton /> : ''}
       </Container>
     </div>
   );
