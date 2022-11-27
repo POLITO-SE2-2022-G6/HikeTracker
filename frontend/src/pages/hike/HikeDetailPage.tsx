@@ -1,4 +1,4 @@
-import { Center, Container, Loader, Paper, Title, Text, Divider, Space, Blockquote, Group, Stack, Box, Button } from '@mantine/core';
+import { Center, Container, Loader, Paper, Title, Text, Space, Blockquote, Group, Stack, Box, Button } from '@mantine/core';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,8 +9,6 @@ import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
 import { API } from '../../utilities/api/api';
 import { Hike } from '../../generated/prisma-client';
-
-
 
 const HikeDetailPage: React.FC = () => {
 

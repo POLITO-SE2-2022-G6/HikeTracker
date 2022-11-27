@@ -72,8 +72,8 @@ export async function hikeById(id: number) {
   });
 }
 
-export const createHike = async (hike: Prisma.HikeCreateInput) => {
-  const { Title, Length, Expected_time, Ascent, Difficulty, GpsTrack, Description } = hike;
+export const createHike = async (hike: Hike) => {
+  const { Title, Length, Expected_time, Ascent, Difficulty, GpsTrack, Description, LocalGuideId } = hike;
 
   return prisma.hike.create(
     {
@@ -85,6 +85,7 @@ export const createHike = async (hike: Prisma.HikeCreateInput) => {
         Difficulty: Difficulty,
         Description: Description,
         GpsTrack: GpsTrack,
+        LocalGuide: LocalGuideId ? { connect: { id: LocalGuideId } } : undefined,
       },
     }
   );

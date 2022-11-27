@@ -33,7 +33,6 @@ const Register: React.FC = () => {
   });
 
   const handleSubmit = async (values: typeof form.values) => {
-    console.log(values);
 
     try {
       const res = await API.auth.register(values);
@@ -42,7 +41,6 @@ const Register: React.FC = () => {
     } catch (err) {
       setError('Something went wrong');
     }
-
 
   }
 
@@ -60,8 +58,8 @@ const Register: React.FC = () => {
             label="Type"
             placeholder="Pick one"
             data={[
-              { value: 'Hiker', label: 'Hiker' },
-              { value: 'Guide', label: 'Guide' },
+              { value: 'hiker', label: 'Hiker' },
+              { value: 'guide', label: 'Guide' },
 
             ]}
             {...form.getInputProps('type')}

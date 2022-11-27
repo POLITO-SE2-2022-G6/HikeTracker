@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  frontend:
+    image: gianmarco114/se2_group6_hike_frontend
+    ports:
+      - "3000:3000"
+    
+  backend:
+    image: gianmarco114/se2_group6_hike_backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/prisma/database.db:/app/prisma/database.db
