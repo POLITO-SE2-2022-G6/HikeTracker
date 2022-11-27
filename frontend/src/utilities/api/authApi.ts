@@ -3,12 +3,12 @@ import { Methods } from "./client";
 import { Resource } from "./resource";
 
 export class AuthApi extends Resource {
-  protected path = "/sessions";
+  protected path = "/auth";
 
   async login(user: any) {
     return this.client.request<User>({
       method: Methods.POST,
-      path: `${this.path}`,
+      path: `${this.path}/login`,
       body: user,
     });
   }

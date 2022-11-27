@@ -29,6 +29,7 @@ export type Hike = {
   EndPointId: number | null
   Description: string | null
   GpsTrack: string | null
+  LocalGuideId: number | null
 }
 /**
  * Model User

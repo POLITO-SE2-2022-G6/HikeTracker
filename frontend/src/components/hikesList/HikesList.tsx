@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
 import { API } from '../../utilities/api/api';
 import { Hike } from '../../generated/prisma-client';
+import {IoIosArrowDropdown } from "react-icons/io";
 
 type HikeProps = {
   data?: any
@@ -39,7 +40,7 @@ const HikesList = ({ data }: HikeProps) => {
     }
   }, [data]);
 
-
+  const { state, setState } = useContext(UserContext)
 
 
 
@@ -64,7 +65,7 @@ const HikesList = ({ data }: HikeProps) => {
           </tr>
         </thead>
         <tbody>{
-          hikes?.map((h) => <HikeData hike={h} key={h['id']} />)}
+           hikes?.map((h) => <HikeData hike={h} key={h['id']} />)}
         </tbody>
       </Table>
     </>
@@ -78,11 +79,12 @@ function HikeData({ hike }: { hike: Hike }) {
   return (
     <>
       <tr onClick={() => { if (state.loggedIn) navigate(`/hike/${hike.id}`) }}>
-        <td>{hike.Title}</td>
+        <td>{hike.Title} </td>
         <td>{hike.Length}</td>
         <td>{hike.Expected_time}</td>
         <td>{hike.Ascent}</td>
         <td>{hike.Difficulty}</td>
+        <td> {state.loggedIn ? <IoIosArrowDropdown size="22px"/>: ""}</td>
         {/* <td>{props.hike['StartPointId']}</td>
         <td>{props.hike['EndPointId']}</td> */}
         {/* <td>{props.hike['Description']}</td> */}

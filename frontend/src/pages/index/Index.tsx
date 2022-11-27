@@ -21,7 +21,7 @@ const Index: React.FC = () => {
   const { state, setState } = useContext(UserContext);
 
   const { loggedIn } = state;
-
+  
   return (
     <>
       <UserContextWrapper>
@@ -33,9 +33,8 @@ const Index: React.FC = () => {
               <Route path='/hike/:id' element={<HikeDetailPage />} />
               <Route path='/hike/edit/' element={<HikeForm />} />
               <Route path='/hike/edit/:id' element={<HikeForm />} />
-              <Route path='/userarea' element={((state.data?.type === 'Hiker'))
-              ? <HikerPage />
-              : <GuidePage />}/>
+                <Route path='/userarea' element={ (state.data?.type === "hiker" )
+              ? <HikerPage />    : <GuidePage />}/>     
             </Route>
             <Route path='/login' element={loggedIn
               ? <Navigate to='/' />
@@ -46,7 +45,11 @@ const Index: React.FC = () => {
 
       </UserContextWrapper>
     </>
+    
   );
+
 };
+
+
 
 export default Index;
