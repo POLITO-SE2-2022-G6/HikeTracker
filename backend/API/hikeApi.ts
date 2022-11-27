@@ -131,6 +131,10 @@ hRouter.post("", isGuide, checkSchema({
     optional: true,
     in: 'body',
     isInt: true
+  },
+  LocalGuideId: {
+    in: ['body'],
+    isInt: true
   }
 }),  async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
