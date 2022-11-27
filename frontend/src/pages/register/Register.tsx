@@ -58,8 +58,8 @@ const Register: React.FC = () => {
             label="Type"
             placeholder="Pick one"
             data={[
-              { value: 'Hiker', label: 'Hiker' },
-              { value: 'Guide', label: 'Guide' },
+              { value: 'hiker', label: 'Hiker' },
+              { value: 'guide', label: 'Guide' },
 
             ]}
             {...form.getInputProps('type')}
