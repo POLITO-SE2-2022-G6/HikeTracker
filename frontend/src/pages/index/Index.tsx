@@ -8,11 +8,11 @@ import Register from '../register/Register';
 import HikeDetailPage from '../hike/HikeDetailPage';
 import HikesSearchPage from '../hikes/HikesSearchPage';
 import HikeForm from '../hikeForm/HikeForm';
+import HikerPage from '../userarea/hikerPage/HikerPage';
+import GuidePage from '../userarea/guidePage/GuidePage';
 import HutsSearchPage from '../huts/HutsSearchPage';
 import HutForm from '../hutForm/HutForm';
 import ParkingLotForm from '../parkingLotForm/ParkingLotForm';
-//import HikerPage from '../userarea/hikerPage/HikerPage';
-//import GuidePage from '../userarea/guidePage/GuidePage';
 
 import { UserContext, UserContextWrapper } from '../../context/userContext';
 import { useContext } from 'react';
@@ -23,7 +23,7 @@ const Index: React.FC = () => {
   const { state, setState } = useContext(UserContext);
 
   const { loggedIn } = state;
-
+  
   return (
     <>
       <UserContextWrapper>
@@ -35,10 +35,11 @@ const Index: React.FC = () => {
               <Route path='/hike/:id' element={<HikeDetailPage />} />
               <Route path='/hike/edit/' element={<HikeForm />} />
               <Route path='/hike/edit/:id' element={<HikeForm />} />
+              <Route path='/guidearea' element={  <GuidePage/>  }/>
+              <Route path='/hikerarea' element={  <HikerPage/>  }/>
               <Route path='/hut/edit/' element={<HutForm />} />
               <Route path='huts' element={<HutsSearchPage />} />
               <Route path='/parkinglot/edit/' element={<ParkingLotForm />} />
-              <Route path='/userarea' />
             </Route>
             
             <Route path='/login' element={loggedIn
@@ -50,13 +51,10 @@ const Index: React.FC = () => {
 
       </UserContextWrapper>
     </>
+    
   );
+
 };
 
 export default Index;
 
-/*
-element={((state.data?.type === 'Hiker'))
-              ? <HikerPage />
-              : <GuidePage />}
-*/

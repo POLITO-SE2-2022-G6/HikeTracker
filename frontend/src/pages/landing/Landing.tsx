@@ -18,16 +18,9 @@ export const Landing = () => {
           <Button> Search Hikes</Button>
         </Link>
         <HikesList />
-        {(state.data?.type === 'guide') ? <NewHikeButton /> : ''}
       </Container>
     </div>
   );
 };
 
-function NewHikeButton() {
-  return (
-    <Link to="/hike/edit">
-      <Button mt="sm"> Add New Hike</Button>
-    </Link>
-  );
-}
+

@@ -35,7 +35,8 @@ const Layout = () => {
                 <Button onClick={() => { handleLogout() }}>LOG-OUT <BiLogOutCircle size="20px" /></Button> :
                 <Button onClick={() => { navigate("/login"); }}>LOG-IN <BiLogInCircle size="20px" /></Button>
               }
-              <Button type="button" className="btn btn-primary" onClick={() => { loggedIn? navigate("/userarea") : navigate("/login")}}>USER AREA <BsPersonCircle color='white' size='20px' /></Button>
+              <Button type="button" className="btn btn-primary" onClick={() => {loggedIn? (state.data?.type === "hiker" ? (navigate("/hikerarea")) : (navigate("/guidearea")) )  : navigate("/login") }}>USER AREA <BsPersonCircle color='white' size='20px' /></Button>
+
             </div>
           </div>
         </Container>
