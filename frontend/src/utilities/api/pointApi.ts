@@ -14,6 +14,10 @@ export class PointApi extends Resource {
     return this.client.request<Point[]>({
       method: Methods.GET,
       path: this.path,
+      body: {
+        Hut: {},
+        ParkingLot: {}
+      }
     });
   }
 

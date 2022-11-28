@@ -22,6 +22,9 @@ export class HikeApi extends Resource {
 
   async createHike(hike: any) {
     return this.client.request<Hike>({
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
       method: Methods.POST,
       path: this.path,
       body: hike,
@@ -30,6 +33,9 @@ export class HikeApi extends Resource {
 
   async updateHike(id: number, hike: any) {
     return this.client.request<Hike>({
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
       method: Methods.PUT,
       path: `${this.path}/${id}`,
       body: hike,
