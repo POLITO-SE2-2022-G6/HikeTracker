@@ -1,7 +1,6 @@
-import express from "express";
-import { Router } from 'express';
+import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
-import { isGuide, isHiker } from "./authApi";
+import { isGuide, isHiker, isLoggedIn } from "./authApi";
 import { createPoint, editPoint, pointById, fullList } from "../DAO/pointDao";
 
 export const pRouter = Router();
@@ -154,24 +153,23 @@ pRouter.post("", checkSchema({
 });
 
 //Get all points
-pRouter.get("", isGuide || isHiker, checkSchema({
+pRouter.get("", isLoggedIn, checkSchema({
     Hut:{
-        in: ['body'],
-        optional: true,
-        isObject: true
+        in: ['query'],
+        optional: true
     },
     "Hut.Description": {
-        in: ['body'],
+        in: ['query'],
         optional: true,
         notEmpty: true
     },
     ParkingLot:{
-        in: ['body'],
+        in: ['query'],
         optional: true,
         isObject: true
     }
 }), async (req: express.Request, res: express.Response) => {    
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const points = await fullList(req.body);
+    const points = await fullList(req.query);
     res.send(points);
 });
