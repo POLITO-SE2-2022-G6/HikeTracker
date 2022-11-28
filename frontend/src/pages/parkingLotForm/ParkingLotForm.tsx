@@ -156,7 +156,7 @@ const ParkingLotForm: React.FC = () => {
 
             <Group position="center">
               <Button mt="xl" type='submit'>Add Hut</Button>
-              <Link to="/userarea">
+              <Link to="/guidearea">
                 <Button mt="xl" color="red">Cancel</Button>
               </Link>
             </Group>
