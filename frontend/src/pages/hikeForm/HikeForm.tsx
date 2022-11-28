@@ -1,12 +1,21 @@
 import s from './HikeForm.module.css';
 import { useForm } from '@mantine/form'
 import axios from 'axios';
-import { Button, Container, Paper, TextInput, Title, NumberInput, FileInput, Group, Textarea } from '@mantine/core';
+import { Button, Container, Paper, TextInput, Title, NumberInput, FileInput, Group, Textarea, Box, Space, Flex, Stack } from '@mantine/core';
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IconUpload } from '@tabler/icons';
 import { useParams } from 'react-router-dom';
 import { API } from '../../utilities/api/api';
+import { Hut, ParkingLot, Point } from '../../generated/prisma-client';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { DivIcon, divIcon } from 'leaflet';
+
+import cabin from './cabin.svg';
+
+const hutIcon = divIcon({
+  html: cabin
+})
 
 const HikeForm: React.FC = () => {
 
@@ -14,41 +23,50 @@ const HikeForm: React.FC = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
+  type Points = Point & {
+    Hut?: Hut
+    ParkingLot?: ParkingLot
+  }
+
+
+  const [points, setPoints] = useState<Points[]>([])
+  const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
+
 
   type Fields = {
-    title?: string;
-    length?: number;
-    expected_time?: number;
-    ascent?: number;
-    difficulty?: number;
-    // start_point?: number;
-    // end_point?: number;
-    description?: string;
-    gpstrack?: File;
+    Title?: string;
+    Length?: number;
+    Expected_time?: number;
+    Ascent?: number;
+    Difficulty?: number;
+    StartPointId?: number;
+    EndPointId?: number;
+    Description?: string;
+    GpsTrack?: File;
   }
 
   const form = useForm<Fields>({
     initialValues: {
-      title: '',
-      length: undefined,
-      expected_time: undefined,
-      ascent: undefined,
-      difficulty: undefined,
-      // start_point: undefined,
-      // end_point: undefined,
-      description: '',
-      gpstrack: undefined,
+      Title: '',
+      Length: undefined,
+      Expected_time: undefined,
+      Ascent: undefined,
+      Difficulty: undefined,
+      StartPointId: undefined,
+      EndPointId: undefined,
+      Description: '',
+      GpsTrack: undefined,
     },
 
     validate: {
-      title: (value: string) => (!value ? 'Title must not be empty' : null),
-      length: (value: number) => (!value ? 'Length must not be empty' : null),
-      expected_time: (value: number) => (!value ? 'Expected time must not be empty' : null),
-      ascent: (value: number) => (!value ? 'Ascent must not be empty' : null),
-      difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
-      // start_point: (value: number) => (!value ? 'Start point must not be empty' : null),
-      // end_point: (value: number) => (!value ? 'End point must not be empty' : null),
-      description: (value: string) => (!value ? 'Description must not be empty' : null),
+      Title: (value: string) => (!value ? 'Title must not be empty' : null),
+      Length: (value: number) => (!value ? 'Length must not be empty' : null),
+      Expected_time: (value: number) => (!value ? 'Expected time must not be empty' : null),
+      Ascent: (value: number) => (!value ? 'Ascent must not be empty' : null),
+      Difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
+      // StartPointId: (value: number) => (!value ? 'Start point must not be empty' : null),
+      // EndPointId: (value: number) => (!value ? 'End point must not be empty' : null),
+      Description: (value: string) => (!value ? 'Description must not be empty' : null),
     },
   });
 
@@ -58,23 +76,36 @@ const HikeForm: React.FC = () => {
         const hike = await API.hike.getHike(parseInt(id))
         if (!hike) return
         form.setValues({
-          title: hike.Title,
-          length: hike.Length,
-          expected_time: hike.Expected_time,
-          ascent: hike.Ascent,
-          difficulty: hike.Difficulty,
-          // start_point: hike.StartPoint,
-          // end_point: hike.EndPoint,
-          description: hike.Description!,
+          Title: hike.Title,
+          Length: hike.Length,
+          Expected_time: hike.Expected_time,
+          Ascent: hike.Ascent,
+          Difficulty: hike.Difficulty,
+          // StartPointId: hike.StartPoint,
+          // EndPointId: hike.EndPoint,
+          Description: hike.Description!,
         })
       }
     }
     fetchHike()
+
+    const getPoints = async () => {
+      try {
+        const points = await API.point.getPoints()
+        setPoints(points!)
+        console.log(points)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getPoints()
+
   }, [])
 
 
 
   const handleSubmit = async (values: Fields) => {
+    console.log('submitting', values)
     if (id) {
       editHike(values)
     } else {
@@ -129,69 +160,107 @@ const HikeForm: React.FC = () => {
             <TextInput
               label="Title"
               placeholder="Title of the hike"
-              {...form.getInputProps('title')} />
+              {...form.getInputProps('Title')} />
             <Textarea
               label="Description"
               placeholder="Description of the hike"
-              {...form.getInputProps('description')} />
+              {...form.getInputProps('Description')} />
             <NumberInput
               label="Length"
-              description="In kilometers"
+              description="In meters"
               precision={1}
               step={0.5}
               placeholder="2"
               min={1}
-              {...form.getInputProps('length')} />
+              {...form.getInputProps('Length')} />
             <NumberInput
               label="Expected Time"
               placeholder="10"
               min={1}
-              {...form.getInputProps('expected_time')} />
+              {...form.getInputProps('Expected_time')} />
             <NumberInput
               label="Ascent"
               description="In meters"
               precision={1}
               step={0.5}
               placeholder="Ascent of the hike"
-              {...form.getInputProps('ascent')}
+              {...form.getInputProps('Ascent')}
             />
             <NumberInput
               label="Difficulty"
               placeholder="0"
               min={0}
               max={4}
-              {...form.getInputProps('difficulty')} />
-            {/* <NumberInput
-              label="Start Point"
-              placeholder="1"
-              min={1}
-              max={40}
-              {...form.getInputProps('start_point')} />
-            <NumberInput
-              label="End Point"
-              placeholder="1"
-              min={1}
-              max={40}
-              {...form.getInputProps('end_point')}
-            /> */}
+              {...form.getInputProps('Difficulty')} />
             <FileInput
               label="Gps Track"
               placeholder=""
               accept=".gpx"
               icon={<IconUpload size={14} />}
-              {...form.getInputProps('gpstrack')}
+              {...form.getInputProps('GpsTrack')}
             />
+
+            <TextInput
+              hidden
+              {...form.getInputProps('StartPointId')}
+            />
+            <TextInput
+              hidden
+              {...form.getInputProps('EndPointId')}
+            />
+
+            <Space h={'md'} />
+            <Flex wrap="wrap">
+              <Box h={'400px'} style={{
+                flexGrow: 1,
+                minWidth: '400px',
+              }}>
+                <MapContainer center={[41.90, 12.49]} zoom={8} className={s.map}>
+                  {
+                    points.map((point) => {
+                      if (point.Hut || point.ParkingLot)
+                        return <Marker
+                          position={[point.Latitude!, point.Longitude!]}
+                          // icon={hutIcon}
+                          eventHandlers={{
+                            click: () => {
+                              setSelectedMarker(point.id)
+                            }
+                          }}
+                        >
+                          <Popup>
+                            {point.Label}
+                          </Popup>
+                        </Marker>
+                    })
+                  }
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                </MapContainer>
+              </Box>
+              <Box>
+                <Stack p={'md'}>
+                  <Button type="button" onClick={() => { selectedMarker && form.setValues({ StartPointId: selectedMarker }) }}> Set as Start Point </Button>
+                  <Button type="button" onClick={() => { selectedMarker && form.setValues({ EndPointId: selectedMarker }) }}> Set as End Point </Button>
+                </Stack>
+              </Box>
+              {/* buttons */}
+
+            </Flex>
+
             <Group position="center">
-              <Button mt="xl" type='submit'>Add Hike</Button>
+              <Button mt="xl" type='submit'>Save</Button>
               <Link to="/">
-                <Button mt="xl" color="red">Cancel</Button>
+                <Button type="button" mt="xl" color="red">Cancel</Button>
               </Link>
             </Group>
+
           </form>
         </Paper>
       </Container>
 
-    </Container>
+    </Container >
   )
 }
 

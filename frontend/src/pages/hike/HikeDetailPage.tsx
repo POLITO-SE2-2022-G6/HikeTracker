@@ -3,12 +3,17 @@ import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import s from './HikeDetailPage.module.css';
-import { MapContainer, TileLayer, useMap, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap, Polyline, Marker, Popup } from 'react-leaflet'
 // import * as defaultTrack from './rocciamelone.json'
 import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
 import { API } from '../../utilities/api/api';
-import { Hike } from '../../generated/prisma-client';
+import { Hike as HIKE, Point } from '../../generated/prisma-client';
+
+type Hike = HIKE & {
+  Start_point: Point,
+  End_point: Point,
+}
 
 const HikeDetailPage: React.FC = () => {
 
@@ -16,7 +21,7 @@ const HikeDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [track, setTrack] = useState<[number, number][] | undefined>(undefined)
-  const [center, setCenter] = useState<[number, number] | undefined>([41.8, 12.4])
+  const [center, setCenter] = useState<[number, number]>([41.8, 12.4])
   const [offset, setOffset] = useState(0)
   const { id } = useParams()
 
@@ -46,7 +51,7 @@ const HikeDetailPage: React.FC = () => {
       try {
         const hike = await fetchHike(id)
         if (!hike) return
-        setHike(hike)
+        setHike(hike as Hike)
         if (hike.GpsTrack) {
           console.log("Download track")
           const xml = await axios.get(`http://localhost:3001/` + hike.GpsTrack, { withCredentials: true })
@@ -115,7 +120,10 @@ const HikeDetailPage: React.FC = () => {
             />
             <Polyline pathOptions={{ dashArray: '10', dashOffset: offset.toString() }} positions={track || []} />
             <MapSetter center={center} />
-
+            {
+              [hike?.Start_point && PointMarker(hike.Start_point),
+              hike?.End_point && PointMarker(hike.End_point)]
+            }
           </MapContainer>
         </Box>
       </Container>
@@ -125,7 +133,19 @@ const HikeDetailPage: React.FC = () => {
 
 export default HikeDetailPage;
 
+function PointMarker(point: Point) {
+  if (!point.Latitude || !point.Longitude) return null
+  return <Marker
+    position={[point.Latitude, point.Longitude]}
+  >
+    <Popup>
+      {point.Label}
+    </Popup>
+  </Marker>;
+}
+
 function extrackPoints(data: any): [number, number][] {
+  if (!data) return []
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(data, "text/xml");
   const points = xmlDoc.getElementsByTagName("trkpt")
