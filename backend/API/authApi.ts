@@ -1,21 +1,13 @@
-import express from "express";
+import express, { RequestHandler, Router } from "express";
 import passport from "passport";
 import passportLocal from "passport-local";
 import session from "express-session";
 import { app } from "../index";
-import { RequestHandler, Router } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
 import { createUsr, getUserByEmail } from "../DAO/authDao";
+import { User } from "@prisma/client";
 
 export const aRouter = Router();
-
-export type User = {
-    id: number,
-    email: string,
-    type: string,
-    username: string,
-    phoneNumber: string
-}
 
 export const isLoggedIn: RequestHandler = (req, res, next) => {
     console.log("is logged in", req.isAuthenticated());
@@ -29,8 +21,8 @@ export const isGuide: RequestHandler = (req, res, next) => {
     return res.status(401).json({ error: "not authenticated" });
 }
 
-export const isHiker: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "hiker") return next();
+export const isGuideOrHiker: RequestHandler = (req, res, next) => {
+    if (req.isAuthenticated() && ((req.user as User).type === "hiker" || (req.user as User).type === "guide")) return next();
     return res.status(401).json({ error: "not authenticated" });
 }
 

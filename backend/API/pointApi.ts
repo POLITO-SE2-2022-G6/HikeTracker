@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
-import { isGuide, isHiker, isLoggedIn } from "./authApi";
+import { isGuide, isGuideOrHiker } from "./authApi";
 import { createPoint, editPoint, pointById, fullList } from "../DAO/pointDao";
 
 export const pRouter = Router();
@@ -25,57 +25,57 @@ pRouter.put("/:id", checkSchema({
         in: ['params'],
         isInt: true
     },
-    Label: {
+    label: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Latitude: {
+    latitude: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    Longitude: {
+    longitude: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    Elevation: {
+    elevation: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    City: {
+    city: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Region: {
+    region: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Province: {
+    province: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Hut:{
+    hut:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "Hut.Description": {
+    "hut.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    ParkingLot:{
+    parkinglot:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "ParkingLot.Description": {
+    "parkinglot.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
@@ -91,79 +91,79 @@ pRouter.put("/:id", checkSchema({
 
 //New Point in Body
 pRouter.post("", checkSchema({
-    Label: {
+    label: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Latitude: {
+    latitude: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    Longitude: {
+    longitude: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    Elevation: {
+    elevation: {
         in: ['body'],
         optional: true,
         isFloat: true
     },
-    City: {
+    city: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Region: {
+    region: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Province: {
+    province: {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    Hut:{
+    hut:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "Hut.Description": {
+    "hut.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     },
-    ParkingLot:{
+    parkinglot:{
         in: ['body'],
         optional: true,
         isObject: true
     },
-    "ParkingLot.Description": {
+    "parkinglot.description": {
         in: ['body'],
         optional: true,
         notEmpty: true
     }
 }), isGuide, async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const pont = await createPoint(req.body);
-    res.send(pont);
+    const point = await createPoint(req.body);
+    res.send(point);
 });
 
 //Get all points
-pRouter.get("", isLoggedIn, checkSchema({
-    Hut:{
+pRouter.get("", isGuideOrHiker, checkSchema({
+    hut:{
         in: ['query'],
         optional: true
     },
-    "Hut.Description": {
+    "hut.description": {
         in: ['query'],
         optional: true,
         notEmpty: true
     },
-    ParkingLot:{
+    parkinglot:{
         in: ['query'],
         optional: true,
         isObject: true

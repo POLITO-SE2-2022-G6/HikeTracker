@@ -2,7 +2,7 @@ import { Point, PrismaClient, Hike } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export type HikeQuery = {
+type HikeQuery = {
   difficulty?: number,
   city?: string,
   region?: string,
@@ -11,37 +11,38 @@ export type HikeQuery = {
   ascent?: number,
   expected_time?: number
 }
+
 export async function hikesList(fields: HikeQuery) {
   return prisma.hike.findMany({
     where: {
       AND: [
         {
-          Difficulty: {
+          difficulty: {
             lt: fields.difficulty
           },
-          Length: {
+          length: {
             lt: fields.length
           },
-          Ascent: {
+          ascent: {
             lt: fields.ascent
           },
-          Expected_time: {
+          expected_time: {
             lt: fields.expected_time
           }
         },
         {
           OR: [
             {
-              Start_point: {
-                City: fields.city && { startsWith: fields.city },
-                Region: fields.region && { startsWith: fields.region },
-                Province: fields.province && { startsWith: fields.province }
+              start_point: {
+                city: fields.city && { startsWith: fields.city },
+                region: fields.region && { startsWith: fields.region },
+                province: fields.province && { startsWith: fields.province }
               }
             }, {
-              End_point: {
-                City: fields.city && { startsWith: fields.city },
-                Region: fields.region && { startsWith: fields.region },
-                Province: fields.province && { startsWith: fields.province }
+              end_point: {
+                city: fields.city && { startsWith: fields.city },
+                region: fields.region && { startsWith: fields.region },
+                province: fields.province && { startsWith: fields.province }
               }
             }
           ]
@@ -55,92 +56,92 @@ export async function hikeById(id: number) {
   return prisma.hike.findUnique({
     where: { id },
     include: {
-      Start_point: {
+      start_point: {
         include: {
-          ParkingLot: true,
-          Hut: true
+          parkinglot: true,
+          hut: true
         }
       },
-      End_point: {
+      end_point: {
         include: {
-          ParkingLot: true,
-          Hut: true
+          parkinglot: true,
+          hut: true
         }
       },
-      Reference_points: true
+      reference_points: true
     }
   });
 }
 
 export const createHike = async (hike: any) => {
-  const { Title, Length, Expected_time, Ascent, Difficulty, GpsTrack, Description, LocalGuideId, StartPointId, EndPointId } = hike;
+  const { title, length, expected_time, ascent, difficulty, gpstrack, description, localguideid, startpointid, endpointid } = hike;
 
   return prisma.hike.create(
     {
       data: {
-        Title: Title,
-        Length: Length,
-        Expected_time: Expected_time,
-        Ascent: Ascent,
-        Difficulty: Difficulty,
-        Description: Description,
-        GpsTrack: GpsTrack,
-        Start_point: StartPointId ? {
+        title: title,
+        length: length,
+        expected_time: expected_time,
+        ascent: ascent,
+        difficulty: difficulty,
+        description: description,
+        gpstrack: gpstrack,
+        start_point: startpointid ? {
           connect: {
-            id: StartPointId
+            id: startpointid
           }
         } : undefined,
-        End_point: EndPointId ? {
+        end_point: endpointid ? {
           connect: {
-            id: EndPointId
+            id: endpointid
           }
         } : undefined,
-        LocalGuide: LocalGuideId ? { connect: { id: LocalGuideId } } : undefined,
+        localguide: localguideid ? { connect: { id: localguideid } } : undefined,
       },
     }
   );
 };
 
-type newHike = Hike & { Reference_points: { created: Point[], deleted: number[] } };
-export const editHike = async (idp: number, params: newHike, idH: number) => {
-  const { Title, Length, Expected_time, Ascent, Difficulty, Description, StartPointId, EndPointId, Reference_points, GpsTrack } = params;
+type newHike = Hike & { reference_points: { created: Point[], deleted: number[] } };
+export const editHike = async (idp: number, params: newHike) => {
+  const { title, length, expected_time, ascent, difficulty, description, startpointid, endpointid, reference_points, gpstrack, localguideid } = params;
 
   return prisma.hike.update({
     where: {
       id: idp,
     },
     data: {
-      Title: Title,
-      Length: Length,
-      Expected_time: Expected_time,
-      Ascent: Ascent,
-      Difficulty: Difficulty,
-      Description: Description,
-      Start_point: StartPointId ? {
+      title: title,
+      length: length,
+      expected_time: expected_time,
+      ascent: ascent,
+      difficulty: difficulty,
+      description: description,
+      start_point: startpointid ? {
         connect: {
-          id: StartPointId
+          id: startpointid
         }
       } : undefined,
-      End_point: EndPointId ? {
+      end_point: endpointid ? {
         connect: {
-          id: EndPointId
+          id: endpointid
         }
       } : undefined,
-      GpsTrack: GpsTrack || undefined,
-      LocalGuide: {
+      gpstrack: gpstrack || undefined,
+      localguide: {
         connect: {
-          id: idH
+          id: localguideid ? localguideid : undefined
         }
       },
-      Reference_points: Reference_points ? {
-        connect: Reference_points.created.map((p) => ({ id: p.id })),
-        deleteMany: Reference_points.deleted.map(id => ({ id }))
+      reference_points: reference_points ? {
+        connect: reference_points.created.map((p) => ({ id: p.id })),
+        deleteMany: reference_points.deleted.map(id => ({ id }))
       } : undefined
     },
     include: {
-      Reference_points: true,
-      Start_point: true,
-      End_point: true,
+      reference_points: true,
+      start_point: true,
+      end_point: true,
     }
   })
 };

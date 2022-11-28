@@ -16,60 +16,60 @@ datasource db {
 
 model Hut {
   id          Int     @id @default(autoincrement())
-  Description String?
-  Point       Point?  @relation("refHut")
-  PointId     Int?
+  description String?
+  point       Point?  @relation("refHut")
+  pointid     Int?
 }
 
 model ParkingLot {
   id          Int     @id @default(autoincrement())
-  Description String?
-  Point       Point?  @relation("refPL")
-  PointId     Int?
+  description String?
+  point       Point?  @relation("refPL")
+  pointid     Int?
 }
 
 model Point {
   id           Int         @id @default(autoincrement())
-  Label        String?
-  Latitude     Float?
-  Longitude    Float?
-  Elevation    Float?
-  City         String?
-  Region       String?
-  Province     String?
-  Hut          Hut?        @relation(fields: [HutId], references: [id], name: "refHut")
-  HutId        Int?        @unique
-  ParkingLot   ParkingLot? @relation(fields: [ParkingLotId], references: [id], name: "refPL")
-  ParkingLotId Int?        @unique
-  startOf      Hike[]      @relation("start")
-  endOf        Hike[]      @relation("end")
+  label        String?
+  latitude     Float?
+  longitude    Float?
+  elevation    Float?
+  city         String?
+  region       String?
+  province     String?
+  hut          Hut?        @relation(fields: [hutid], references: [id], name: "refHut")
+  hutid        Int?        @unique
+  parkinglot   ParkingLot? @relation(fields: [parkinglotid], references: [id], name: "refPL")
+  parkinglotid Int?        @unique
+  startof      Hike[]      @relation("start")
+  endof        Hike[]      @relation("end")
   hikes        Hike[]      @relation("hikes")
 }
 
 model Hike {
   id               Int     @id @default(autoincrement())
-  Title            String
-  Length           Float
-  Expected_time    Int
-  Ascent           Float
-  Difficulty       Int
-  Description      String?
-  Start_point      Point?  @relation(fields: [StartPointId], references: [id], name: "start")
-  StartPointId     Int?
-  End_point        Point?  @relation(fields: [EndPointId], references: [id], name: "end")
-  EndPointId       Int?
-  Reference_points Point[] @relation("hikes")
-  GpsTrack         String?
-  LocalGuide       User?   @relation(fields: [LocalGuideId], references: [id], name: "guide")
-  LocalGuideId     Int?
+  title            String
+  length           Float
+  expected_time    Int
+  ascent           Float
+  difficulty       Int
+  description      String?
+  start_point      Point?  @relation(fields: [startpointid], references: [id], name: "start")
+  startpointid     Int?
+  end_point        Point?  @relation(fields: [endpointid], references: [id], name: "end")
+  endpointid       Int?
+  reference_points Point[] @relation("hikes")
+  gpstrack         String?
+  localguide       User?   @relation(fields: [localguideid], references: [id], name: "guide")
+  localguideid     Int?
 }
 
 model Performance {
   id       Int   @id @default(autoincrement())
   duration Int
   altitude Float
-  user     User  @relation(fields: [UserId], references: [id])
-  UserId   Int
+  user     User  @relation(fields: [userid], references: [id])
+  userid   Int
 }
 
 model User {
@@ -79,5 +79,5 @@ model User {
   username    String
   phoneNumber String        @unique
   performance Performance[]
-  hikesList   Hike[]        @relation("guide")
+  hikeslist   Hike[]        @relation("guide")
 }

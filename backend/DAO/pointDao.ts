@@ -7,32 +7,32 @@ export async function pointById(id: number) {
 }
 
 export type newPoint = Prisma.PointCreateInput & {
-    Hut?: {
-        Description: string,
+    hut?: {
+        description: string,
     },
-    ParkingLot?: {
-        Description: string,
+    parkinglot?: {
+        description: string,
     }
 }
 
 export async function createPoint(point: newPoint) {
     return prisma.point.create({
         data: {
-            Label: point.Label || undefined,
-            Latitude: point.Latitude,
-            Longitude: point.Longitude,
-            Elevation: point.Elevation,
-            City: point.City,
-            Region: point.Region,
-            Province: point.Province,
-            Hut: point.Hut ? {
+            label: point.label || undefined,
+            latitude: point.latitude,
+            longitude: point.longitude,
+            elevation: point.elevation,
+            city: point.city,
+            region: point.region,
+            province: point.province,
+            hut: point.hut ? {
                 create: {
-                    Description: point.Hut.Description
+                    description: point.hut.description
                 }
             } : undefined,
-            ParkingLot: point.ParkingLot ? {
+            parkinglot: point.parkinglot ? {
                 create: {
-                    Description: point.ParkingLot.Description,
+                    description: point.parkinglot.description,
                 }
             } : undefined
         }
@@ -47,21 +47,21 @@ export async function deletePoint(id: number) {
 export async function editPoint(id: number, point: newPoint) {
     return prisma.point.update({
         where: { id: id }, data: {
-            Label: point.Label || undefined,
-            Latitude: point.Latitude || undefined,
-            Longitude: point.Longitude || undefined,
-            Elevation: point.Elevation || undefined,
-            City: point.City || undefined,
-            Region: point.Region || undefined,
-            Province: point.Province || undefined,
-            Hut: point.Hut ? {
+            label: point.label || undefined,
+            latitude: point.latitude || undefined,
+            longitude: point.longitude || undefined,
+            elevation: point.elevation || undefined,
+            city: point.city || undefined,
+            region: point.region || undefined,
+            province: point.province || undefined,
+            hut: point.hut ? {
                 update: {
-                    Description: point.Hut.Description
+                    description: point.hut.description
                 }
             } : undefined,
-            ParkingLot: point.ParkingLot ? {
+            parkinglot: point.parkinglot ? {
                 update: {
-                    Description: point.ParkingLot.Description
+                    description: point.parkinglot.description
                 }
             } : undefined
         }
@@ -71,18 +71,18 @@ export async function editPoint(id: number, point: newPoint) {
 export async function fullList(fields: newPoint) {
     return prisma.point.findMany({
         where: {
-            Label: fields.Label && { startsWith: fields.Label },
-            Latitude: fields.Latitude && { lte: fields.Latitude },
-            Longitude: fields.Longitude && { lte: fields.Longitude },
-            Elevation: fields.Elevation && { lte: fields.Elevation },
-            City: fields.City && { startsWith: fields.City },
-            Region: fields.Region && { startsWith: fields.Region },
-            Province: fields.Province && { startsWith: fields.Province },
-            Hut: (() => {
-                if (fields.Hut) {
-                    if (fields.Hut.Description) {
+            label: fields.label && { startsWith: fields.label },
+            latitude: fields.latitude && { lte: fields.latitude },
+            longitude: fields.longitude && { lte: fields.longitude },
+            elevation: fields.elevation && { lte: fields.elevation },
+            city: fields.city && { startsWith: fields.city },
+            region: fields.region && { startsWith: fields.region },
+            province: fields.province && { startsWith: fields.province },
+            hut: (() => {
+                if (fields.hut) {
+                    if (fields.hut.description) {
                         return {
-                            Description: fields.Hut.Description && { contains: fields.Hut.Description }
+                            description: fields.hut.description && { contains: fields.hut.description }
                         }
                     }
                     else {
@@ -92,11 +92,11 @@ export async function fullList(fields: newPoint) {
                     }
                 }
             })(),
-            ParkingLot: fields.ParkingLot
+            parkinglot: fields.parkinglot
         },
         include: {
-            Hut: fields.Hut ? true : undefined,
-            ParkingLot: fields.ParkingLot ? true : undefined
+            hut: fields.hut ? true : undefined,
+            parkinglot: fields.parkinglot ? true : undefined
         }
     })
 }

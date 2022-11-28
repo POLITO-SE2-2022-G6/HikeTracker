@@ -47,41 +47,41 @@ const guides: Prisma.UserCreateInput[] = Array(10).fill(0).map(e => {
 
 const hikes: Prisma.HikeCreateInput[] = Array(20).fill(0).map(e => {
   return {
-    Title: faker.commerce.productName(),
-    Description: faker.lorem.paragraph(),
-    Ascent: Math.floor(Math.random() * 1000) - 500,
-    Difficulty: Math.floor(Math.random() * 5),
-    Length: Math.floor(Math.random() * 10000),
-    Expected_time: Math.floor(Math.random() * 500),
-    LocalGuide: {
+    title: faker.commerce.productName(),
+    description: faker.lorem.paragraph(),
+    ascent: Math.floor(Math.random() * 1000) - 500,
+    difficulty: Math.floor(Math.random() * 5),
+    length: Math.floor(Math.random() * 10000),
+    expected_time: Math.floor(Math.random() * 500),
+    localguide: {
       connect: {
         id: Math.floor(hikers.length + Math.random() * guides.length)
       }
     },
-    Start_point: {
+    start_point: {
       create: {
-        City: faker.address.city(),
-        Region: regioni[Math.floor(Math.random() * regioni.length)],
-        Province: province[Math.floor(Math.random() * province.length)],
-        Latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
-        Longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
-        Hut: {
+        city: faker.address.city(),
+        region: regioni[Math.floor(Math.random() * regioni.length)],
+        province: province[Math.floor(Math.random() * province.length)],
+        latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
+        longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
+        hut: {
           create: {
-            Description: faker.lorem.paragraph(),
+            description: faker.lorem.paragraph(),
           }
         }
       }
     },
-    End_point: {
+    end_point: {
       create: {
-        City: faker.address.city(),
-        Region: regioni[Math.floor(Math.random() * regioni.length)],
-        Province: province[Math.floor(Math.random() * province.length)],
-        Latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
-        Longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
-        ParkingLot: {
+        city: faker.address.city(),
+        region: regioni[Math.floor(Math.random() * regioni.length)],
+        province: province[Math.floor(Math.random() * province.length)],
+        latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
+        longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
+        parkinglot: {
           create: {
-            Description: faker.lorem.paragraph(),
+            description: faker.lorem.paragraph(),
           }
         }
       }
@@ -92,15 +92,15 @@ const hikes: Prisma.HikeCreateInput[] = Array(20).fill(0).map(e => {
 
 const huts: Prisma.HutCreateInput[] = Array(100).fill(0).map(e => {
   return {
-    Description: faker.lorem.paragraph(),
-    Point: {
+    description: faker.lorem.paragraph(),
+    point: {
       create: {
-        City: faker.address.city(),
-        Region: regioni[Math.floor(Math.random() * regioni.length)],
-        Province: province[Math.floor(Math.random() * province.length)],
-        Label: faker.address.streetName(),
-        Latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
-        Longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
+        city: faker.address.city(),
+        region: regioni[Math.floor(Math.random() * regioni.length)],
+        province: province[Math.floor(Math.random() * province.length)],
+        label: faker.address.streetName(),
+        latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
+        longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
       }
     }
   }
@@ -108,15 +108,15 @@ const huts: Prisma.HutCreateInput[] = Array(100).fill(0).map(e => {
 
 const parkings: Prisma.ParkingLotCreateInput[] = Array(100).fill(0).map(e => {
   return {
-    Description: faker.lorem.paragraph(),
-    Point: {
+    description: faker.lorem.paragraph(),
+    point: {
       create: {
-        City: faker.address.city(),
-        Region: regioni[Math.floor(Math.random() * regioni.length)],
-        Province: province[Math.floor(Math.random() * province.length)],
-        Label: faker.address.streetName(),
-        Latitude: parseFloat(faker.address.latitude(47.1153931748, 36.619987291)),
-        Longitude: parseFloat(faker.address.longitude(18.4802470232, 6.7499552751)),
+        city: faker.address.city(),
+        region: regioni[Math.floor(Math.random() * regioni.length)],
+        province: province[Math.floor(Math.random() * province.length)],
+        label: faker.address.streetName(),
+        latitude: parseFloat(faker.address.latitude(47.1153931748, 36.619987291)),
+        longitude: parseFloat(faker.address.longitude(18.4802470232, 6.7499552751)),
       }
     }
   }
@@ -136,7 +136,7 @@ Promise.all(hikers)
     hikes.map(h => prisma.hike.create({
       data: {
         ...h,
-        LocalGuide: {
+        localguide: {
           connect: {
             id: gl[Math.floor(Math.random() * gl.length)].id
           }

@@ -1,41 +1,40 @@
-import { PrismaClient,Prisma, Point, PrismaPromise } from "@prisma/client"; 
+import { PrismaClient, Point  } from "@prisma/client"; 
 const prisma = new PrismaClient(); 
-import { pointById, createPoint, deletePoint, editPoint, fullList, newPoint} from "../DAO/pointDao"; 
+import { pointById, createPoint, fullList, newPoint} from "../DAO/pointDao"; 
 import request from 'supertest' 
  
 const baseURL = "http://localhost:3001/api/";
  
 const pointtest: newPoint = { 
-    Label : "pointtest", 
-    Latitude : 10, 
-    Longitude : 10, 
-    Elevation : 10, 
-    Hut: { 
-        Description:"suda"
+    label : "pointtest", 
+    latitude : 10, 
+    longitude : 10, 
+    elevation : 10, 
+    hut: { 
+        description:"suda"
     } 
 }  
 
 const newpointtest: newPoint = { 
-    Label : "pointtest", 
-    Latitude : 10, 
-    Longitude : 10, 
-    Elevation : 10
+    label : "pointtest", 
+    latitude : 10, 
+    longitude : 10, 
+    elevation : 10
 }  
 
 const pointFilter={ 
-    Hut: { 
-        Description:"su" 
+    hut: { 
+        description:"su" 
     } 
 } 
 
 const pointFilterEmpty={ 
-    Hut: { 
-         
+    hut: {  
     } 
 } 
 
 const pointEdit  = { 
-    Label : "pointedit" 
+    label : "pointedit" 
 } 
 
  
@@ -56,8 +55,7 @@ describe("Get List of point", () => {
             where: { 
                 id: response.body.id 
             } 
-        }) 
-         
+        })   
     });
 
     test('Check filter of points with empty hut', async () => { 
@@ -77,7 +75,6 @@ describe("Get List of point", () => {
                 id: response.body.id 
             } 
         }) 
-         
     });
     
     test('Check filter of points with no filters for hut and pl', async () => { 
@@ -103,9 +100,7 @@ describe("Get List of point", () => {
                 id: responseHut.body.id 
             } 
         }) 
-         
     });
-
 }); 
  
 describe("Create point", () => { 
@@ -139,8 +134,7 @@ describe("Create point", () => {
                 id: pointAdded.id 
             } 
         }) 
-    });     
-     
+    });      
 }); 
  
 describe("Edit point", () => { 
@@ -155,9 +149,6 @@ describe("Edit point", () => {
                 id: response.body.id 
             } 
         }) 
-    }); 
- 
-     
- 
+    });  
 });
 
