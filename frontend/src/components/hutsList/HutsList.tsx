@@ -4,33 +4,16 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
 import { API } from '../../utilities/api/api';
-import { Hut } from '../../generated/prisma-client';
+import { Hut, Point } from '../../generated/prisma-client';
 
 type HutProps = {
-  data?: any
+  data: HutPoint[]
 }
 
 const HutsList = ({ data }: HutProps) => {
 
-  const [huts, setHuts] = useState<Hut[]>([]);
+  const huts = data;
 
-
-  const getAllHuts = async () => {
-    const hikes = await getHuts();
-    setHuts(hikes);
-  };
-
-  useEffect(() => {
-    if (data) {
-      setHuts(data)
-    } else {
-      getAllHuts();
-    }
-  }, [data]);
-
-  const getHuts = async () => {
-    return await API.hut.getHuts() as Hut[];
-  };
 
   return (
     <>
@@ -38,25 +21,31 @@ const HutsList = ({ data }: HutProps) => {
       <Table highlightOnHover>
         <thead>
           <tr>
+            <th>Name</th>
             <th>Description</th>
           </tr>
         </thead>
         <tbody>{
-          huts?.map((h) => <HutData hut={h} key={h['id']} />)}
+          huts?.map((h) => <HutData hut={h} key={h.id} />)}
         </tbody>
       </Table>
     </>
   );
 }
 
-function HutData({ hut }: { hut: Hut }) {
+type HutPoint = Point & {
+  Hut: Hut;
+};
+
+function HutData({ hut }: { hut: HutPoint }) {
   const navigate = useNavigate()
   const { state, setState } = useContext(UserContext)
 
   return (
     <>
-      <tr onClick={() => { if (state.loggedIn) navigate(`/hike/${hut.id}`) }}>
-        <td>{hut.Description}</td>
+      <tr onClick={() => { if (state.loggedIn) navigate(`/hut/${hut.id}`) }}>
+        <td>{hut.Label}</td>
+        <td>{hut.Hut.Description}</td>
       </tr>
     </>
   );
