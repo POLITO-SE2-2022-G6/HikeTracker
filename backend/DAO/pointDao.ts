@@ -7,7 +7,7 @@ export async function pointById(id: number) {
 }
 
 export type newPoint = Prisma.PointCreateInput & {
-   Hut?: {
+    Hut?: {
         Description: string,
     },
     ParkingLot?: {
@@ -78,9 +78,20 @@ export async function fullList(fields: newPoint) {
             City: fields.City && { startsWith: fields.City },
             Region: fields.Region && { startsWith: fields.Region },
             Province: fields.Province && { startsWith: fields.Province },
-            Hut: fields.Hut? fields.Hut.Description ? {
-                Description: fields.Hut.Description && { contains: fields.Hut.Description }
-            } : { isNot:null } : undefined,  
+            Hut: (() => {
+                if (fields.Hut) {
+                    if (fields.Hut.Description) {
+                        return {
+                            Description: fields.Hut.Description && { contains: fields.Hut.Description }
+                        }
+                    }
+                    else {
+                        return {
+                            isNot: null
+                        }
+                    }
+                }
+            })(),
             ParkingLot: fields.ParkingLot
         },
         include: {
