@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import path from "path";
 import { checkSchema, validationResult } from 'express-validator';
 import { createHike, editHike, hikeById, hikesList } from "../DAO/hikeDao";
-import { isGuide, isLoggedIn, getID } from "./authApi";
+import { isGuide, isLoggedIn } from "./authApi";
 import { User } from "@prisma/client";
 
 export const hRouter = Router();
