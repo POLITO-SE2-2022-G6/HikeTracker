@@ -2,7 +2,7 @@ import s from './GuidePage.module.css';
 import { Container ,Paper,Button,Flex,Grid} from '@mantine/core';
 import { useNavigate } from "react-router-dom";
 import { HikeCard } from "../../../components/hikeCard/hikeCard";
-import { Hike } from '../../../utilities/api/types';
+import { Hike } from '../../../generated/prisma-client';
 import { useContext, useEffect, useState } from 'react';
 import { API } from '../../../utilities/api/api';
 import { UserContext } from '../../../context/userContext';
@@ -10,15 +10,15 @@ import UserInfo from '../../../components/userInfo/userInfo';
 
 
 
-const GuidePage: React.FC = () => {
+const GuidePage = () => {
 
   const navigate = useNavigate();
   const [hikes, setHikes] = useState<Hike[]>([]);
 
 
   const getAllHikes = async () => {
-    const hikes = await  getHikes();
-    setHikes(hikes);
+    const hikes = await  getHikes()
+    setHikes(hikes)
   };
 
   useEffect(() => {

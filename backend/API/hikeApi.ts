@@ -1,6 +1,5 @@
-import express from "express";
+import express, { RequestHandler, Router } from "express";
 import path from "path";
-import { Router } from 'express';
 import { checkSchema, validationResult } from 'express-validator';
 import { createHike, editHike, hikeById, hikesList } from "../DAO/hikeDao";
 import { isGuide, isLoggedIn, getID } from "./authApi";
@@ -77,7 +76,7 @@ hRouter.post("", isGuide, checkSchema({
   },
   Length: {
     in: ['body'],
-    notEmpty: true
+    isFloat: true
   },
   Ascent: {
     in: ['body'],
@@ -97,12 +96,12 @@ hRouter.post("", isGuide, checkSchema({
     optional: true,
     isFloat: true
   },
-  Start_point: {
+  StartPointId: {
     in: ['body'],
     optional: true,
     isInt: true
   },
-  End_point: {
+  EndPointId: {
     in: ['body'],
     optional: true,
     isInt: true
@@ -131,20 +130,31 @@ hRouter.post("", isGuide, checkSchema({
     optional: true,
     in: 'body',
     isInt: true
-  },
-  LocalGuideId: {
-    in: ['body'],
-    isInt: true
   }
-}),  async (req: express.Request, res: express.Response) => {
-    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+}), async (req: express.Request, res: express.Response) => {
+  if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+  
+  const idLG = getID(req);
+  if (!idLG) return res.status(401).json({ error: "Unauthorized" });
+  // const hike = req.body;
+  let hike: any = {
+    Title: req.body.Title,
+    Length: parseInt(req.body.Length),
+    Expected_time: parseInt(req.body.Expected_time),
+    Ascent: parseInt(req.body.Ascent),
+    Difficulty: parseInt(req.body.Difficulty),
+    Description: req.body.Description,
+    StartPointId: parseInt(req.body.StartPointId),
+    EndPointId: parseInt(req.body.EndPointId),
+    LocalGuideId: idLG,
+  }
 
-    const hike = req.body;
-    hike.gpstrack = await gpsUpload(req, res);
 
-    const newHike = await createHike(hike);
-    return res.status(201).json(newHike);
-  })
+  hike.GpsTrack = await gpsUpload(req, res);
+
+  const newHike = await createHike(hike);
+  return res.status(201).json(newHike);
+})
 
 
 //Edit Hike
@@ -157,7 +167,7 @@ hRouter.put("/:id", isGuide, checkSchema({
   Length: {
     in: ['body'],
     optional: true,
-    notEmpty: true
+    isFloat: true
   },
   Expected_time: {
     in: ['body'],
@@ -184,22 +194,12 @@ hRouter.put("/:id", isGuide, checkSchema({
     optional: true,
     notEmpty: true
   },
-  Start_point: {
-    in: ['body'],
-    optional: true,
-    isObject: true
-  },
-  "Start_point.id":{
+  StartPointId: {
     in: ['body'],
     optional: true,
     isInt: true
   },
-  End_point: {
-    in: ['body'],
-    optional: true,
-    isObject: true
-  },
-  "End_point.id":{
+  EndPointId: {
     in: ['body'],
     optional: true,
     isInt: true
@@ -229,28 +229,38 @@ hRouter.put("/:id", isGuide, checkSchema({
     in: 'body',
     isObject: true
   }
-}),  async (req: express.Request, res: express.Response) => {
-    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const id: number = parseInt(req.params.id, 10);
-    const params = req.body;
-    const idHiker = getID(req);
-    if (!idHiker) return res.status(401).json({ error: "Unauthorized" });
-    params.gpstrack = await gpsUpload(req, res);
-    const modifiedHike = await editHike(id, params, idHiker);
-    return res.status(201).json(modifiedHike);
-  })
+}), async (req: express.Request, res: express.Response) => {
+  if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+  const id: number = parseInt(req.params.id, 10);
+  const idHiker = getID(req);
+  let hike: any = {
+    Title: req.body.Title,
+    Length: parseInt(req.body.Length),
+    Expected_time: parseInt(req.body.Expected_time),
+    Ascent: parseInt(req.body.Ascent),
+    Difficulty: parseInt(req.body.Difficulty),
+    Description: req.body.Description,
+    StartPointId: parseInt(req.body.StartPointId),
+    EndPointId: parseInt(req.body.EndPointId),
+    LocalGuideId: idHiker,
+  }
+  // if (!idHiker) return res.status(401).json({ error: "Unauthorized" });
+  hike.GpsTrack = await gpsUpload(req, res);
+  const modifiedHike = await editHike(id, hike, idHiker);
+  return res.status(201).json(modifiedHike);
+})
 
 async function gpsUpload(req: express.Request, res: express.Response) {
   let file = undefined
   if (req.files) {
-    const track = req.files.gpstrack
+    const track = req.files.GpsTrack
     if (!(track instanceof Array)) {
       const rand = (Math.random() + 1).toString(36).substring(7)
-      const trackPath = path.join(__dirname, 'gpstracks', rand, track.name);
+      const trackPath = path.join(path.resolve(__dirname, '..'), 'gpstracks', rand, track.name);
       track.mv(trackPath, (err) => {
         if (err) return res.status(500).send(err);
       });
-      file = `../gpstracks/${rand}/${track.name}`;
+      file = `api/gpstracks/${rand}/${track.name}`;
     }
   }
   return file;

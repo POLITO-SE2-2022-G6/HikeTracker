@@ -6,13 +6,13 @@ import { useState } from 'react';
 import axios from 'axios';
 import HutsList from '../../components/hutsList/HutsList';
 import { HikeCardGrid } from '../../components/hikeCardGrid/hikeCardGrid';
-import { Hut } from '../../generated/prisma-client/index';
+import { Hut, Point } from '../../generated/prisma-client/index';
 
 const elementsPerPage = 5;
 
 const HutsSearchPage: React.FC = () => {
   const [params, setParams] = useSearchParams()
-  const [result, setResult] = useState<Hut[]>([])
+  const [result, setResult] = useState<(Point & { Hut: Hut })[]>([])
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
 
@@ -37,11 +37,13 @@ const HutsSearchPage: React.FC = () => {
 
 
 
-    const res = await axios.get('http://localhost:3001/api/hut', {
+    const res = await axios.get('http://localhost:3001/api/point', {
       params: {
-        region: values.region || undefined,
-        province: values.province || undefined
-      }
+        Region: values.region || undefined,
+        Province: values.province || undefined,
+        Hut: true,
+      },
+      withCredentials: true
     })
     setLoading(false)
 
@@ -92,7 +94,7 @@ const HutsSearchPage: React.FC = () => {
             }
           }
         }>
-          { <HutsList data={result}></HutsList > }
+          {<HutsList data={result.slice((page - 1) * elementsPerPage, elementsPerPage * page)}></HutsList >}
           <Center>
             <Pagination
               total={result.length / elementsPerPage + (result.length % elementsPerPage ? 1 : 0)}

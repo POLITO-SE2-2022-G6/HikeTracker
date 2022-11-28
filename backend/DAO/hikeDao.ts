@@ -1,4 +1,4 @@
-import { Point, PrismaClient, Hike, Prisma } from '@prisma/client'
+import { Point, PrismaClient, Hike } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -72,8 +72,8 @@ export async function hikeById(id: number) {
   });
 }
 
-export const createHike = async (hike: Hike) => {
-  const { Title, Length, Expected_time, Ascent, Difficulty, GpsTrack, Description, LocalGuideId } = hike;
+export const createHike = async (hike: any) => {
+  const { Title, Length, Expected_time, Ascent, Difficulty, GpsTrack, Description, LocalGuideId, StartPointId, EndPointId } = hike;
 
   return prisma.hike.create(
     {
@@ -85,6 +85,16 @@ export const createHike = async (hike: Hike) => {
         Difficulty: Difficulty,
         Description: Description,
         GpsTrack: GpsTrack,
+        Start_point: StartPointId ? {
+          connect: {
+            id: StartPointId
+          }
+        } : undefined,
+        End_point: EndPointId ? {
+          connect: {
+            id: EndPointId
+          }
+        } : undefined,
         LocalGuide: LocalGuideId ? { connect: { id: LocalGuideId } } : undefined,
       },
     }
@@ -125,9 +135,9 @@ export const editHike = async (idp: number, params: newHike, idH: number) => {
       Reference_points: Reference_points ? {
         connect: Reference_points.created.map((p) => ({ id: p.id })),
         deleteMany: Reference_points.deleted.map(id => ({ id }))
-      }: undefined
+      } : undefined
     },
-    include:{
+    include: {
       Reference_points: true,
       Start_point: true,
       End_point: true,
