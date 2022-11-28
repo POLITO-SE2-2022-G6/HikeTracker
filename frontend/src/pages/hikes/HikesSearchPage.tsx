@@ -1,5 +1,5 @@
 import s from './HikesSearchPage.module.css';
-import { Box, Button, Center, Container, Pagination, Paper, Space, TextInput, Title } from '@mantine/core';
+import { Box, Button, Center, Container, Pagination, Paper, Slider, Space, TextInput, Title, Text } from '@mantine/core';
 import { useForm } from '@mantine/form'
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
@@ -8,7 +8,7 @@ import HikesList from '../../components/hikesList/HikesList';
 import { HikeCardGrid } from '../../components/hikeCardGrid/hikeCardGrid';
 import { Hike } from '../../generated/prisma-client/index';
 
-const elementsPerPage = 5;
+const elementsPerPage = 6;
 
 const HikesSearchPage: React.FC = () => {
   const [params, setParams] = useSearchParams()
@@ -27,8 +27,8 @@ const HikesSearchPage: React.FC = () => {
     initialValues: {
       region: params.get('region') || '',
       province: params.get('province') || '',
-      difficulty: parseInt(params.get('difficulty') || '') || undefined,
-      length: parseInt(params.get('length') || '') || undefined,
+      difficulty: parseInt(params.get('difficulty') || '1') || undefined,
+      length: parseInt(params.get('length') || '1') || undefined,
       expected_time: parseInt(params.get('duration') || '') || undefined,
     },
   })
@@ -36,6 +36,10 @@ const HikesSearchPage: React.FC = () => {
   const handleSubmit = async (values: Fields) => {
     setLoading(true)
     console.log(values)
+    let len = 0
+    if (values.length && values.length < 1000) {
+      len = values.length * 1000
+    }
     setParams({
       region: values.region || '',
       province: values.province || '',
@@ -49,7 +53,7 @@ const HikesSearchPage: React.FC = () => {
     const res = await axios.get('http://localhost:3001/api/hike', {
       params: {
         difficulty: values.difficulty || undefined,
-        length: values.length || undefined,
+        length: len || undefined,
         expected_time: values.expected_time || undefined,
         region: values.region || undefined,
         province: values.province || undefined
@@ -91,22 +95,58 @@ const HikesSearchPage: React.FC = () => {
               name="province"
               {...form.getInputProps('province')}
             />
-            <TextInput
-              label="Difficulty"
-              placeholder="Easy"
+            <Text fw={500} fz='sm'>
+              Difficulty:&nbsp;
+              {form.values.difficulty && formatDifficulty(form.values.difficulty)}
+            </Text>
+            <Slider
+              py={'md'}
+              min={1}
+              max={5}
+              step={1}
               name="difficulty"
+              label={formatDifficulty}
+              marks={[
+                { value: 1 },
+                { value: 2 },
+                { value: 3 },
+                { value: 4 },
+                { value: 5 }
+              ]}
               {...form.getInputProps('difficulty')}
+
             />
-            <TextInput
-              label="Length"
-              placeholder="10"
+            <Text fw={500} fz='sm'>
+              Length:&nbsp;
+              {form.values.length && formatLength(form.values.length)}
+            </Text>
+            <Slider
+              scale={calcScale}
+              py={'md'}
+              min={1}
+              max={1000}
+              label={formatLength}
               name="length"
+              defaultValue={10}
               {...form.getInputProps('length')}
+
             />
-            <TextInput
+            {/* <TextInput
               label="Duration"
               placeholder="2"
               name="expected_time"
+              {...form.getInputProps('expected_time')}
+            /> */}
+            <Text fw={500} fz='sm'>
+              Duration:&nbsp;
+              {form.values.expected_time && formatTime(form.values.expected_time)}
+            </Text>
+            <Slider
+              py={'md'}
+              min={1}
+              max={24 * 60}
+              step={30}
+              label={formatTime}
               {...form.getInputProps('expected_time')}
             />
             <Space h={'md'} />
@@ -136,5 +176,28 @@ const HikesSearchPage: React.FC = () => {
     </Container >
   );
 };
+
+function formatDifficulty(value: number) {
+  return ['Beginner', 'Easy', 'Intermediate', 'Hard', 'Expert'][value - 1];
+}
+
+function formatTime(value: number) {
+  if (value > 60) {
+    const hours = (value / 60).toFixed(0);
+    const min = value % 60;
+    return hours + ' h' + (min ? ' ' + min + ' min' : '');
+  }
+  else
+    return value.toFixed(0) + ' min';
+}
+
+function calcScale(value: number) {
+  return 0.000001 * (value ** 3);
+}
+
+function formatLength(value: number) {
+  if (value > 1) return value.toFixed(0) + ' km'
+  else return (value * 1000).toFixed(0) + ' m'
+}
 
 export default HikesSearchPage;
