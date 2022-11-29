@@ -23,14 +23,12 @@ const newpointtest: newPoint = {
 }  
 
 const pointFilter={ 
-    hut: { 
-        description:"su" 
-    } 
+    hut: true,
+    description:"su" 
 } 
 
 const pointFilterEmpty={ 
-    hut: {  
-    } 
+    hut: true
 } 
 
 const pointEdit  = { 
@@ -44,14 +42,14 @@ describe("Get List of point", () => {
         await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
         const response = await agent.post("point").send(newpointtest).expect(200); 
         const responseHut = await agent.post("point").send(pointtest).expect(200);  
-        const idResponse = await agent.get("point").send(pointFilter).expect(200); 
+        const idResponse = await agent.get("point").query(pointFilter).expect(200); 
         const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
         const res = idResponse.body.find((p: Point) => p.id === response.body.id);
 
         expect(resHut).toMatchObject(pointtest);
         expect (res).toBeUndefined();
          
-        await prisma.point.delete({ 
+        prisma.point.delete({ 
             where: { 
                 id: response.body.id 
             } 
@@ -63,14 +61,14 @@ describe("Get List of point", () => {
         await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
         const response = await agent.post("point").send(newpointtest).expect(200); 
         const responseHut = await agent.post("point").send(pointtest).expect(200);  
-        const idResponse = await agent.get("point").send(pointFilterEmpty).expect(200); 
+        const idResponse = await agent.get("point").query(pointFilterEmpty).expect(200); 
         const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
         const res = idResponse.body.find((p: Point) => p.id === response.body.id);
 
         expect(resHut).toMatchObject(pointtest);
         expect (res).toBeUndefined();
          
-        await prisma.point.delete({ 
+        prisma.point.delete({ 
             where: { 
                 id: response.body.id 
             } 
@@ -82,20 +80,20 @@ describe("Get List of point", () => {
         await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
         const response = await agent.post("point").send(newpointtest).expect(200); 
         const responseHut = await agent.post("point").send(pointtest).expect(200);  
-        const idResponse = await agent.get("point").send(newpointtest).expect(200); 
+        const idResponse = await agent.get("point").query(newpointtest).expect(200); 
         const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
         const res = idResponse.body.find((p: Point) => p.id === response.body.id);
         
         expect(resHut).toMatchObject(pointtest);
         expect (res).toMatchObject(newpointtest);
          
-        await prisma.point.delete({ 
+        prisma.point.delete({ 
             where: { 
                 id: response.body.id 
             } 
         });
         
-        await prisma.point.delete({ 
+        prisma.point.delete({ 
             where: { 
                 id: responseHut.body.id 
             } 
@@ -113,7 +111,7 @@ describe("Create point", () => {
         const idResponse = await agent.get("point/" + response.body.id).expect(200); 
         expect (idResponse.body).toMatchObject(response.body); 
          
-        await prisma.point.delete({ 
+        prisma.point.delete({ 
             where: { 
                 id: response.body.id 
             } 
@@ -129,7 +127,7 @@ describe("Create point", () => {
         const point = await pointById(pointAdded.id); 
         expect(point).toMatchObject(pointAdded); 
  
-        await prisma.point.delete({ 
+        prisma.point.delete({ 
             where: { 
                 id: pointAdded.id 
             } 
@@ -144,11 +142,10 @@ describe("Edit point", () => {
         const response = await agent.post("point").send(pointtest).expect(200); 
         const editResponse = await agent.put("point/" + response.body.id).send(pointEdit).expect(200); 
         expect (editResponse.body).toMatchObject(pointEdit); 
-        await prisma.point.delete({ 
+        prisma.point.delete({ 
             where: { 
                 id: response.body.id 
             } 
         }) 
     });  
 });
-

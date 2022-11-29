@@ -68,7 +68,8 @@ export async function editPoint(id: number, point: newPoint) {
     })
 }
 
-export async function fullList(fields: newPoint) {
+type pointQuery = Prisma.PointCreateInput & { hut?: boolean, parkinglot?: boolean, hutdescription?: string, parkinglotdescription?: string };
+export async function fullList(fields: pointQuery) {
     return prisma.point.findMany({
         where: {
             label: fields.label && { startsWith: fields.label },
@@ -80,19 +81,28 @@ export async function fullList(fields: newPoint) {
             province: fields.province && { startsWith: fields.province },
             hut: (() => {
                 if (fields.hut) {
-                    if (fields.hut.description) {
+                    if (fields.hutdescription) {
                         return {
-                            description: fields.hut.description && { contains: fields.hut.description }
+                            description: fields.hutdescription && { contains: fields.hutdescription }
                         }
                     }
-                    else {
-                        return {
-                            isNot: null
-                        }
+                    return {
+                        isNot: null
                     }
                 }
             })(),
-            parkinglot: fields.parkinglot
+            parkinglot: (() => {
+                if (fields.parkinglot) {
+                    if (fields.parkinglotdescription) {
+                        return {
+                            description: fields.parkinglotdescription && { contains: fields.parkinglotdescription }
+                        }
+                    }
+                    return {
+                        isNot: null
+                    }
+                }
+            })()
         },
         include: {
             hut: fields.hut ? true : undefined,

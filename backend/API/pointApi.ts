@@ -158,7 +158,7 @@ pRouter.get("", isGuideOrHiker, checkSchema({
         in: ['query'],
         optional: true
     },
-    "hut.description": {
+    hutdescription: {
         in: ['query'],
         optional: true,
         notEmpty: true
@@ -167,9 +167,28 @@ pRouter.get("", isGuideOrHiker, checkSchema({
         in: ['query'],
         optional: true,
         isObject: true
+    },
+    parkinglotdescription: {
+        in: ['query'],
+        optional: true,
+        notEmpty: true
     }
 }), async (req: express.Request, res: express.Response) => {    
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const points = await fullList(req.query);
+    const {label, latitude, longitude, elevation, city, region, province, hut, hutdescription, parkinglot, parkinglotdescription } = req.query as Record<string, string | undefined>;
+
+    const points = await fullList({
+        label,
+        latitude: latitude ? parseFloat(latitude) : undefined,
+        longitude: longitude ? parseFloat(longitude) : undefined,
+        elevation: elevation ? parseFloat(elevation) : undefined,
+        city,
+        region,
+        province,
+        hut: hut? hut === "true" : undefined,
+        hutdescription,
+        parkinglot: parkinglot? parkinglot === "true" : undefined,
+        parkinglotdescription
+    });
     res.send(points);
 });
