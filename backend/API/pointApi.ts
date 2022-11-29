@@ -105,7 +105,8 @@ pRouter.post("", checkSchemaOfPoint(), isGuide, async (req: express.Request, res
 pRouter.get("", isGuideOrHiker, checkSchema({
     hut:{
         in: ['query'],
-        optional: true
+        optional: true,
+        isBoolean: true
     },
     hutdescription: {
         in: ['query'],
@@ -115,7 +116,7 @@ pRouter.get("", isGuideOrHiker, checkSchema({
     parkinglot:{
         in: ['query'],
         optional: true,
-        isObject: true
+        isBoolean: true
     },
     parkinglotdescription: {
         in: ['query'],
