@@ -79,34 +79,12 @@ export async function fullList(fields: pointQuery) {
             city: fields.city && { startsWith: fields.city },
             region: fields.region && { startsWith: fields.region },
             province: fields.province && { startsWith: fields.province },
-            hut: (() => {
-                if (fields.hut) {
-                    if (fields.hutdescription) {
-                        return {
-                            description: fields.hutdescription && { contains: fields.hutdescription }
-                        }
-                    }
-                    return {
-                        isNot: null
-                    }
-                }
-            })(),
-            parkinglot: (() => {
-                if (fields.parkinglot) {
-                    if (fields.parkinglotdescription) {
-                        return {
-                            description: fields.parkinglotdescription && { contains: fields.parkinglotdescription }
-                        }
-                    }
-                    return {
-                        isNot: null
-                    }
-                }
-            })()
+            hut: fields.hut && { description: { contains: fields.hutdescription } },
+            parkinglot: fields.parkinglot && { description: { contains: fields.parkinglotdescription } }
         },
         include: {
-            hut: fields.hut ? true : undefined,
-            parkinglot: fields.parkinglot ? true : undefined
+            hut: (fields.hut || !(fields.parkinglot)) ? true : false,
+            parkinglot: (fields.parkinglot || !(fields.hut)) ? true : false
         }
     })
 }

@@ -24,7 +24,7 @@ const newpointtest: newPoint = {
 
 const pointFilter={ 
     hut: true,
-    description:"su" 
+    hutdescription:"su" 
 } 
 
 const pointFilterEmpty={ 
@@ -43,6 +43,7 @@ describe("Get List of point", () => {
         const response = await agent.post("point").send(newpointtest).expect(200); 
         const responseHut = await agent.post("point").send(pointtest).expect(200);  
         const idResponse = await agent.get("point").query(pointFilter).expect(200); 
+        
         const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
         const res = idResponse.body.find((p: Point) => p.id === response.body.id);
 

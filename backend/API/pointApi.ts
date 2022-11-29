@@ -176,7 +176,7 @@ pRouter.get("", isGuideOrHiker, checkSchema({
 }), async (req: express.Request, res: express.Response) => {    
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const {label, latitude, longitude, elevation, city, region, province, hut, hutdescription, parkinglot, parkinglotdescription } = req.query as Record<string, string | undefined>;
-
+    
     const points = await fullList({
         label,
         latitude: latitude ? parseFloat(latitude) : undefined,
