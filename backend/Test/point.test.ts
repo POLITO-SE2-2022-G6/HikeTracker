@@ -1,6 +1,6 @@
 import { PrismaClient, Point  } from "@prisma/client"; 
 const prisma = new PrismaClient(); 
-import { pointById, createPoint, fullList, newPoint} from "../DAO/pointDao"; 
+import { pointById, createPoint, fullList, newPoint, pointQuery} from "../DAO/pointDao"; 
 import request from 'supertest' 
  
 const baseURL = "http://localhost:3001/api/";
@@ -15,7 +15,7 @@ const pointtest: newPoint = {
     } 
 }  
 
-const newpointtest: newPoint = { 
+const newpointtest: pointQuery = { 
     label : "pointtest", 
     latitude : 10, 
     longitude : 10, 
@@ -36,69 +36,55 @@ const pointEdit  = {
 } 
 
  
+async function setUpCheckFilter(filter: pointQuery){
+    const agent = request.agent(baseURL);  
+    await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
+    const response = await agent.post("point").send(newpointtest).expect(200); 
+    const responseHut = await agent.post("point").send(pointtest).expect(200);  
+    const idResponse = await agent.get("point").query(filter).expect(200); 
+    const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
+    const res = idResponse.body.find((p: Point) => p.id === response.body.id);
+    expect(resHut).toMatchObject(pointtest);
+    return {resHut, res};
+}
+
 describe("Get List of point", () => { 
     test('Check filter of points', async () => { 
-        const agent = request.agent(baseURL);  
-        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
-        const response = await agent.post("point").send(newpointtest).expect(200); 
-        const responseHut = await agent.post("point").send(pointtest).expect(200);  
-        const idResponse = await agent.get("point").query(pointFilter).expect(200); 
-        
-        const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
-        const res = idResponse.body.find((p: Point) => p.id === response.body.id);
-
-        expect(resHut).toMatchObject(pointtest);
+        const {resHut, res} = await setUpCheckFilter(pointFilter);
         expect (res).toBeUndefined();
          
-        prisma.point.delete({ 
+        prisma.point.delete({
             where: { 
-                id: response.body.id 
+                id: resHut.id 
             } 
         })   
     });
 
     test('Check filter of points with empty hut', async () => { 
-        const agent = request.agent(baseURL);  
-        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
-        const response = await agent.post("point").send(newpointtest).expect(200); 
-        const responseHut = await agent.post("point").send(pointtest).expect(200);  
-        const idResponse = await agent.get("point").query(pointFilterEmpty).expect(200); 
-        const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
-        const res = idResponse.body.find((p: Point) => p.id === response.body.id);
-
-        expect(resHut).toMatchObject(pointtest);
+        const {resHut, res} = await setUpCheckFilter(pointFilterEmpty);
         expect (res).toBeUndefined();
          
-        prisma.point.delete({ 
+        prisma.point.delete({
             where: { 
-                id: response.body.id 
+                id: resHut.id 
             } 
-        }) 
+        })
     });
     
     test('Check filter of points with no filters for hut and pl', async () => { 
-        const agent = request.agent(baseURL);  
-        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200); 
-        const response = await agent.post("point").send(newpointtest).expect(200); 
-        const responseHut = await agent.post("point").send(pointtest).expect(200);  
-        const idResponse = await agent.get("point").query(newpointtest).expect(200); 
-        const resHut = idResponse.body.find((p: Point) => p.id === responseHut.body.id);
-        const res = idResponse.body.find((p: Point) => p.id === response.body.id);
-        
-        expect(resHut).toMatchObject(pointtest);
+        const {resHut, res} = await setUpCheckFilter(newpointtest);
         expect (res).toMatchObject(newpointtest);
          
+        prisma.point.delete({
+            where: { 
+                id: resHut.id 
+            } 
+        })
         prisma.point.delete({ 
             where: { 
-                id: response.body.id 
+                id: res.id 
             } 
-        });
-        
-        prisma.point.delete({ 
-            where: { 
-                id: responseHut.body.id 
-            } 
-        }) 
+        })
     });
 }); 
  

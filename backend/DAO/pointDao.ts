@@ -68,7 +68,7 @@ export async function editPoint(id: number, point: newPoint) {
     })
 }
 
-type pointQuery = Prisma.PointCreateInput & { hut?: boolean, parkinglot?: boolean, hutdescription?: string, parkinglotdescription?: string };
+export type pointQuery = Prisma.PointCreateInput & { hut?: boolean, parkinglot?: boolean, hutdescription?: string, parkinglotdescription?: string };
 export async function fullList(fields: pointQuery) {
     return prisma.point.findMany({
         where: {
