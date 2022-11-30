@@ -1,4 +1,4 @@
-TEMPLATE FOR RETROSPECTIVE (Team #6)
+RETROSPECTIVE (Team #6)
 =====================================
 
 ## PROCESS MEASURES 
