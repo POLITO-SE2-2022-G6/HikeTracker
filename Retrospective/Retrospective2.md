@@ -27,17 +27,17 @@ RETROSPECTIVE 2 (Team #6)
 
 | Story  | # Tasks | Points | Hours est. | Hours actual |
 |--------|---------|--------|------------|--------------|
-| _#0_   |    11   |   -    |     37     |       33     |
+| _#0_   |    11   |   -    |     37     |       24     |
 | _#5_   |    13   |   3    |     16     |       17     |
 | _#6_   |    1    |   3    |     2      |       1      |
-| _#7_   |    4    |   5    |     5.5    |       8.5    |
-| _#8_   |    2    |   3    |     5      |       4.5    |
+| _#7_   |    4    |   5    |     5.5    |       9      |
+| _#8_   |    2    |   3    |     5      |       3.5    |
 | _#9_   |    2    |   3    |     3.5    |       0      |
 
 - Hours per task average, standard deviation (estimate and actual)
   2.09, 1.94
 - Total task estimation error ratio: sum of total (hours estimation / sum of total hours spent) - 1
-  28/62 - 1 = -54%
+  69/54 - 1 = 28%
   
   
 ## QUALITY MEASURES 
@@ -67,4 +67,4 @@ RETROSPECTIVE 2 (Team #6)
   - Better work hours' management
 
 - One thing you are proud of as a Team!!
-  - The end result was ok.
+  - The end result was organised and polished, albeit having bugs
