@@ -34,7 +34,8 @@
     "start": "nodemon index.ts",
     "build": "tsc",
     "execute": "node dist/index.js",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "test": "jest --runInBand"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
