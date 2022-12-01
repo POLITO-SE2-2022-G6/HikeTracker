@@ -44,7 +44,7 @@ RETROSPECTIVE 2 (Team #6)
 
 - Unit Testing:
   - Total hours estimated: 12
-  - Total hours spent: 6(to be uptaded)
+  - Total hours spent: 6
   - Nr of automated unit test cases: 12-
   - Coverage (if available)
 - E2E testing: - 
