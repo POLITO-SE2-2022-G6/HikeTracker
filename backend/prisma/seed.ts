@@ -122,8 +122,14 @@ const parkings: Prisma.ParkingLotCreateInput[] = Array(100).fill(0).map(e => {
   }
 })
 
+const usr ={
+  email: "Ezio_DiMauro48@hotmail.com", 
+  type: 'guide',
+  username: faker.internet.userName(),
+  phoneNumber: faker.phone.number()
+}
 
-
+const usrPromise = prisma.user.create({data: usr});
 const guidesPromises = guides.map(u => prisma.user.create({ data: u }))
 const hikersPromises = hikers.map(u => prisma.user.create({ data: u }))
 
@@ -146,6 +152,7 @@ Promise.all(hikers)
   ))
   .then(() => Promise.all(hutsPromises))
   .then(() => Promise.all(parkingsPromises))
+  .then(() => Promise.resolve(usrPromise))
   .then(() => {
     console.log('Seed finished')
     process.exit(0)

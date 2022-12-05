@@ -19,6 +19,7 @@ model Hut {
   description String?
   point       Point?  @relation("refHut")
   pointid     Int?
+  hikes       Hike[] @relation("huts")
 }
 
 model ParkingLot {
@@ -62,6 +63,7 @@ model Hike {
   gpstrack         String?
   localguide       User?   @relation(fields: [localguideid], references: [id], name: "guide")
   localguideid     Int?
+  huts             Hut[]   @relation("huts")
 }
 
 model Performance {

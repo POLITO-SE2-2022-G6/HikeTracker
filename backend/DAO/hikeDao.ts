@@ -1,4 +1,4 @@
-import { Point, PrismaClient, Hike } from '@prisma/client'
+import { Point, PrismaClient, Hike, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -10,6 +10,10 @@ type HikeQuery = {
   length?: number,
   ascent?: number,
   expected_time?: number
+}
+
+export type FromForm<T> = {
+  [k in keyof T]: string
 }
 
 export async function hikesList(fields: HikeQuery) {
@@ -102,7 +106,7 @@ export const createHike = async (hike: any) => {
   );
 };
 
-type newHike = Hike & { reference_points: { created: Point[], deleted: number[] } };
+export type newHike = Prisma.HikeCreateInput & { reference_points: { created: Point[], deleted: number[] }, startpointid: number, endpointid: number, localguideid: number };
 export const editHike = async (idp: number, params: newHike) => {
   const { title, length, expected_time, ascent, difficulty, description, startpointid, endpointid, reference_points, gpstrack, localguideid } = params;
 

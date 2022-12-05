@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import path from "path";
 import { checkSchema, validationResult } from 'express-validator';
-import { createHike, editHike, hikeById, hikesList } from "../DAO/hikeDao";
+import { createHike, editHike, hikeById, hikesList, newHike } from "../DAO/hikeDao";
 import { isGuide, isLoggedIn } from "./authApi";
 import { User } from "@prisma/client";
 
@@ -134,12 +134,20 @@ hRouter.post("", isGuide, checkSchema({
   }
 }), async (req: express.Request, res: express.Response) => {
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-  
-  const hike = req.body;
-  hike.localguideid = (req.user as User).id;
-  hike.gpstrack = await gpsUpload(req, res);
 
-  const newHike = await createHike(hike);
+  const newHike = await createHike({
+    title: req.body.title,
+    length: req.body.length && parseFloat(req.body.length),
+    ascent: req.body.ascent && parseFloat(req.body.ascent),
+    expected_time: req.body.expected_time && parseInt(req.body.expected_time),
+    difficulty: req.body.difficulty && parseInt(req.body.difficulty),
+    description: req.body.description,
+    gpstrack: await gpsUpload(req, res),
+    startpointid: req.body.startpointid && parseInt(req.body.startpointid),
+    endpointid: req.body.endpointid && parseInt(req.body.endpointid),
+    reference_points: req.body.reference_points,
+    localguideid: (req.user as User).id
+  });
   return res.status(201).json(newHike);
 })
 
@@ -219,10 +227,20 @@ hRouter.put("/:id", isGuide, checkSchema({
 }), async (req: express.Request, res: express.Response) => {
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
   const id: number = parseInt(req.params.id, 10);
-  const hike = req.body;
-  hike.localguideid = (req.user as User).id;;
-  hike.gpstrack = await gpsUpload(req, res);
-  const modifiedHike = await editHike(id, hike);
+  
+  const modifiedHike = await editHike(id, {
+    title: req.body.title,
+    length: req.body.length && parseFloat(req.body.length),
+    expected_time: req.body.expected_time && parseInt(req.body.expected_time),
+    ascent: req.body.ascent && parseFloat(req.body.ascent),
+    difficulty: req.body.difficulty && parseInt(req.body.difficulty),
+    description: req.body.description,
+    gpstrack: await(gpsUpload(req, res)) || null,
+    startpointid: req.body.startpointid && parseInt(req.body.startpointid),
+    endpointid: req.body.endpointid && parseInt(req.body.endpointid),
+    reference_points: req.body.reference_points,
+    localguideid: (req.user as User).id
+  });
   return res.status(201).json(modifiedHike);
 })
 

@@ -5,6 +5,11 @@ import request from 'supertest'
 
 const baseURL = "http://localhost:3001/api/";
 
+const usr ={
+    email: "Ezio_DiMauro48@hotmail.com", 
+    password: "Isa6"
+}
+
 const pointtest: newPoint = {
     label: "pointtest",
     latitude: 10,
@@ -42,7 +47,7 @@ const pointEdit = {
 
 async function setUpCheckFilter(filter: pointQuery) {
     const agent = request.agent(baseURL);
-    await agent.post('auth/login').send({ email: "Galeazzo_Abbrescia40@email.it", password: "Isa6" }).expect(200);
+    await agent.post('auth/login').send(usr).expect(200);
     const response = await agent.post("point").send(newpointtest).expect(200);
     const responseHut = await agent.post("point").send(pointtest).expect(200);
     const idResponse = await agent.get("point").query(filter).expect(200);
@@ -126,7 +131,7 @@ describe("Get List of point", () => {
 describe("Create point", () => {
     test('check addition of point from API', async () => {
         const agent = request.agent(baseURL);
-        await agent.post('auth/login').send({ email: "Galeazzo_Abbrescia40@email.it", password: "Isa6" }).expect(200);
+        await agent.post('auth/login').send(usr).expect(200);
 
         const response = await agent.post("point").send(pointtest).expect(200);
 
@@ -161,7 +166,7 @@ describe("Create point", () => {
 describe("Edit point", () => {
     test("check edit of point's label from API", async () => {
         const agent = request.agent(baseURL);
-        await agent.post('auth/login').send({ email: "Galeazzo_Abbrescia40@email.it", password: "Isa6" }).expect(200);
+        await agent.post('auth/login').send(usr).expect(200);
         const response = await agent.post("point").send(pointtest).expect(200);
         const editResponse = await agent.put("point/" + response.body.id).send(pointEdit).expect(200);
         expect(editResponse.body).toMatchObject(pointEdit);
