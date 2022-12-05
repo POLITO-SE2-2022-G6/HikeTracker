@@ -44,8 +44,8 @@ function HutData({ hut }: { hut: HutPoint }) {
   return (
     <>
       <tr onClick={() => { if (state.loggedIn) navigate(`/hut/${hut.id}`) }}>
-        <td>{hut.Label}</td>
-        <td>{hut.Hut.Description}</td>
+        <td>{hut.label}</td>
+        <td>{hut.Hut.description}</td>
       </tr>
     </>
   );

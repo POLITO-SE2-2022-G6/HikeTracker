@@ -4,7 +4,8 @@ import { BsClockHistory } from "react-icons/bs";
 import { GiMountains, GiPathDistance } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
-import { Hike } from "../../utilities/api/types";
+import { Hike } from "../../generated/prisma-client";
+
 
 
 interface HikeCardProps {
@@ -40,13 +41,13 @@ export const HikeCard = (props: HikeCardProps) => {
         </Card.Section>
 
         <Group position="apart" my={'sm'}>
-          <Title order={4}>{hike.Title}</Title>
-          <Badge color={difficultyColor[hike.Difficulty]}>
-            {['Beginner', 'Easy', 'Intermediate', 'Hard', 'Expert'][hike.Difficulty]}
+          <Title order={4}>{hike.title}</Title>
+          <Badge color={difficultyColor[hike.difficulty]}>
+            {['Beginner', 'Easy', 'Intermediate', 'Hard', 'Expert'][hike.difficulty]}
           </Badge>
         </Group>
 
-        <Text size='sm' lineClamp={3}>{hike.Description}</Text>
+        <Text size='sm' lineClamp={3}>{hike.description}</Text>
 
         <Card.Section
           p='md'
@@ -57,18 +58,18 @@ export const HikeCard = (props: HikeCardProps) => {
               variant="outline"
               leftSection={<GiPathDistance style={{ verticalAlign: 'middle' }} size='1.5em' />}
               size="lg"
-            >{hike.Length.toFixed(1)} Km</Badge>
+            >{hike.length.toFixed(1)} Km</Badge>
             <Badge
               variant="outline"
               leftSection={<GiMountains style={{ verticalAlign: 'middle' }} size='1.5em' />}
               size="lg"
-            >{hike.Ascent.toFixed(0)} M</Badge>
+            >{hike.ascent.toFixed(0)} M</Badge>
             <Badge
               variant="outline"
               leftSection={<BsClockHistory style={{ verticalAlign: 'middle' }} size='1.5em' />}
               size="lg"
             >{
-                formatTime(hike.Expected_time)
+                formatTime(hike.expected_time)
               }</Badge>
           </Group>
         </Card.Section>

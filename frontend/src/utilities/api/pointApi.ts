@@ -3,8 +3,8 @@ import { Methods } from "./client";
 import { Resource } from "./resource";
 
 type AddPoint = Partial<Point> & {
-  Hut?: Partial<Hut>;
-  ParkingLot?: Partial<ParkingLot>;
+  hut?: Partial<Hut>;
+  parkingLot?: Partial<ParkingLot>;
 };
 
 export class PointApi extends Resource {

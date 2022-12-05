@@ -1,6 +1,6 @@
 import { Grid } from "@mantine/core";
 import { HikeCard } from "../../components/hikeCard/hikeCard";
-import { Hike } from "../../utilities/api/types";
+import { Hike } from "../../generated/prisma-client";
 
 
 export const HikeCardGrid = ({ hikes }: { hikes?: Hike[] }) => {

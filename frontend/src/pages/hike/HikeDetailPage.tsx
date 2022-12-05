@@ -52,9 +52,9 @@ const HikeDetailPage: React.FC = () => {
         const hike = await fetchHike(id)
         if (!hike) return
         setHike(hike as Hike)
-        if (hike.GpsTrack) {
+        if (hike.gpstrack) {
           console.log("Download track")
-          const xml = await axios.get(`http://localhost:3001/` + hike.GpsTrack, { withCredentials: true })
+          const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
           console.log("Extract track")
           const points = extrackPoints(xml.data)
           console.log("Set points")
@@ -80,7 +80,7 @@ const HikeDetailPage: React.FC = () => {
       <Container>
         <Paper p={'md'} radius={'md'} shadow={'md'} withBorder>
           <Group position='apart'>
-            <Title order={1}>{hike?.Title}</Title>
+            <Title order={1}>{hike?.title}</Title>
             {loggedIn && state.data?.type == 'guide' && <Button onClick={() => navigate(`/hike/edit/${id}`)}>Edit Hike</Button>}
           </Group>
           <Space h={'md'} />
@@ -88,25 +88,25 @@ const HikeDetailPage: React.FC = () => {
           <Stack maw='15em'>
             <Group position='apart' >
               <Text>Length:</Text>
-              <Text>{((hike?.Length || 0) / 1000).toPrecision(2)} km</Text>
+              <Text>{((hike?.length || 0) / 1000).toPrecision(2)} km</Text>
             </Group>
             <Group position='apart' >
               <Text>Expected Time:</Text>
-              <Text>{hike?.Expected_time} min</Text>
+              <Text>{hike?.expected_time} min</Text>
             </Group>
             <Group position='apart' >
               <Text>Ascent:</Text>
-              <Text>{hike?.Ascent} m</Text>
+              <Text>{hike?.ascent} m</Text>
             </Group>
             <Group position='apart' >
               <Text>Difficulty:</Text>
-              <Text>{hike?.Difficulty}</Text>
+              <Text>{hike?.difficulty}</Text>
             </Group>
 
           </Stack>
 
           <Title order={4}>What our local guides have to say:</Title>
-          <Blockquote maw={'60%'}>{hike?.Description}</Blockquote>
+          <Blockquote maw={'60%'}>{hike?.description}</Blockquote>
         </Paper>
 
         <Space h={'md'} />
@@ -134,12 +134,12 @@ const HikeDetailPage: React.FC = () => {
 export default HikeDetailPage;
 
 function PointMarker(point: Point) {
-  if (!point.Latitude || !point.Longitude) return null
+  if (!point.latitude || !point.longitude) return null
   return <Marker
-    position={[point.Latitude, point.Longitude]}
+    position={[point.latitude, point.longitude]}
   >
     <Popup>
-      {point.Label}
+      {point.label}
     </Popup>
   </Marker>;
 }

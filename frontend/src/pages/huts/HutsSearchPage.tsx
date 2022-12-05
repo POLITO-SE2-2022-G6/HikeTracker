@@ -39,8 +39,8 @@ const HutsSearchPage: React.FC = () => {
 
     const res = await axios.get('http://localhost:3001/api/point', {
       params: {
-        Region: values.region || undefined,
-        Province: values.province || undefined,
+        region: values.region || undefined,
+        province: values.province || undefined,
         Hut: true,
       },
       withCredentials: true

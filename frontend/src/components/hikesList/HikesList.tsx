@@ -79,11 +79,11 @@ function HikeData({ hike }: { hike: Hike }) {
   return (
     <>
       <tr onClick={() => { if (state.loggedIn) navigate(`/hike/${hike.id}`) }}>
-        <td>{hike.Title} </td>
-        <td>{hike.Length}</td>
-        <td>{hike.Expected_time}</td>
-        <td>{hike.Ascent}</td>
-        <td>{hike.Difficulty}</td>
+        <td>{hike.title} </td>
+        <td>{hike.length}</td>
+        <td>{hike.expected_time}</td>
+        <td>{hike.ascent}</td>
+        <td>{hike.difficulty}</td>
         <td> {state.loggedIn ? <IoIosArrowDropdown size="22px"/>: ""}</td>
         {/* <td>{props.hike['StartPointId']}</td>
         <td>{props.hike['EndPointId']}</td> */}

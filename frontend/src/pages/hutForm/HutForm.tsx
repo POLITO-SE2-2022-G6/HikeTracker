@@ -69,14 +69,14 @@ const HutForm: React.FC = () => {
     try {
       console.log(values);
       const res = await API.point.createPoint({
-        City: values.city,
-        Latitude: values.latitude,
-        Longitude: values.longitude,
-        Province: values.province,
-        Region: values.region,
-        Label: values.title,
-        Hut: {
-          Description: values.description,
+        city: values.city,
+        latitude: values.latitude,
+        longitude: values.longitude,
+        province: values.province,
+        region: values.region,
+        label: values.title,
+        hut: {
+          description: values.description,
         }
       });
       console.log(res);

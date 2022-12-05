@@ -84,7 +84,7 @@ const GuidePage = () => {
     return (
       <Grid >
         {
-          hikes?.filter((h) => h.LocalGuideId === guideId ).map( (h) => <Grid.Col span={'auto'} key={h.id}>
+          hikes?.filter((h) => h.localguideid === guideId ).map( (h) => <Grid.Col span={'auto'} key={h.id}>
             <HikeCard hike={h} />
           </Grid.Col >)
         }

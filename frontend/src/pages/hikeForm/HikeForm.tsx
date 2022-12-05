@@ -34,39 +34,39 @@ const HikeForm: React.FC = () => {
 
 
   type Fields = {
-    Title?: string;
-    Length?: number;
-    Expected_time?: number;
-    Ascent?: number;
-    Difficulty?: number;
-    StartPointId?: number;
-    EndPointId?: number;
-    Description?: string;
-    GpsTrack?: File;
+    title?: string;
+    length?: number;
+    expected_time?: number;
+    ascent?: number;
+    difficulty?: number;
+    startpointid?: number;
+    endpointid?: number;
+    description?: string;
+    gpstrack?: File;
   }
 
   const form = useForm<Fields>({
     initialValues: {
-      Title: '',
-      Length: undefined,
-      Expected_time: undefined,
-      Ascent: undefined,
-      Difficulty: undefined,
-      StartPointId: undefined,
-      EndPointId: undefined,
-      Description: '',
-      GpsTrack: undefined,
+      title: '',
+      length: undefined,
+      expected_time: undefined,
+      ascent: undefined,
+      difficulty: undefined,
+      startpointid: undefined,
+      endpointid: undefined,
+      description: '',
+      gpstrack: undefined,
     },
 
     validate: {
-      Title: (value: string) => (!value ? 'Title must not be empty' : null),
-      Length: (value: number) => (!value ? 'Length must not be empty' : null),
-      Expected_time: (value: number) => (!value ? 'Expected time must not be empty' : null),
-      Ascent: (value: number) => (!value ? 'Ascent must not be empty' : null),
-      Difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
+      title: (value: string) => (!value ? 'Title must not be empty' : null),
+      length: (value: number) => (!value ? 'Length must not be empty' : null),
+      expected_time: (value: number) => (!value ? 'Expected time must not be empty' : null),
+      ascent: (value: number) => (!value ? 'Ascent must not be empty' : null),
+      difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
       // StartPointId: (value: number) => (!value ? 'Start point must not be empty' : null),
       // EndPointId: (value: number) => (!value ? 'End point must not be empty' : null),
-      Description: (value: string) => (!value ? 'Description must not be empty' : null),
+      description: (value: string) => (!value ? 'Description must not be empty' : null),
     },
   });
 
@@ -76,14 +76,14 @@ const HikeForm: React.FC = () => {
         const hike = await API.hike.getHike(parseInt(id))
         if (!hike) return
         form.setValues({
-          Title: hike.Title,
-          Length: hike.Length,
-          Expected_time: hike.Expected_time,
-          Ascent: hike.Ascent,
-          Difficulty: hike.Difficulty,
+          title: hike.title,
+          length: hike.length,
+          expected_time: hike.expected_time,
+          ascent: hike.ascent,
+          difficulty: hike.difficulty,
           // StartPointId: hike.StartPoint,
           // EndPointId: hike.EndPoint,
-          Description: hike.Description!,
+          description: hike.description!,
         })
       }
     }
@@ -160,11 +160,11 @@ const HikeForm: React.FC = () => {
             <TextInput
               label="Title"
               placeholder="Title of the hike"
-              {...form.getInputProps('Title')} />
+              {...form.getInputProps('title')} />
             <Textarea
               label="Description"
               placeholder="Description of the hike"
-              {...form.getInputProps('Description')} />
+              {...form.getInputProps('description')} />
             <NumberInput
               label="Length"
               description="In meters"
@@ -172,41 +172,41 @@ const HikeForm: React.FC = () => {
               step={0.5}
               placeholder="2"
               min={1}
-              {...form.getInputProps('Length')} />
+              {...form.getInputProps('length')} />
             <NumberInput
               label="Expected Time"
               placeholder="10"
               min={1}
-              {...form.getInputProps('Expected_time')} />
+              {...form.getInputProps('expected_time')} />
             <NumberInput
               label="Ascent"
               description="In meters"
               precision={1}
               step={0.5}
               placeholder="Ascent of the hike"
-              {...form.getInputProps('Ascent')}
+              {...form.getInputProps('ascent')}
             />
             <NumberInput
               label="Difficulty"
               placeholder="0"
               min={0}
               max={4}
-              {...form.getInputProps('Difficulty')} />
+              {...form.getInputProps('difficulty')} />
             <FileInput
               label="Gps Track"
               placeholder=""
               accept=".gpx"
               icon={<IconUpload size={14} />}
-              {...form.getInputProps('GpsTrack')}
+              {...form.getInputProps('gpstrack')}
             />
 
             <TextInput
               hidden
-              {...form.getInputProps('StartPointId')}
+              {...form.getInputProps('startpointid')}
             />
             <TextInput
               hidden
-              {...form.getInputProps('EndPointId')}
+              {...form.getInputProps('endpointid')}
             />
 
             <Space h={'md'} />
@@ -220,7 +220,7 @@ const HikeForm: React.FC = () => {
                     points.map((point) => {
                       if (point.Hut || point.ParkingLot)
                         return <Marker
-                          position={[point.Latitude!, point.Longitude!]}
+                          position={[point.latitude!, point.longitude!]}
                           // icon={hutIcon}
                           eventHandlers={{
                             click: () => {
@@ -229,7 +229,7 @@ const HikeForm: React.FC = () => {
                           }}
                         >
                           <Popup>
-                            {point.Label}
+                            {point.label}
                           </Popup>
                         </Marker>
                     })
@@ -241,8 +241,8 @@ const HikeForm: React.FC = () => {
               </Box>
               <Box>
                 <Stack p={'md'}>
-                  <Button type="button" onClick={() => { selectedMarker && form.setValues({ StartPointId: selectedMarker }) }}> Set as Start Point </Button>
-                  <Button type="button" onClick={() => { selectedMarker && form.setValues({ EndPointId: selectedMarker }) }}> Set as End Point </Button>
+                  <Button type="button" onClick={() => { selectedMarker && form.setValues({ startpointid: selectedMarker }) }}> Set as Start Point </Button>
+                  <Button type="button" onClick={() => { selectedMarker && form.setValues({ endpointid: selectedMarker }) }}> Set as End Point </Button>
                 </Stack>
               </Box>
               {/* buttons */}
