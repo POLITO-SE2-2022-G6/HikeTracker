@@ -16,7 +16,13 @@ datasource db {
 
 model Hut {
   id          Int     @id @default(autoincrement())
+  name        String
   description String?
+  altitude    Float
+  beds        Int
+  phone       String
+  email       String
+  website     String?
   point       Point?  @relation("refHut")
   pointid     Int?
   hikes       Hike[] @relation("huts")
@@ -25,6 +31,9 @@ model Hut {
 model ParkingLot {
   id          Int     @id @default(autoincrement())
   description String?
+  name        String
+  position    String
+  capacity    Int
   point       Point?  @relation("refPL")
   pointid     Int?
 }
@@ -68,10 +77,12 @@ model Hike {
 
 model Performance {
   id       Int   @id @default(autoincrement())
+  length Float
   duration Int
   altitude Float
-  user     User  @relation(fields: [userid], references: [id])
-  userid   Int
+  difficulty Int
+  hiker     User  @relation(fields: [hikerid], references: [id])
+  hikerid   Int @unique
 }
 
 model User {
@@ -80,6 +91,7 @@ model User {
   email       String        @unique
   username    String
   phoneNumber String        @unique
-  performance Performance[]
+  verified    Boolean
+  performance Performance? 
   hikeslist   Hike[]        @relation("guide")
 }

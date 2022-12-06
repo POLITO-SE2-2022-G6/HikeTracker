@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- CreateTable
 CREATE TABLE "Hut" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -49,10 +50,12 @@ CREATE TABLE "Hike" (
 -- CreateTable
 CREATE TABLE "Performance" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "length" REAL NOT NULL,
     "duration" INTEGER NOT NULL,
     "altitude" REAL NOT NULL,
-    "userid" INTEGER NOT NULL,
-    CONSTRAINT "Performance_userid_fkey" FOREIGN KEY ("userid") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "difficulty" INTEGER NOT NULL,
+    "hikerid" INTEGER NOT NULL,
+    CONSTRAINT "Performance_hikerid_fkey" FOREIGN KEY ("hikerid") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -85,6 +88,9 @@ CREATE UNIQUE INDEX "Point_hutid_key" ON "Point"("hutid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Point_parkinglotid_key" ON "Point"("parkinglotid");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Performance_hikerid_key" ON "Performance"("hikerid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
