@@ -27,7 +27,7 @@ const regioni = [
 
 const province = ["Agrigento", "Alessandria", "Ancona", "Arezzo", "AscoliPiceno", "Asti", "Avellino", "Bari", "Barletta-Andria-Trani", "Belluno", "Benevento", "Bergamo", "Biella", "Bologna", "Bolzano", "Brescia", "Brindisi", "Cagliari", "Caltanissetta", "Campobasso", "Caserta", "Catania", "Catanzaro", "Chieti", "Como", "Cosenza", "Cremona", "Crotone", "Cuneo", "Enna", "Fermo", "Ferrara", "Firenze", "Foggia", "Forlì-Cesena", "Frosinone", "Genova", "Gorizia", "Grosseto", "Imperia", "Isernia", "L'Aquila", "LaSpezia", "Latina", "Lecce", "Lecco", "Livorno", "Lodi", "Lucca", "Macerata", "Mantova", "Massa-Carrara", "Matera", "Messina", "Milano", "Modena", "MonzaedellaBrianza", "Napoli", "Novara", "Nuoro", "Oristano", "Padova", "Palermo", "Parma", "Pavia", "Perugia", "PesaroeUrbino", "Pescara", "Piacenza", "Pisa", "Pistoia", "Pordenone", "Potenza", "Prato", "Ragusa", "Ravenna", "ReggioCalabria", "Reggionell'Emilia", "Rieti", "Rimini", "Roma", "Rovigo", "Salerno", "Sassari", "Savona", "Siena", "Siracusa", "Sondrio", "SudSardegna", "Taranto", "Teramo", "Terni", "Torino", "Trapani", "Trento", "Treviso", "Trieste", "Udine", "Valled'Aosta", "Varese", "Venezia", "Verbano-Cusio-Ossola", "Vercelli", "Verona", "ViboValentia", "Vicenza", "Viterbo"]
 
-const hikers: Prisma.UserCreateInput[] = Array(10).fill(0).map(e => {
+const hikers: Prisma.UserCreateInput[] = Array(5).fill(0).map(e => {
   return {
     type: 'hiker',
     username: faker.internet.userName(),
@@ -36,7 +36,7 @@ const hikers: Prisma.UserCreateInput[] = Array(10).fill(0).map(e => {
   }
 })
 
-const guides: Prisma.UserCreateInput[] = Array(10).fill(0).map(e => {
+const guides: Prisma.UserCreateInput[] = Array(5).fill(0).map(e => {
   return {
     type: 'guide',
     username: faker.internet.userName(),
@@ -122,21 +122,42 @@ const parkings: Prisma.ParkingLotCreateInput[] = Array(100).fill(0).map(e => {
   }
 })
 
-const usr ={
-  email: "Ezio_DiMauro48@hotmail.com", 
-  type: 'guide',
-  username: faker.internet.userName(),
-  phoneNumber: faker.phone.number()
-}
+const usrs =[
+  {
+    email: "guide@email.com", 
+    type: 'guide',
+    username: faker.internet.userName(),
+    phoneNumber: faker.phone.number()
+  },
+  {
+    email: "hiker@email.com",
+    type: "hiker",
+    username: faker.internet.userName(),
+    phoneNumber: faker.phone.number()
+  },
+  {
+    email: "hworker@email.com",
+    type: "hworker",
+    username: faker.internet.userName(),
+    phoneNumber: faker.phone.number()
+  },
+  {
+    email: "admin@email.com",
+    type: "admin",
+    username: faker.internet.userName(),
+    phoneNumber: faker.phone.number()
+  }
+]
 
-const usrPromise = prisma.user.create({data: usr});
+
+const usrsPromises = usrs.map(u => prisma.user.create({data: u}));
 const guidesPromises = guides.map(u => prisma.user.create({ data: u }))
 const hikersPromises = hikers.map(u => prisma.user.create({ data: u }))
 
 const hutsPromises = huts.map(h => prisma.hut.create({ data: h }))
 const parkingsPromises = parkings.map(p => prisma.parkingLot.create({ data: p }))
 
-Promise.all(hikers)
+Promise.all(hikersPromises)
   .then(() => Promise.all(guidesPromises))
   .then((gl) => Promise.all(
     hikes.map(h => prisma.hike.create({
@@ -152,7 +173,7 @@ Promise.all(hikers)
   ))
   .then(() => Promise.all(hutsPromises))
   .then(() => Promise.all(parkingsPromises))
-  .then(() => Promise.resolve(usrPromise))
+  .then(() => Promise.all(usrsPromises))
   .then(() => {
     console.log('Seed finished')
     process.exit(0)
