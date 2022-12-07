@@ -136,7 +136,7 @@ const hikersPromises = hikers.map(u => prisma.user.create({ data: u }))
 const hutsPromises = huts.map(h => prisma.hut.create({ data: h }))
 const parkingsPromises = parkings.map(p => prisma.parkingLot.create({ data: p }))
 
-Promise.all(hikers)
+Promise.all(hikersPromises)
   .then(() => Promise.all(guidesPromises))
   .then((gl) => Promise.all(
     hikes.map(h => prisma.hike.create({

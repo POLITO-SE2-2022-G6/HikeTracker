@@ -5,7 +5,7 @@ import request from 'supertest'
 const baseURL = "http://localhost:3001/api/";
 
 const usr ={
-    email: "Vanda66@gmail.com", 
+    email: "hiker@email.com", 
     password: "Isa6"
 } //is guide not hiker
 
@@ -25,9 +25,8 @@ describe("Create performance", () => {
         const response = await agent.post("hiker/performance").send(performance).expect(201);
         const idResponse = await agent.get("hiker/performance").expect(200);
         const hikes = await agent.get("hiker/hikesByPerf");
-        console.log(hikes);
         expect (idResponse.body).toMatchObject(response.body);
-        
+      
         
     });
 

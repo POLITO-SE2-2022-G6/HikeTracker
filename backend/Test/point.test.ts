@@ -6,7 +6,7 @@ import request from 'supertest'
 const baseURL = "http://localhost:3001/api/";
 
 const usr ={
-    email: "Vanda66@gmail.com", 
+    email: "guide@email.com", 
     password: "Isa6"
 }
 
