@@ -4,9 +4,10 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 generator frontend {
   provider = "prisma-client-js"
-  output = "../../frontend/src/generated/prisma-client"
+  output   = "../../frontend/src/generated/prisma-client"
 }
 
 datasource db {
@@ -25,7 +26,7 @@ model Hut {
   website     String?
   point       Point?  @relation("refHut")
   pointid     Int?
-  hikes       Hike[] @relation("huts")
+  hikes       Hike[]  @relation("huts")
 }
 
 model ParkingLot {
@@ -76,22 +77,22 @@ model Hike {
 }
 
 model Performance {
-  id       Int   @id @default(autoincrement())
-  length Float
-  duration Int
-  altitude Float
+  id         Int   @id @default(autoincrement())
+  length     Float
+  duration   Int
+  altitude   Float
   difficulty Int
-  hiker     User  @relation(fields: [hikerid], references: [id])
-  hikerid   Int @unique
+  hiker      User  @relation(fields: [hikerid], references: [id])
+  hikerid    Int   @unique
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   type        String
-  email       String        @unique
+  email       String       @unique
   username    String
-  phoneNumber String        @unique
+  phoneNumber String       @unique
   verified    Boolean
-  performance Performance? 
-  hikeslist   Hike[]        @relation("guide")
+  performance Performance?
+  hikeslist   Hike[]       @relation("guide")
 }
