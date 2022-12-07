@@ -1,13 +1,13 @@
 import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
-import { isHiker } from "./authApi";
+import { isGuideOrHiker } from "./authApi";
 import { hikesList } from "../DAO/hikeDao";
 import { createPerformance,editPerformance,performanceByHikerId } from "../DAO/hikerDao";
 import { User,Performance } from "@prisma/client";
 
 export const uRouter = Router();
 
-uRouter.post("/performance",isHiker,checkSchema({
+uRouter.post("/performance",isGuideOrHiker,checkSchema({
     length:{
         in: ['body'],
         isFloat: true
@@ -30,20 +30,24 @@ uRouter.post("/performance",isHiker,checkSchema({
     }
 }),async(req:express.Request,res:express.Response)=> {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+    console.log("pre-chiamata");
+    
   const performance = await createPerformance({
     length:req.body.length && parseFloat(req.body.length),
     duration:req.body.duration &&parseInt(req.body.duration),
     altitude:req.body.altitude && parseFloat(req.body.altitude),
     difficulty:req.body.difficulty && parseInt(req.body.difficulty),
     hikerid: (req.user as User).id
+    
   });
 
+  console.log("perfomance creata");
   return res.status(201).json(performance);
 }
 )
 
 //edit performance
-uRouter.put("/performance",isHiker,checkSchema({
+uRouter.put("/performance",isGuideOrHiker,checkSchema({
     length:{
         in: ['body'],
         isFloat: true
@@ -77,7 +81,7 @@ uRouter.put("/performance",isHiker,checkSchema({
 }
 )
 
-uRouter.get("/performance",isHiker,async (req: express.Request, res: express.Response) => {
+uRouter.get("/performance",isGuideOrHiker,async (req: express.Request, res: express.Response) => {
     const hikerId=(req.user as User).id
     const performance = await (performanceByHikerId(hikerId));
     if (!performance) return res.status(404).json({ error: "Performance not found" });
@@ -85,7 +89,7 @@ uRouter.get("/performance",isHiker,async (req: express.Request, res: express.Res
   })
 
 
-uRouter.get("/hikesByPerf",isHiker,async(req:express.Request,res:express.Response)=>{
+uRouter.get("/hikesByPerf",isGuideOrHiker,async(req:express.Request,res:express.Response)=>{
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
     const hikerId=(req.user as User).id
     const performance=await (performanceByHikerId(hikerId));

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,26 +14,17 @@ datasource db {
 
 model Hut {
   id          Int     @id @default(autoincrement())
-  name        String
   description String?
-  altitude    Float
-  beds        Int
-  phone       String
-  email       String
-  website     String?
-  point       Point?  @relation("refHut")
   pointid     Int?
+  point       Point?  @relation("refHut")
   hikes       Hike[]  @relation("huts")
 }
 
 model ParkingLot {
   id          Int     @id @default(autoincrement())
   description String?
-  name        String
-  position    String
-  capacity    Int
-  point       Point?  @relation("refPL")
   pointid     Int?
+  point       Point?  @relation("refPL")
 }
 
 model Point {
@@ -48,12 +36,12 @@ model Point {
   city         String?
   region       String?
   province     String?
-  hut          Hut?        @relation(fields: [hutid], references: [id], name: "refHut")
   hutid        Int?        @unique
-  parkinglot   ParkingLot? @relation(fields: [parkinglotid], references: [id], name: "refPL")
   parkinglotid Int?        @unique
-  startof      Hike[]      @relation("start")
+  parkinglot   ParkingLot? @relation("refPL", fields: [parkinglotid], references: [id])
+  hut          Hut?        @relation("refHut", fields: [hutid], references: [id])
   endof        Hike[]      @relation("end")
+  startof      Hike[]      @relation("start")
   hikes        Hike[]      @relation("hikes")
 }
 
@@ -65,14 +53,14 @@ model Hike {
   ascent           Float
   difficulty       Int
   description      String?
-  start_point      Point?  @relation(fields: [startpointid], references: [id], name: "start")
   startpointid     Int?
-  end_point        Point?  @relation(fields: [endpointid], references: [id], name: "end")
   endpointid       Int?
-  reference_points Point[] @relation("hikes")
   gpstrack         String?
-  localguide       User?   @relation(fields: [localguideid], references: [id], name: "guide")
   localguideid     Int?
+  localguide       User?   @relation("guide", fields: [localguideid], references: [id])
+  end_point        Point?  @relation("end", fields: [endpointid], references: [id])
+  start_point      Point?  @relation("start", fields: [startpointid], references: [id])
+  reference_points Point[] @relation("hikes")
   huts             Hut[]   @relation("huts")
 }
 
@@ -87,12 +75,11 @@ model Performance {
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   type        String
-  email       String       @unique
+  email       String        @unique
   username    String
-  phoneNumber String       @unique
-  verified    Boolean
-  performance Performance?
-  hikeslist   Hike[]       @relation("guide")
+  phoneNumber String        @unique
+  hikeslist   Hike[]        @relation("guide")
+  Performance Performance?
 }

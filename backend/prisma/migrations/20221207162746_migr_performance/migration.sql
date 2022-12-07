@@ -1,4 +1,3 @@
--- SQLBook: Code
 -- CreateTable
 CREATE TABLE "Hut" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -25,8 +24,8 @@ CREATE TABLE "Point" (
     "province" TEXT,
     "hutid" INTEGER,
     "parkinglotid" INTEGER,
-    CONSTRAINT "Point_hutid_fkey" FOREIGN KEY ("hutid") REFERENCES "Hut" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "Point_parkinglotid_fkey" FOREIGN KEY ("parkinglotid") REFERENCES "ParkingLot" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "Point_parkinglotid_fkey" FOREIGN KEY ("parkinglotid") REFERENCES "ParkingLot" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Point_hutid_fkey" FOREIGN KEY ("hutid") REFERENCES "Hut" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -42,9 +41,9 @@ CREATE TABLE "Hike" (
     "endpointid" INTEGER,
     "gpstrack" TEXT,
     "localguideid" INTEGER,
-    CONSTRAINT "Hike_startpointid_fkey" FOREIGN KEY ("startpointid") REFERENCES "Point" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Hike_localguideid_fkey" FOREIGN KEY ("localguideid") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Hike_endpointid_fkey" FOREIGN KEY ("endpointid") REFERENCES "Point" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "Hike_localguideid_fkey" FOREIGN KEY ("localguideid") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "Hike_startpointid_fkey" FOREIGN KEY ("startpointid") REFERENCES "Point" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable

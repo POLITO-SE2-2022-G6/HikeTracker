@@ -5,6 +5,7 @@ const prisma = new PrismaClient()
 
 
 export const createPerformance = async (performance: any) => {
+    console.log(performance);
     const { length, duration, altitude, difficulty, hikerid } = performance;
     return prisma.performance.create({
         data: {
