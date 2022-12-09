@@ -10,10 +10,14 @@ const usr ={
 } //is guide not hiker
 
 const performance : Partial<Performance>= {
-    length: 100,
-    duration: 50,
+    length: 1000,
+    duration: 300,
     altitude: 10,
-    difficulty: 10
+    difficulty: 4
+}
+
+const modifiedPerformance : Partial<Performance>= {
+    length: 700,
 }
 
 
@@ -24,14 +28,34 @@ describe("Create performance", () => {
         await agent.post('auth/login').send(usr).expect(200);
         const response = await agent.post("hiker/performance").send(performance).expect(201);
         const idResponse = await agent.get("hiker/performance").expect(200);
-        const hikes = await agent.get("hiker/hikesByPerf");
         expect (idResponse.body).toMatchObject(response.body);
       
-        
     });
-
     
 });
+
+describe("Get list of hikes by perfomance", () => {
+    test('check list of hikes by perfomance from API', async () => {
+        const agent = request.agent(baseURL); 
+        await agent.post('auth/login').send(usr).expect(200);
+        const hikes = await agent.get("hiker/hikesByPerf").expect(200); //should be 2 hikes
+        expect (hikes.body.length).toBe(2);
+              
+    });
+    
+});
+
+describe("check edit perfomance", () => {
+    test('check edit of perfomance by user', async () => {
+        const agent = request.agent(baseURL); 
+        await agent.post('auth/login').send(usr).expect(200);
+        const response = await agent.put("hiker/performance").send(modifiedPerformance).expect(201);
+        expect (response.body).toMatchObject(modifiedPerformance);
+              
+    });
+    
+});
+
 
 
 

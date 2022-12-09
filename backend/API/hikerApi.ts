@@ -30,7 +30,6 @@ uRouter.post("/performance",isGuideOrHiker,checkSchema({
     }
 }),async(req:express.Request,res:express.Response)=> {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-    console.log("pre-chiamata");
     
   const performance = await createPerformance({
     length:req.body.length && parseFloat(req.body.length),
@@ -41,7 +40,6 @@ uRouter.post("/performance",isGuideOrHiker,checkSchema({
     
   });
 
-  console.log("perfomance creata");
   return res.status(201).json(performance);
 }
 )
@@ -50,23 +48,23 @@ uRouter.post("/performance",isGuideOrHiker,checkSchema({
 uRouter.put("/performance",isGuideOrHiker,checkSchema({
     length:{
         in: ['body'],
-        isFloat: true
-
+        isFloat: true,
+        optional:true
     },
     duration:{
         in: ['body'],
-        isInt:true
-
+        isInt:true,
+        optional:true
     },
     altitude:{
         in: ['body'],
-        isFloat:true
-
+        isFloat:true,
+        optional:true
     },
     difficulty:{
         in: ['body'],
-        isInt:true
-
+        isInt:true,
+        optional:true
     }
 
 }),async(req:express.Request,res:express.Response)=>{
@@ -78,8 +76,8 @@ uRouter.put("/performance",isGuideOrHiker,checkSchema({
     altitude:req.body.altitude && parseFloat(req.body.altitude),
     difficulty:req.body.difficulty && parseInt(req.body.difficulty),
     })
-}
-)
+    return res.status(201).json(modifiedPerformance);
+})
 
 uRouter.get("/performance",isGuideOrHiker,async (req: express.Request, res: express.Response) => {
     const hikerId=(req.user as User).id

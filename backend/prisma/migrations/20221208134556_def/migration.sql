@@ -1,7 +1,13 @@
 -- CreateTable
 CREATE TABLE "Hut" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT,
     "description" TEXT,
+    "altitude" REAL,
+    "beds" INTEGER,
+    "phone" TEXT,
+    "email" TEXT,
+    "website" TEXT,
     "pointid" INTEGER
 );
 
@@ -9,6 +15,9 @@ CREATE TABLE "Hut" (
 CREATE TABLE "ParkingLot" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "description" TEXT,
+    "name" TEXT,
+    "position" TEXT,
+    "capacity" INTEGER,
     "pointid" INTEGER
 );
 
@@ -63,7 +72,8 @@ CREATE TABLE "User" (
     "type" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
-    "phoneNumber" TEXT NOT NULL
+    "phoneNumber" TEXT NOT NULL,
+    "verified" BOOLEAN NOT NULL DEFAULT false
 );
 
 -- CreateTable

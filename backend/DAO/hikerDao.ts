@@ -5,7 +5,6 @@ const prisma = new PrismaClient()
 
 
 export const createPerformance = async (performance: any) => {
-    console.log(performance);
     const { length, duration, altitude, difficulty, hikerid } = performance;
     return prisma.performance.create({
         data: {
@@ -30,17 +29,10 @@ export const editPerformance= async (idh:number,params:any)=>{
             hikerid:idh,
         },
         data: {
-            length: length,
-            duration: duration,
-            altitude: altitude,
-            difficulty: difficulty,
-            hiker: {
-                connect: {
-                    id: idh
-                }
-            }
-
-            
+            length: length || undefined,
+            duration: duration || undefined,
+            altitude: altitude || undefined,
+            difficulty: difficulty || undefined,          
         }
     })
 }
