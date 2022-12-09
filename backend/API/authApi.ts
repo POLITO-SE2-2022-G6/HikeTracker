@@ -30,6 +30,10 @@ export const isHiker: RequestHandler = (req, res, next) => {
     if (req.isAuthenticated() && (req.user as User).type === "hiker") return next();
     return res.status(401).json({ error: "not authenticated" });
 }
+export const isManager: RequestHandler = (req, res, next) => {
+    if (req.isAuthenticated() && (req.user as User).type === "manager") return next();
+    return res.status(401).json({ error: "not authenticated" });
+}
 
 
 
