@@ -178,9 +178,11 @@ const HikesSearchPage: React.FC = () => {
   );
 };
 
+
 function calcScale(value: number) {
   return 0.000001 * (value ** 3);
 }
+
 
 
 export default HikesSearchPage;

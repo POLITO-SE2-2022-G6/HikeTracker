@@ -5,6 +5,7 @@ import { GiMountains, GiPathDistance } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 import { Hike } from "../../generated/prisma-client";
+import { formatTime } from "../../utilities/formatters";
 
 
 
@@ -78,10 +79,3 @@ export const HikeCard = (props: HikeCardProps) => {
     </div>
   );
 };
-
-function formatTime(minutes: number) {
-  let date = new Date(0)
-  date.setMinutes(minutes)
-
-  return date.toLocaleTimeString('it-IT', { hour: 'numeric', minute: 'numeric', hour12: false })
-}
