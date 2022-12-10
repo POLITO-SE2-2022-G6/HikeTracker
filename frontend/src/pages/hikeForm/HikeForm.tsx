@@ -218,7 +218,7 @@ const HikeForm: React.FC = () => {
                 <MapContainer center={[41.90, 12.49]} zoom={8} className={s.map}>
                   {
                     points.map((point) => {
-                      if (point.Hut || point.ParkingLot)
+                      if (point.hutid || point.parkinglotid)
                         return <Marker
                           position={[point.latitude!, point.longitude!]}
                           // icon={hutIcon}

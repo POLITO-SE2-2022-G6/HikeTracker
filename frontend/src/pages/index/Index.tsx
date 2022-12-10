@@ -10,6 +10,7 @@ import HikesSearchPage from '../hikes/HikesSearchPage';
 import HikeForm from '../hikeForm/HikeForm';
 import HikerPage from '../userarea/hikerPage/HikerPage';
 import GuidePage from '../userarea/guidePage/GuidePage';
+import PerformanceForm from '../userarea/hikerPage/PerformanceForm';
 import HutsSearchPage from '../huts/HutsSearchPage';
 import HutForm from '../hutForm/HutForm';
 import ParkingLotForm from '../parkingLotForm/ParkingLotForm';
@@ -37,6 +38,7 @@ const Index: React.FC = () => {
               <Route path='/hike/edit/:id' element={<HikeForm />} />
               <Route path='/guidearea' element={  <GuidePage/>  }/>
               <Route path='/hikerarea' element={  <HikerPage/>  }/>
+              <Route path='/performances' element={  <PerformanceForm/>  }/>
               <Route path='/hut/edit/' element={<HutForm />} />
               <Route path='huts' element={<HutsSearchPage />} />
               <Route path='/parkinglot/edit/' element={<ParkingLotForm />} />
