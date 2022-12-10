@@ -80,7 +80,7 @@ const ParkingLotForm: React.FC = () => {
         }
       });
       console.log(res);
-      navigate('/');
+      navigate('/hikelist');
 
     } catch (err) {
       setError('Error - creating a new parking lot');
