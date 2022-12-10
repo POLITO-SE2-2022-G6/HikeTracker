@@ -2,18 +2,19 @@ import { Hut, Point, Prisma } from "../../generated/prisma-client";
 import { Methods } from "./client";
 import { Resource } from "./resource";
 
+export type HutWithPoint = Hut & { point: Point };
 export class HutApi extends Resource {
   protected path = "/hut";
 
   async getHuts() {
-    return this.client.request<Hut[]>({
+    return this.client.request<HutWithPoint[]>({
       method: Methods.GET,
       path: this.path,
     });
   }
 
   async getHut(id: number) {
-    return this.client.request<Hut>({
+    return this.client.request<HutWithPoint>({
       method: Methods.GET,
       path: `${this.path}/${id}`,
     });
