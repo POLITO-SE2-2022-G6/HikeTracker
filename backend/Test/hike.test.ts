@@ -5,6 +5,11 @@ import { createHike, hikeById, hikesList  } from "../DAO/hikeDao";
 
 const baseURL = "http://localhost:3001/api/";
 
+const usr ={
+    email: "guide@email.com", 
+    password: "Isa6"
+}
+
 const hiketest : Prisma.HikeCreateInput = {
     title : "test",
     length : 10,
@@ -24,7 +29,7 @@ const hikeEdit  = {
 describe("Get List of hike", () => {
     test('Check filter of hikes', async () => {
         const agent = request.agent(baseURL); 
-        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200);
+        await agent.post('auth/login').send(usr).expect(200);
         const response = await agent.post("hike").send(hiketest).expect(201);
 
         const idResponse = await agent.get("hike").send(hikeFilter).expect(200);
@@ -42,7 +47,7 @@ describe("Get List of hike", () => {
 describe("Create hike", () => {
     test('check addition of hike from API', async () => {
         const agent = request.agent(baseURL); 
-        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200);
+        await agent.post('auth/login').send(usr).expect(200);
         const response = await agent.post("hike").send(hiketest).expect(201);
 
         const idResponse = await agent.get("hike/" + response.body.id).expect(200);
@@ -76,7 +81,7 @@ describe("Create hike", () => {
 describe("Edit Hike", () => {
     test("check edit of hike's difficulty from API", async () => {
         const agent = request.agent(baseURL);
-        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200);
+        await agent.post('auth/login').send(usr).expect(200);
         const response = await agent.post("hike").send(hiketest).expect(201);
         const editResponse = await agent.put("hike/" + response.body.id).send(hikeEdit).expect(201);
         expect (editResponse.body).toMatchObject(hikeEdit);
@@ -89,7 +94,7 @@ describe("Edit Hike", () => {
 
     test("Check additions of points", async () => {
         const agent = request.agent(baseURL);
-        await agent.post('auth/login').send({email: "Galeazzo_Abbrescia40@email.it", password: "Isa6"}).expect(200);
+        await agent.post('auth/login').send(usr).expect(200);
         const response = await agent.post("hike").send(hiketest).expect(201);
         const stPoint = await agent.post("point").send({label: "starttest", latitude: 10, longitude: 10, elevation: 10}).expect(200);
         const enPoint = await agent.post("point").send({label: "endtest", latitude: 10, longitude: 10, elevation: 10}).expect(200);
