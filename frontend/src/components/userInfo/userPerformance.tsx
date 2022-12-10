@@ -1,5 +1,5 @@
 import s from './userPerformance.module.css';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { UserContext } from '../../context/userContext';
 import { Container, Paper, Text, Table } from '@mantine/core';
 

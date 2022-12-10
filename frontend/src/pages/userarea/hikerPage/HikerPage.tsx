@@ -1,5 +1,5 @@
 import s from './HikerPage.module.css';
-import { Button, Container, Paper, Flex, Text ,Table} from '@mantine/core';
+import { Button, Container, Paper, Flex } from '@mantine/core';
 import UserInfo from '../../../components/userInfo/userInfo';
 import UserPerformance from '../../../components/userInfo/userPerformance';
 import { useNavigate, createSearchParams } from 'react-router-dom';

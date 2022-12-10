@@ -1,7 +1,7 @@
 import s from './PerformanceForm.module.css';
 import { useForm } from '@mantine/form'
-import { Button, Container, Paper, TextInput, Title, Text, Slider, Space} from '@mantine/core';
-import { useNavigate, Link } from 'react-router-dom';
+import { Button, Container, Paper, Title, Text, Slider, Space} from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { API } from '../../../utilities/api/api';
 
