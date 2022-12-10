@@ -9,7 +9,6 @@ import {
   Space,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API } from '../../utilities/api/api';
@@ -78,7 +77,7 @@ const Register: React.FC = () => {
           }
           <Button fullWidth mt="xl" type="submit">Register</Button>
         </form>
-        <Button fullWidth mt="xl" onClick={() => navigate('/')}>Proceed as a visitor</Button>
+        <Button fullWidth mt="xl" onClick={() => navigate('/hikelist')}>Proceed as a visitor</Button>
       </Paper>
     </Container>
   );

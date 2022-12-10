@@ -1,6 +1,5 @@
 import s from './HikeForm.module.css';
 import { useForm } from '@mantine/form'
-import axios from 'axios';
 import { Button, Container, Paper, TextInput, Title, NumberInput, FileInput, Group, Textarea, Box, Space, Flex, Stack } from '@mantine/core';
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -129,7 +128,7 @@ const HikeForm: React.FC = () => {
       console.log(values);
 
       const res = await API.hike.createHike(values)
-      navigate('/');
+      navigate('/hikelist');
 
     } catch (err) {
       setError('Error - creating a new hike');
@@ -251,7 +250,7 @@ const HikeForm: React.FC = () => {
 
             <Group position="center">
               <Button mt="xl" type='submit'>Save</Button>
-              <Link to="/">
+              <Link to="/hikelist">
                 <Button type="button" mt="xl" color="red">Cancel</Button>
               </Link>
             </Group>
