@@ -8,9 +8,11 @@ import { useParams } from 'react-router-dom';
 import { API } from '../../utilities/api/api';
 import { Hut, ParkingLot, Point } from '../../generated/prisma-client';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import { DivIcon, divIcon } from 'leaflet';
+import L, { DivIcon, divIcon, icon } from 'leaflet';
+import { MdCabin } from "react-icons/md";
 
 import cabin from './cabin.svg';
+import car from './car.svg';
 
 const hutIcon = divIcon({
   html: cabin
@@ -216,11 +218,13 @@ const HikeForm: React.FC = () => {
               }}>
                 <MapContainer center={[41.90, 12.49]} zoom={8} className={s.map}>
                   {
-                    points.map((point) => {
-                      if (point.Hut || point.ParkingLot)
-                        return <Marker
+                    points.map((point,id) => {
+                   //   if (point.Hut || point.ParkingLot)
+                      if ( point.parkinglotid || point.hutid)
+                        return( <Marker
+                        key={id}
                           position={[point.latitude!, point.longitude!]}
-                          // icon={hutIcon}
+                           icon={ (point.hutid) ? L.icon({ iconUrl: cabin}) : L.icon({ iconUrl: car})}
                           eventHandlers={{
                             click: () => {
                               setSelectedMarker(point.id)
@@ -230,7 +234,7 @@ const HikeForm: React.FC = () => {
                           <Popup>
                             {point.label}
                           </Popup>
-                        </Marker>
+                        </Marker>)
                     })
                   }
                   <TileLayer
