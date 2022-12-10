@@ -25,8 +25,8 @@ export const createPerformance = async (performance: any) => {
 export const editPerformance= async (idh:number,params:any)=>{
     const { length, duration, altitude, difficulty } = params;
     return prisma.performance.update({
-        where:{
-            hikerid:idh,
+        where: {
+            id: idh
         },
         data: {
             length: length || undefined,
@@ -37,7 +37,13 @@ export const editPerformance= async (idh:number,params:any)=>{
     })
 }
 
-export async function performanceByHikerId(id:number) {
-    return prisma.performance.findUnique({where:{hikerid:id}})
+export async function getPerformance(id: number){
+    return prisma.performance.findUnique({ where:{ id } })
 }
+        
 
+export async function deletePerformance(id: number){
+    return prisma.performance.delete({
+        where: {id}
+    })
+}

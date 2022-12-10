@@ -1,12 +1,13 @@
 import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
-import { isGuideOrHiker } from "./authApi";
+import { isGuideOrHiker, isHiker } from "./authApi";
 import { hikesList } from "../DAO/hikeDao";
-import { createPerformance,editPerformance,performanceByHikerId } from "../DAO/hikerDao";
+import { createPerformance,deletePerformance,editPerformance,getPerformance } from "../DAO/hikerDao";
 import { User,Performance } from "@prisma/client";
 
 export const uRouter = Router();
 
+//Create new performance
 uRouter.post("/performance",isGuideOrHiker,checkSchema({
     length:{
         in: ['body'],
@@ -69,8 +70,10 @@ uRouter.put("/performance",isGuideOrHiker,checkSchema({
 
 }),async(req:express.Request,res:express.Response)=>{
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-    const hikerId=(req.user as User).id
-    const modifiedPerformance= await editPerformance(hikerId,{
+    const performanceId=(req.user as User).performanceid;
+    if (!performanceId) return res.status(404).json({ error: "No performance saved" });
+
+    const modifiedPerformance= await editPerformance(performanceId,{
     length:req.body.length && parseFloat(req.body.length),
     duration:req.body.duration &&parseInt(req.body.duration),
     altitude:req.body.altitude && parseFloat(req.body.altitude),
@@ -79,9 +82,11 @@ uRouter.put("/performance",isGuideOrHiker,checkSchema({
     return res.status(201).json(modifiedPerformance);
 })
 
+//get performance
 uRouter.get("/performance",isGuideOrHiker,async (req: express.Request, res: express.Response) => {
-    const hikerId=(req.user as User).id
-    const performance = await (performanceByHikerId(hikerId));
+    const performanceId=(req.user as User).performanceid;
+    if (!performanceId) return res.status(404).json({ error: "No performance saved" });
+    const performance = await (getPerformance(performanceId));
     if (!performance) return res.status(404).json({ error: "Performance not found" });
     return res.status(200).json(performance);
   })
@@ -89,8 +94,10 @@ uRouter.get("/performance",isGuideOrHiker,async (req: express.Request, res: expr
 
 uRouter.get("/hikesByPerf",isGuideOrHiker,async(req:express.Request,res:express.Response)=>{
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-    const hikerId=(req.user as User).id
-    const performance=await (performanceByHikerId(hikerId));
+    const performanceId=(req.user as User).performanceid;
+    if (!performanceId) return res.status(404).json({ error: "No performance saved" });
+    const performance = await (getPerformance(performanceId));
+    if (!performance) return res.status(404).json({ error: "Performance not found" });
     res.send(await hikesList(
         {
             difficulty:performance?.difficulty,
@@ -101,3 +108,10 @@ uRouter.get("/hikesByPerf",isGuideOrHiker,async(req:express.Request,res:express.
     
     })
   
+//delete performance
+uRouter.delete("/performance", isHiker, async(req:express.Request,res:express.Response)=>{    
+    const performanceId=(req.user as User).performanceid;
+    if (!performanceId) return res.status(404).json({ error: "No performance saved" });
+    await deletePerformance(performanceId);
+    return res.status(200).json({message:"Performance deleted"});
+})

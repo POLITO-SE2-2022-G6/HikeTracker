@@ -17,23 +17,25 @@ export const isLoggedIn: RequestHandler = (req, res, next) => {
 };
 
 export const isGuide: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "guide") return next();
+    if (req.isAuthenticated() && (((req.user as User).type === "guide" && (req.user as User).verified === true) || (req.user as User).type === "manager")) return next();
     return res.status(401).json({ error: "not authenticated" });
 }
 
 export const isGuideOrHiker: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && ((req.user as User).type === "hiker" || (req.user as User).type === "guide")) return next();
+    if (req.isAuthenticated() && ((req.user as User).type === "hiker" || (req.user as User).type === "guide") || (req.user as User).type === "manager") return next();
     return res.status(401).json({ error: "not authenticated" });
 }
 
 export const isHiker: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "hiker") return next();
+    if (req.isAuthenticated() && (req.user as User).type === "hiker" || (req.user as User).type === "manager") return next();
     return res.status(401).json({ error: "not authenticated" });
 }
 export const isManager: RequestHandler = (req, res, next) => {
     if (req.isAuthenticated() && (req.user as User).type === "manager") return next();
     return res.status(401).json({ error: "not authenticated" });
 }
+
+
 
 
 

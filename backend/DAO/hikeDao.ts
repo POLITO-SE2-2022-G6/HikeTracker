@@ -149,3 +149,11 @@ export const editHike = async (idp: number, params: newHike) => {
     }
   })
 };
+
+export const deleteHike = async (id: number) => {
+  return prisma.hike.delete({
+    where: {
+      id: id,
+    },
+  });
+};

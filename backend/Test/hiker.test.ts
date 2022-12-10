@@ -29,7 +29,7 @@ describe("Create performance", () => {
         const response = await agent.post("hiker/performance").send(performance).expect(201);
         const idResponse = await agent.get("hiker/performance").expect(200);
         expect (idResponse.body).toMatchObject(response.body);
-      
+        agent.delete("hiker/performance").expect(204);
     });
     
 });
@@ -38,8 +38,13 @@ describe("Get list of hikes by perfomance", () => {
     test('check list of hikes by perfomance from API', async () => {
         const agent = request.agent(baseURL); 
         await agent.post('auth/login').send(usr).expect(200);
-        const hikes = await agent.get("hiker/hikesByPerf").expect(200); //should be 2 hikes
-        expect (hikes.body.length).toBe(2);
+        const response = await agent.post("hiker/performance").send(performance).expect(201);
+        const hikes = await agent.get("hiker/hikesByPerf").expect(200);
+
+
+        //expect (hikes.body.length).toBe(1);
+
+        agent.delete("hiker/performance").expect(204);
               
     });
     
@@ -52,6 +57,7 @@ describe("check edit perfomance", () => {
         const response = await agent.put("hiker/performance").send(modifiedPerformance).expect(201);
         expect (response.body).toMatchObject(modifiedPerformance);
               
+        agent.delete("hiker/performance").expect(204);
     });
     
 });

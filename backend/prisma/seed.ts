@@ -42,6 +42,7 @@ const guides: Prisma.UserCreateInput[] = Array(5).fill(0).map(e => {
     username: faker.internet.userName(),
     email: faker.internet.email(),
     phoneNumber: faker.phone.number(),
+    verified: true
   }
 })
 
@@ -127,7 +128,8 @@ const usrs =[
     email: "guide@email.com", 
     type: 'guide',
     username: faker.internet.userName(),
-    phoneNumber: faker.phone.number()
+    phoneNumber: faker.phone.number(),
+    verified: true
   },
   {
     email: "hiker@email.com",
@@ -139,11 +141,12 @@ const usrs =[
     email: "hworker@email.com",
     type: "hworker",
     username: faker.internet.userName(),
-    phoneNumber: faker.phone.number()
+    phoneNumber: faker.phone.number(),
+    verified: true
   },
   {
-    email: "admin@email.com",
-    type: "admin",
+    email: "manager@email.com",
+    type: "manager",
     username: faker.internet.userName(),
     phoneNumber: faker.phone.number()
   }

@@ -1,7 +1,7 @@
 import { PrismaClient, Prisma } from "@prisma/client";
-import request from 'supertest'
+import request, { agent } from 'supertest'
 const prisma = new PrismaClient();
-import { createHike, hikeById, hikesList  } from "../DAO/hikeDao";
+import { createHike, deleteHike, hikeById, hikesList  } from "../DAO/hikeDao";
 
 const baseURL = "http://localhost:3001/api/";
 
@@ -35,12 +35,7 @@ describe("Get List of hike", () => {
         const idResponse = await agent.get("hike").send(hikeFilter).expect(200);
         expect (idResponse.body).toContainEqual(response.body);
         
-        prisma.hike.delete({
-            where: {
-                id: response.body.id
-            }
-        })
-        
+        await agent.delete("hike/" + response.body.id).expect(204);        
     });
 });
 
@@ -53,11 +48,7 @@ describe("Create hike", () => {
         const idResponse = await agent.get("hike/" + response.body.id).expect(200);
         expect (idResponse.body).toMatchObject(response.body);
         
-        prisma.hike.delete({
-            where: {
-                id: response.body.id
-            }
-        })
+        await agent.delete("hike/" + response.body.id).expect(204);
     });
 
     test('check addition of hike from DAO', async () => {
@@ -69,12 +60,8 @@ describe("Create hike", () => {
         expect (secondLength).toBe(firstLength + 1);
         const hike = await hikeById(hikeAdded.id);
         expect(hike).toMatchObject(hikeAdded);
-
-        prisma.hike.delete({
-            where: {
-                id: hikeAdded.id
-            }
-        })
+        
+        await deleteHike(hikeAdded.id);
     });    
 });
 
@@ -85,11 +72,7 @@ describe("Edit Hike", () => {
         const response = await agent.post("hike").send(hiketest).expect(201);
         const editResponse = await agent.put("hike/" + response.body.id).send(hikeEdit).expect(201);
         expect (editResponse.body).toMatchObject(hikeEdit);
-        prisma.hike.delete({
-            where: {
-                id: response.body.id
-            }
-        })
+        await agent.delete("hike/" + response.body.id).expect(204);
     });
 
     test("Check additions of points", async () => {
@@ -113,21 +96,10 @@ describe("Edit Hike", () => {
         };
         const editResponse = await agent.put("hike/" + response.body.id).send(editHike).expect(201);
         expect (editResponse.body).toMatchObject(editHike4Check);
-        prisma.hike.delete({
-            where: {
-                id: response.body.id
-            }
-        })
-        prisma.point.delete({
-            where: {
-                id: stPoint.body.id
-            }
-        })
-        prisma.point.delete({
-            where: {
-                id: enPoint.body.id
-            }
-        })
+
+        await agent.delete("hike/" + response.body.id).expect(204);
+        await agent.delete("point/" + stPoint.body.id).expect(204);
+        await agent.delete("point/" + enPoint.body.id).expect(204);
     })
 
 });

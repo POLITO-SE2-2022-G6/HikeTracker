@@ -30,7 +30,6 @@ app.use('/api/hike', hRouter);
 import { pRouter } from "./API/pointApi";
 app.use('/api/point', pRouter);
 
-
 // Auth APIs
 import { aRouter, isLoggedIn } from "./API/authApi";
 app.use('/api/auth', aRouter);
@@ -42,6 +41,9 @@ app.use('/api/hiker',uRouter);
 // Manager APIs
 import{ mRouter} from "./API/managerApi";
 app.use('/api/manager',mRouter);
+
+/*import { hutRouter } from "./API/hutAPI";
+app.use('/api/hut');*/
 
 // GPS APIs
 app.use("/api/gpstracks", isLoggedIn, express.static(path.join(__dirname, "gpstracks")));
