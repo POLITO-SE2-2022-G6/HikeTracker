@@ -37,11 +37,11 @@ describe("Get list of hikes by perfomance", () => {
     test('check list of hikes by perfomance from API', async () => {
         const agent = request.agent(baseURL); 
         await agent.post('auth/login').send(usr).expect(200);
-        const response = await agent.post("hiker/performance").send(performance).expect(201);
+        await agent.post("hiker/performance").send(performance).expect(201);
         const hikes = await agent.get("hiker/hikesByPerf").expect(200);
 
 
-        //expect (hikes.body.length).toBe(1);
+        expect (hikes.body.length).toBeGreaterThan(0);
 
         await agent.delete("hiker/performance").expect(204);
               

@@ -138,7 +138,7 @@ const HikeDetailPage: React.FC = () => {
 export default HikeDetailPage;
 
 function DisplayReferencePoints(points: Point[]) {
-  points.map((point) => {
+  points.forEach((point) => {
     return <Marker
       position={[point.latitude!, point.longitude!]}
     // icon={hutIcon}
