@@ -14,7 +14,7 @@ hRouter.get("", checkSchema({
     optional: true,
     notEmpty: true
   },
-  Pprovince: {
+  province: {
     in: ['query'],
     optional: true,
     notEmpty: true

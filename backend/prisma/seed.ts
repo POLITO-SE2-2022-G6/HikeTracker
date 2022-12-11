@@ -91,7 +91,7 @@ const hikes: Prisma.HikeCreateInput[] = Array(20).fill(0).map(e => {
   }
 })
 
-const huts: Prisma.HutCreateInput[] = Array(100).fill(0).map(e => {
+function getSpecialPoint(){
   return {
     description: faker.lorem.paragraph(),
     point: {
@@ -105,23 +105,11 @@ const huts: Prisma.HutCreateInput[] = Array(100).fill(0).map(e => {
       }
     }
   }
-})
+}
 
-const parkings: Prisma.ParkingLotCreateInput[] = Array(100).fill(0).map(e => {
-  return {
-    description: faker.lorem.paragraph(),
-    point: {
-      create: {
-        city: faker.address.city(),
-        region: regioni[Math.floor(Math.random() * regioni.length)],
-        province: province[Math.floor(Math.random() * province.length)],
-        label: faker.address.streetName(),
-        latitude: parseFloat(faker.address.latitude(47.1153931748, 36.619987291)),
-        longitude: parseFloat(faker.address.longitude(18.4802470232, 6.7499552751)),
-      }
-    }
-  }
-})
+const huts: Prisma.HutCreateInput[] = Array(100).fill(0).map(e => getSpecialPoint())
+
+const parkings: Prisma.ParkingLotCreateInput[] = Array(100).fill(0).map(e => getSpecialPoint())
 
 const usrs =[
   {
