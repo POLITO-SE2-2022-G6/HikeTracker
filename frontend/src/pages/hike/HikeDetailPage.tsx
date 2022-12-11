@@ -9,10 +9,11 @@ import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
 import { API } from '../../utilities/api/api';
 import { Hike as HIKE, Point } from '../../generated/prisma-client';
+import { extrackPoints } from '../../utilities/gpx';
 
 type Hike = HIKE & {
-  Start_point: Point,
-  End_point: Point,
+  start_point: Point,
+  end_point: Point,
 }
 
 const HikeDetailPage: React.FC = () => {
@@ -121,8 +122,8 @@ const HikeDetailPage: React.FC = () => {
             <Polyline pathOptions={{ dashArray: '10', dashOffset: offset.toString() }} positions={track || []} />
             <MapSetter center={center} />
             {
-              [hike?.Start_point && PointMarker(hike.Start_point),
-              hike?.End_point && PointMarker(hike.End_point)]
+              [hike?.start_point && PointMarker(hike.start_point),
+              hike?.end_point && PointMarker(hike.end_point)]
             }
           </MapContainer>
         </Box>
@@ -144,19 +145,8 @@ function PointMarker(point: Point) {
   </Marker>;
 }
 
-function extrackPoints(data: any): [number, number][] {
-  if (!data) return []
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(data, "text/xml");
-  const points = xmlDoc.getElementsByTagName("trkpt")
-  const pointsArray = Array.from(points)
-  const pointsCoordinates = pointsArray.map((point) => {
-    return [parseFloat(point.getAttribute('lat') || ''), parseFloat(point.getAttribute('lon') || '')] as [number, number]
-  })
-  return pointsCoordinates
-}
 
-const MapSetter = ({ center }: { center: [number, number] | undefined }) => {
+export const MapSetter = ({ center }: { center: [number, number] | undefined }) => {
 
   const map = useMap()
 

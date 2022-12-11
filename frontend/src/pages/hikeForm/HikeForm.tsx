@@ -12,6 +12,7 @@ import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { DivIcon, divIcon } from 'leaflet';
 
 import cabin from './cabin.svg';
+import { extrackPoints } from '../../utilities/gpx';
 
 const hutIcon = divIcon({
   html: cabin

@@ -7,6 +7,7 @@ import axios from 'axios';
 import HikesList from '../../components/hikesList/HikesList';
 import { HikeCardGrid } from '../../components/hikeCardGrid/hikeCardGrid';
 import { Hike } from '../../generated/prisma-client/index';
+import { formatDifficulty, formatLength, formatTime } from '../../utilities/formatters';
 
 const elementsPerPage = 6;
 
@@ -177,27 +178,9 @@ const HikesSearchPage: React.FC = () => {
   );
 };
 
-function formatDifficulty(value: number) {
-  return ['Beginner', 'Easy', 'Intermediate', 'Hard', 'Expert'][value - 1];
-}
-
-function formatTime(value: number) {
-  if (value > 60) {
-    const hours = (value / 60).toFixed(0);
-    const min = value % 60;
-    return hours + ' h' + (min ? ' ' + min + ' min' : '');
-  }
-  else
-    return value.toFixed(0) + ' min';
-}
-
 function calcScale(value: number) {
   return 0.000001 * (value ** 3);
 }
 
-function formatLength(value: number) {
-  if (value > 1) return value.toFixed(0) + ' km'
-  else return (value * 1000).toFixed(0) + ' m'
-}
 
 export default HikesSearchPage;
