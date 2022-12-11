@@ -1,5 +1,3 @@
-import { PrismaClient, Performance, User, Prisma } from "@prisma/client";
-const prisma = new PrismaClient();
 import request from 'supertest'
 
 const baseURL = "http://localhost:3001/api/";
@@ -21,9 +19,8 @@ const guide ={
 describe("Validate a local guide",()=>{
     test('check validation of a local guide',async()=>{
     const agent=request.agent(baseURL);
-    await agent.post('auth/login').send(usr).expect(200);
+    await agent.post('auth/login').send(mng).expect(200);
     const response= await agent.put("manager/validate/"+guide.id).expect(201)
     expect (response.body.verified).toBe(true);
-
     })
 })

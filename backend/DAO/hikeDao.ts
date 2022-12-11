@@ -1,4 +1,4 @@
-import { Point, PrismaClient, Hike, Prisma } from '@prisma/client'
+import { Point, PrismaClient, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -148,4 +148,12 @@ export const editHike = async (idp: number, params: newHike) => {
       end_point: true,
     }
   })
+};
+
+export const deleteHike = async (id: number) => {
+  return prisma.hike.delete({
+    where: {
+      id: id,
+    },
+  });
 };

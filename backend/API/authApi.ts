@@ -10,36 +10,20 @@ import { User } from "@prisma/client";
 export const aRouter = Router();
 
 export const isLoggedIn: RequestHandler = (req, res, next) => {
-    console.log("is logged in", req.isAuthenticated());
     if (req.isAuthenticated()) return next();
-
     return res.status(401).json({ error: "not authenticated" });
 };
 
-export const isGuide: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "guide") return next();
-    return res.status(401).json({ error: "not authenticated" });
-}
+export const bigCheck = (role: string[]) =>{
+    return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        if (!req.isAuthenticated()) return res.status(401).json({ error: "not authenticated" });
 
-export const isGuideOrHiker: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && ((req.user as User).type === "hiker" || (req.user as User).type === "guide")) return next();
-    return res.status(401).json({ error: "not authenticated" });
-}
+        if (!role.includes((req.user as User).type) && ((req.user as User).type) !== "manager") return res.status(401).json({ error: "not authorized" });
+        
+        if (((req.user as User).type) === "guide" && (req.user as User).verified === false) return res.status(401).json({ error: "guide not verified" });
 
-export const isHiker: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "hiker") return next();
-    return res.status(401).json({ error: "not authenticated" });
-}
-export const isManager: RequestHandler = (req, res, next) => {
-    if (req.isAuthenticated() && (req.user as User).type === "manager") return next();
-    return res.status(401).json({ error: "not authenticated" });
-}
-
-
-
-
-export function getID(req: express.Request): number {
-    return (req.user as User).id;
+        return next();
+    }
 }
 
 const LocalStrategy = passportLocal.Strategy;

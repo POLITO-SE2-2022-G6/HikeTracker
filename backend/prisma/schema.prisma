@@ -21,8 +21,8 @@ model Hut {
   phone       String?
   email       String?
   website     String?
-  point       Point?  @relation("refHut")
-  pointid     Int?
+  point       Point?  @relation("refHut", fields: [pointid], references: [id], onDelete: Cascade)
+  pointid     Int?    @unique
   hikes       Hike[]  @relation("huts")
 }
 
@@ -32,8 +32,8 @@ model ParkingLot {
   name        String?
   position    String?
   capacity    Int?
-  point       Point?  @relation("refPL")
-  pointid     Int?
+  point       Point?  @relation("refPL", fields: [pointid], references: [id], onDelete: Cascade)
+  pointid     Int?    @unique
 }
 
 model Point {
@@ -45,10 +45,8 @@ model Point {
   city         String?
   region       String?
   province     String?
-  hutid        Int?        @unique
-  parkinglotid Int?        @unique
-  parkinglot   ParkingLot? @relation("refPL", fields: [parkinglotid], references: [id])
-  hut          Hut?        @relation("refHut", fields: [hutid], references: [id])
+  parkinglot   ParkingLot? @relation("refPL")
+  hut          Hut?        @relation("refHut")
   endof        Hike[]      @relation("end")
   startof      Hike[]      @relation("start")
   hikes        Hike[]      @relation("hikes")
@@ -74,13 +72,13 @@ model Hike {
 }
 
 model Performance {
-  id         Int   @id @default(autoincrement())
-  length     Float
-  duration   Int
-  altitude   Float
-  difficulty Int
-  hiker      User  @relation(fields: [hikerid], references: [id])
-  hikerid    Int   @unique
+  id         Int    @id @default(autoincrement())
+  length     Float  @default(0)
+  duration   Int    @default(0)
+  altitude   Float  @default(0)
+  difficulty Int    @default(0)
+  hiker      User?  @relation("perf", fields: [hikerid], references: [id], onDelete: SetNull) 
+  hikerid    Int?   @unique
 }
 
 model User {
@@ -91,5 +89,5 @@ model User {
   phoneNumber String        @unique
   verified    Boolean       @default(false)
   hikeslist   Hike[]        @relation("guide")
-  Performance Performance?
+  performance Performance?  @relation("perf")
 }

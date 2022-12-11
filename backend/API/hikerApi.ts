@@ -1,13 +1,14 @@
 import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
-import { isGuideOrHiker } from "./authApi";
+import { bigCheck } from "./authApi";
 import { hikesList } from "../DAO/hikeDao";
-import { createPerformance,editPerformance,performanceByHikerId } from "../DAO/hikerDao";
-import { User,Performance } from "@prisma/client";
+import { createPerformance, deletePerformance, editPerformance, getPerformance } from "../DAO/hikerDao";
+import { User } from "@prisma/client";
 
 export const uRouter = Router();
 
-uRouter.post("/performance",isGuideOrHiker,checkSchema({
+//Create new performance
+uRouter.post("/performance", bigCheck(["guide", "hiker"]),checkSchema({
     length:{
         in: ['body'],
         isFloat: true
@@ -45,7 +46,7 @@ uRouter.post("/performance",isGuideOrHiker,checkSchema({
 )
 
 //edit performance
-uRouter.put("/performance",isGuideOrHiker,checkSchema({
+uRouter.put("/performance", bigCheck(["guide", "hiker"]),checkSchema({
     length:{
         in: ['body'],
         isFloat: true,
@@ -69,7 +70,8 @@ uRouter.put("/performance",isGuideOrHiker,checkSchema({
 
 }),async(req:express.Request,res:express.Response)=>{
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-    const hikerId=(req.user as User).id
+    const hikerId=(req.user as User).id;
+
     const modifiedPerformance= await editPerformance(hikerId,{
     length:req.body.length && parseFloat(req.body.length),
     duration:req.body.duration &&parseInt(req.body.duration),
@@ -79,18 +81,19 @@ uRouter.put("/performance",isGuideOrHiker,checkSchema({
     return res.status(201).json(modifiedPerformance);
 })
 
-uRouter.get("/performance",isGuideOrHiker,async (req: express.Request, res: express.Response) => {
-    const hikerId=(req.user as User).id
-    const performance = await (performanceByHikerId(hikerId));
+//get performance
+uRouter.get("/performance", bigCheck(["guide", "hiker"]), async (req: express.Request, res: express.Response) => {
+    const hikerId=(req.user as User).id;
+    const performance = await (getPerformance(hikerId));
     if (!performance) return res.status(404).json({ error: "Performance not found" });
     return res.status(200).json(performance);
   })
 
 
-uRouter.get("/hikesByPerf",isGuideOrHiker,async(req:express.Request,res:express.Response)=>{
-    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-    const hikerId=(req.user as User).id
-    const performance=await (performanceByHikerId(hikerId));
+uRouter.get("/hikesByPerf", bigCheck(["guide", "hiker"]), async(req:express.Request,res:express.Response)=>{
+    const hikerId=(req.user as User).id;
+    const performance = await (getPerformance(hikerId));
+    if (!performance) return res.status(404).json({ error: "Performance not found" });
     res.send(await hikesList(
         {
             difficulty:performance?.difficulty,
@@ -101,3 +104,9 @@ uRouter.get("/hikesByPerf",isGuideOrHiker,async(req:express.Request,res:express.
     
     })
   
+//delete performance
+uRouter.delete("/performance", bigCheck(["hiker"]), async(req:express.Request, res:express.Response)=>{    
+    const hikerId=(req.user as User).id;
+    await deletePerformance(hikerId);
+    return res.status(204).json({message:"Performance deleted"});
+})

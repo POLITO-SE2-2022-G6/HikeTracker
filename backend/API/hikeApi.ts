@@ -1,8 +1,8 @@
 import express, { Router } from "express";
 import path from "path";
 import { checkSchema, validationResult } from 'express-validator';
-import { createHike, editHike, hikeById, hikesList, newHike } from "../DAO/hikeDao";
-import { isGuide, isLoggedIn } from "./authApi";
+import { createHike, deleteHike, editHike, hikeById, hikesList } from "../DAO/hikeDao";
+import { bigCheck, isLoggedIn } from "./authApi";
 import { User } from "@prisma/client";
 
 export const hRouter = Router();
@@ -70,7 +70,7 @@ hRouter.get("/:id", isLoggedIn, async (req: express.Request, res: express.Respon
 
 
 //New Hike in Body
-hRouter.post("", isGuide, checkSchema({
+hRouter.post("", bigCheck(["guide"]), checkSchema({
   title: {
     in: ['body'],
     notEmpty: true
@@ -153,7 +153,7 @@ hRouter.post("", isGuide, checkSchema({
 
 
 //Edit Hike
-hRouter.put("/:id", isGuide, checkSchema({
+hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
   title: {
     in: ['body'],
     optional: true,
@@ -259,3 +259,19 @@ async function gpsUpload(req: express.Request, res: express.Response) {
   }
   return file;
 }
+
+//Delete Hike
+hRouter.delete("/:id", bigCheck(["guide"]), checkSchema({
+  id: {
+    in: ['params'],
+    isInt: true
+  }
+}), async (req: express.Request, res: express.Response) => {
+  if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+  const id: number = parseInt(req.params.id, 10);
+  const h = await hikeById(id);
+  if (!h) return res.status(404).json({ errors: [{ msg: "Hike not found" }] });
+  if (h.localguideid !== (req.user as User).id) return res.status(403).json({ errors: [{ msg: "You are not the owner of this hike" }] });
+  await deleteHike(id);
+  return res.status(204).send();
+})
