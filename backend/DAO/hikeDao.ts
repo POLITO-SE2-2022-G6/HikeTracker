@@ -107,9 +107,9 @@ export const createHike = async (hike: any) => {
 };
 
 export type newHike = Prisma.HikeCreateInput & { reference_points: { created: Point[], deleted: number[] }, startpointid: number, endpointid: number, localguideid: number };
-export const editHike = async (idp: number, params: newHike) => {
-  const { title, length, expected_time, ascent, difficulty, description, startpointid, endpointid, reference_points, gpstrack, localguideid } = params;
-
+export const editHike = async (idp: number, params: Partial<newHike>) => {
+  const { title, length, expected_time, ascent, difficulty, description, startpointid, endpointid, reference_points, gpstrack, localguideid, conditions, conddescription } = params;
+  
   return prisma.hike.update({
     where: {
       id: idp,
@@ -121,6 +121,8 @@ export const editHike = async (idp: number, params: newHike) => {
       ascent: ascent,
       difficulty: difficulty,
       description: description,
+      conditions: conditions,
+      conddescription: conddescription,
       start_point: startpointid ? {
         connect: {
           id: startpointid

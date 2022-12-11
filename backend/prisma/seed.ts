@@ -142,7 +142,8 @@ const usrs =[
     type: "hworker",
     username: faker.internet.userName(),
     phoneNumber: faker.phone.number(),
-    verified: true
+    verified: true,
+    hutid: 1
   },
   {
     email: "manager@email.com",
