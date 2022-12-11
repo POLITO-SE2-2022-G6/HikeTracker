@@ -8,7 +8,7 @@ import { User } from "@prisma/client";
 export const uRouter = Router();
 
 //Create new performance
-uRouter.post("/performance", bigCheck(["guide", "hiker"]),checkSchema({
+uRouter.post("/performance", bigCheck(["hiker"]),checkSchema({
     length:{
         in: ['body'],
         isFloat: true
@@ -46,7 +46,7 @@ uRouter.post("/performance", bigCheck(["guide", "hiker"]),checkSchema({
 )
 
 //edit performance
-uRouter.put("/performance", bigCheck(["guide", "hiker"]),checkSchema({
+uRouter.put("/performance", bigCheck(["hiker"]),checkSchema({
     length:{
         in: ['body'],
         isFloat: true,
@@ -82,7 +82,7 @@ uRouter.put("/performance", bigCheck(["guide", "hiker"]),checkSchema({
 })
 
 //get performance
-uRouter.get("/performance", bigCheck(["guide", "hiker"]), async (req: express.Request, res: express.Response) => {
+uRouter.get("/performance", bigCheck(["hiker"]), async (req: express.Request, res: express.Response) => {
     const hikerId=(req.user as User).id;
     const performance = await (getPerformance(hikerId));
     if (!performance) return res.status(404).json({ error: "Performance not found" });
@@ -90,7 +90,7 @@ uRouter.get("/performance", bigCheck(["guide", "hiker"]), async (req: express.Re
   })
 
 
-uRouter.get("/hikesByPerf", bigCheck(["guide", "hiker"]), async(req:express.Request,res:express.Response)=>{
+uRouter.get("/hikesByPerf", bigCheck(["hiker"]), async(req:express.Request,res:express.Response)=>{
     const hikerId=(req.user as User).id;
     const performance = await (getPerformance(hikerId));
     if (!performance) return res.status(404).json({ error: "Performance not found" });

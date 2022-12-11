@@ -51,12 +51,12 @@ const PerformanceForm: React.FC = () => {
     const handleSubmit = async (values: Fields) => {
 
         console.log('submitting', values)
-        editParameters(values)
+        await editParameters(values)
     }
 
     const editParameters = async (values: Fields) => {
         try {
-            //const response = await API.hiker.editPerformance(values)
+            const response = await API.hiker.editPerformance(values)
             navigate('/hikerarea/')
         } catch (error) {
             setError("Error while editing hike")
