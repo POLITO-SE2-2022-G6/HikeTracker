@@ -11,8 +11,9 @@ import { API } from '../../utilities/api/api';
 import { Hike as HIKE, Point } from '../../generated/prisma-client';
 
 type Hike = HIKE & {
-  Start_point: Point,
-  End_point: Point,
+  start_point: Point,
+  end_point: Point,
+  reference_points: Point[]
 }
 
 const HikeDetailPage: React.FC = () => {
@@ -120,10 +121,13 @@ const HikeDetailPage: React.FC = () => {
             />
             <Polyline pathOptions={{ dashArray: '10', dashOffset: offset.toString() }} positions={track || []} />
             <MapSetter center={center} />
-            {
-              [hike?.Start_point && PointMarker(hike.Start_point),
-              hike?.End_point && PointMarker(hike.End_point)]
-            }
+            <>
+              {
+                [hike?.start_point && PointMarker(hike.start_point),
+                hike?.end_point && PointMarker(hike.end_point),
+                hike && DisplayReferencePoints(hike.reference_points)]
+              }
+            </>
           </MapContainer>
         </Box>
       </Container>
@@ -132,6 +136,19 @@ const HikeDetailPage: React.FC = () => {
 };
 
 export default HikeDetailPage;
+
+function DisplayReferencePoints(points: Point[]) {
+  points.map((point) => {
+    return <Marker
+      position={[point.latitude!, point.longitude!]}
+    // icon={hutIcon}
+    >
+      <Popup>
+        {point.label}
+      </Popup>
+    </Marker>
+  })
+}
 
 function PointMarker(point: Point) {
   if (!point.latitude || !point.longitude) return null
