@@ -1,21 +1,51 @@
 import s from './HikerPage.module.css';
-import { Button, Center, Container ,Paper} from '@mantine/core';
+import { Button, Container, Paper, Flex } from '@mantine/core';
 import UserInfo from '../../../components/userInfo/userInfo';
-import { useNavigate } from 'react-router-dom';
+import UserPerformance from '../../../components/userInfo/userPerformance';
+import { useNavigate, createSearchParams } from 'react-router-dom';
+import { UserContext } from '../../../context/userContext';
+import React, { useContext, useEffect } from 'react';
+
 const HikerPage: React.FC = () => {
+
+    const { state, setState } = useContext(UserContext)
+
+    const params = { length: '5', duration: '100', difficulty: '3', ascent: '1.5' };
+
     const navigate = useNavigate()
+    const goToSearch = () => {
+        navigate({
+            pathname: '/hikes',
+            search: `?${createSearchParams(params)}`
+        });
+    }
+
     return (
         <>
-         <UserInfo/> 
-         <Center>
-            <Button
-                onClick={() => {
-                    navigate('/huts')
-                }}
-            >
-                Search a Hut
-            </Button>
-         </Center>
+            <UserInfo />
+            <UserPerformance />
+            <Container sx={(t) => {
+                return {
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "flex-start"
+                }
+            }}>
+                <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={
+                    (t) => {
+                        return {
+                            flexGrow: 1,
+                            flexShrink: 0,
+                        }
+                    }
+                }>
+                    <Flex direction={{ base: 'column', sm: 'row' }} gap={{ base: 'sm', sm: 'lg' }} justify={{ sm: 'center' }}>
+                        <Button size="md" onClick={() => {navigate('/huts')}}>Search a Hut</Button>
+                        <Button size="md" onClick={() => {navigate('/performances')}}>Modify Performance Parameters</Button>
+                        <Button size="md" onClick={goToSearch}>See filtered hikes</Button>
+                    </Flex>
+                </Paper>
+            </Container>
         </>
     );
 };

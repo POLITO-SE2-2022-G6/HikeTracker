@@ -24,10 +24,9 @@ const HikeForm: React.FC = () => {
   const [error, setError] = useState('');
 
   type Points = Point & {
-    Hut?: Hut
-    ParkingLot?: ParkingLot
+    hut?: Hut
+    parkinglot?: ParkingLot
   }
-
 
   const [points, setPoints] = useState<Points[]>([])
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
@@ -218,7 +217,7 @@ const HikeForm: React.FC = () => {
                 <MapContainer center={[41.90, 12.49]} zoom={8} className={s.map}>
                   {
                     points.map((point) => {
-                      if (point.Hut || point.ParkingLot)
+                      if (point.hut || point.parkinglot)
                         return <Marker
                           position={[point.latitude!, point.longitude!]}
                           // icon={hutIcon}
