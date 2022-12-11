@@ -9,14 +9,18 @@ export async function getUserByEmail(email: string) {
     return await prisma.user.findUnique({ where: { email: email } })
 }
 
-export async function createUsr(type: string, username: string, email: string, phoneNumber: string) {
+export async function createUsr(type: string, username: string, email: string, phoneNumber: string, hutid: number) {
     return prisma.user.create({
         data: {
             type: type,
             username: username,
             email: email,
-            phoneNumber: phoneNumber
-        }
-    })
+            phoneNumber: phoneNumber,
+            hut: hutid ? {
+                connect: {
+                    id: hutid
+                }
+            } : undefined
+        }})
 }
 

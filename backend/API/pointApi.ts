@@ -5,7 +5,7 @@ import { createPoint, editPoint, pointById, fullList, deletePoint } from "../DAO
 
 export const pRouter = Router();
 
-function checkSchemaOfPoint(){
+function checkSchemaOfPoint() {
     return checkSchema({
         label: {
             in: ['body'],
@@ -42,7 +42,7 @@ function checkSchemaOfPoint(){
             optional: true,
             notEmpty: true
         },
-        hut:{
+        hut: {
             in: ['body'],
             optional: true,
             isObject: true
@@ -52,7 +52,7 @@ function checkSchemaOfPoint(){
             optional: true,
             notEmpty: true
         },
-        parkinglot:{
+        parkinglot: {
             in: ['body'],
             optional: true,
             isObject: true
@@ -73,10 +73,15 @@ pRouter.get("/:id", checkSchema({
     }
 }), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const id = parseInt(req.params.id);
-    const point = await pointById(id);
-    if (!point) return res.status(404).json({ error: "Point not found" });
-    res.send(point);
+    try {
+        const id = parseInt(req.params.id);
+        const point = await pointById(id);
+        if (!point) return res.status(404).json({ error: "Point not found" });
+        res.send(point);
+    }
+    catch (e) {
+        return res.status(500).json({ error: "Server Error: " + e });
+    }
 });
 
 //Edit Point
@@ -86,24 +91,32 @@ pRouter.put("/:id", checkSchemaOfPoint(), checkSchema({
         isInt: true
     }
 }), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
-    if (!validationResult(req).isEmpty()) 
+    if (!validationResult(req).isEmpty())
         return res.status(400).json({ errors: "Illegal Data" });
-    const id = parseInt(req.params.id);
-    const point = await editPoint(id, req.body);
-    if (!point) return res.status(404).json({ error: "Point not found" });
-    res.send(point);
+    try {
+        const id = parseInt(req.params.id);
+        const point = await editPoint(id, req.body);
+        if (!point) return res.status(404).json({ error: "Point not found" });
+        res.send(point);
+    } catch (e) {
+        return res.status(500).json({ error: "Server Error: " + e });
+    }
 });
 
 //New Point in Body
 pRouter.post("", checkSchemaOfPoint(), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const point = await createPoint(req.body);
-    res.send(point);
+    try {
+        const point = await createPoint(req.body);
+        res.send(point);
+    } catch (e) {
+        return res.status(500).json({ error: "Server Error: " + e });
+    }
 });
 
 //Get all points
 pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
-    hut:{
+    hut: {
         in: ['query'],
         optional: true,
         isBoolean: true
@@ -113,7 +126,7 @@ pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
         optional: true,
         notEmpty: true
     },
-    parkinglot:{
+    parkinglot: {
         in: ['query'],
         optional: true,
         isBoolean: true
@@ -123,23 +136,28 @@ pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
         optional: true,
         notEmpty: true
     }
-}), async (req: express.Request, res: express.Response) => {    
+}), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const {label, latitude, longitude, elevation, city, region, province, hut, hutdescription, parkinglot, parkinglotdescription } = req.query as Record<string, string | undefined>;
-    
-    res.send(await fullList({
-        label,
-        latitude: latitude ? parseFloat(latitude) : undefined,
-        longitude: longitude ? parseFloat(longitude) : undefined,
-        elevation: elevation ? parseFloat(elevation) : undefined,
-        city,
-        region,
-        province,
-        hut: hut? hut === "true" : undefined,
-        hutdescription,
-        parkinglot: parkinglot? parkinglot === "true" : undefined,
-        parkinglotdescription
-    }));
+    const { label, latitude, longitude, elevation, city, region, province, hut, hutdescription, parkinglot, parkinglotdescription } = req.query as Record<string, string | undefined>;
+
+    try {
+        res.send(await fullList({
+            label,
+            latitude: latitude ? parseFloat(latitude) : undefined,
+            longitude: longitude ? parseFloat(longitude) : undefined,
+            elevation: elevation ? parseFloat(elevation) : undefined,
+            city,
+            region,
+            province,
+            hut: hut ? hut === "true" : undefined,
+            hutdescription,
+            parkinglot: parkinglot ? parkinglot === "true" : undefined,
+            parkinglotdescription
+        }));
+
+    } catch (error) {
+        return res.status(500).json({ error: "Server Error: " + error });
+    }
 });
 
 //Delete Point
@@ -150,7 +168,11 @@ pRouter.delete("/:id", checkSchema({
     }
 }), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const id = parseInt(req.params.id);
-    await deletePoint(id);
-    return res.status(204).send();
+    try {
+        const id = parseInt(req.params.id);
+        await deletePoint(id);
+        return res.status(204).send();
+    } catch (e) {
+        return res.status(500).json({ error: "Server Error: " + e });
+    }
 });

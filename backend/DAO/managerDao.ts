@@ -13,7 +13,7 @@ export const validateGuide= async(id:number)=>{
 export async function uGuidesList(){
     return prisma.user.findMany({
         where:{
-         type:"guide",
+         type:"guide" || "hworker",
          verified:false,
         }
     })
