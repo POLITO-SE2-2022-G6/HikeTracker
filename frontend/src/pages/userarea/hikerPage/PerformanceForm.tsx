@@ -4,6 +4,7 @@ import { Button, Container, Paper, Title, Text, Slider, Space} from '@mantine/co
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { API } from '../../../utilities/api/api';
+import { Performance } from '../../../generated/prisma-client';
 
 const PerformanceForm: React.FC = () => {
 
@@ -12,40 +13,35 @@ const PerformanceForm: React.FC = () => {
 
     type Fields = {
         length?: number;
-        expected_time?: number;
+        duration?: number;
         difficulty?: number;
-        ascent?: number;
+        altitude?: number;
     }
 
     const form = useForm<Fields>({
         initialValues: {
             length: undefined,
-            expected_time: undefined,
-            ascent: undefined,
+            duration: undefined,
+            altitude: undefined,
             difficulty: undefined,
         },
 
         validate: {
             length: (value: number) => (!value ? 'Length must not be empty' : null),
-            expected_time: (value: number) => (!value ? 'Duration time must not be empty' : null),
-            ascent: (value: number) => (!value ? 'Altitude must not be empty' : null),
+            duration: (value: number) => (!value ? 'Duration time must not be empty' : null),
+            altitude: (value: number) => (!value ? 'Altitude must not be empty' : null),
             difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
         },
     });
 
     useEffect(() => {
         const fetchParameters = async () => {
-            const parameters = {
-                length: 3,
-                expected_time: 80,
-                ascent: 1.5,
-                difficulty: 2
-            }
+            const parameters = await API.hiker.getPerformance() as Performance
             if (!parameters) return
             form.setValues({
                 length: parameters.length,
-                expected_time: parameters.expected_time,
-                ascent: parameters.ascent,
+                duration: parameters.duration,
+                altitude: parameters.altitude,
                 difficulty: parameters.difficulty,
             })
         }
@@ -60,7 +56,7 @@ const PerformanceForm: React.FC = () => {
 
     const editParameters = async (values: Fields) => {
         try {
-            //const response = await API.user.updateParameters(values)
+            //const response = await API.hiker.editPerformance(values)
             navigate('/hikerarea/')
         } catch (error) {
             setError("Error while editing hike")
@@ -110,7 +106,7 @@ const PerformanceForm: React.FC = () => {
                         />
                         <Text fw={500} fz='sm'>
                             Length:&nbsp;
-                            {form.values.length && formatLength(form.values.length)}
+                            {form.values.length && formatLength(calcScale(form.values.length))}
                         </Text>
                         <Slider
                             scale={calcScale}
@@ -124,7 +120,7 @@ const PerformanceForm: React.FC = () => {
                         />
                         <Text fw={500} fz='sm'>
                             Duration:&nbsp;
-                            {form.values.expected_time && formatTime(form.values.expected_time)}
+                            {form.values.duration && formatTime(form.values.duration)}
                         </Text>
                         <Slider
                             py={'md'}
@@ -132,21 +128,20 @@ const PerformanceForm: React.FC = () => {
                             max={24 * 60}
                             step={30}
                             label={formatTime}
-                            {...form.getInputProps('expected_time')}
+                            {...form.getInputProps('duration')}
                         />
                         <Text fw={500} fz='sm'>
                             Altitude:&nbsp;
-                            {form.values.ascent && formatLength(form.values.ascent)}
+                            {form.values.altitude && formatAltitude(form.values.altitude)}
                         </Text>
                         <Slider
-                            scale={calcScale}
                             py={'md'}
-                            min={1}
-                            max={1000}
-                            label={formatLength}
+                            min={0}
+                            max={10000}
+                            label={formatAltitude}
                             name="length"
                             defaultValue={10}
-                            {...form.getInputProps('ascent')}
+                            {...form.getInputProps('altitude')}
                         />
                         <Space h={'md'} />
                         <Button fullWidth type='submit'>Save Parameters</Button>
@@ -180,5 +175,8 @@ function formatLength(value: number) {
     else return (value * 1000).toFixed(0) + ' m'
 }
 
+function formatAltitude(value: number) {
+    return value.toFixed(0) + ' m'
+}
+
 export default PerformanceForm;
-/*const parameters = await API.user.getParameters()*/
