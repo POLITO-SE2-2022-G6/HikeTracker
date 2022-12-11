@@ -1,5 +1,3 @@
-import { PrismaClient, Performance, User, Prisma } from "@prisma/client";
-const prisma = new PrismaClient();
 import request from 'supertest'
 
 const baseURL = "http://localhost:3001/api/";

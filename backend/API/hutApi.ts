@@ -1,13 +1,13 @@
 import express, { Router } from "express";
-import { check, checkSchema, validationResult } from 'express-validator';
+import { checkSchema, validationResult } from 'express-validator';
 import { hutList, hutByID } from "../DAO/hutDao";
-import { isGuide, isLoggedIn } from "./authApi";
+import { bigCheck, isLoggedIn } from "./authApi";
 import { User } from "@prisma/client";
 
 export const hutRouter = Router();
 
-//if is necessary you can complete 
-hutRouter.get("", /*checkSchema({
+//Get all huts
+hutRouter.get("", checkSchema({
     name: {
       in: ['query'],
       optional: true,
@@ -44,22 +44,20 @@ hutRouter.get("", /*checkSchema({
       isString: true
     },
     
-  }*/, async (req: express.Request, res: express.Response) => {
+  }), bigCheck(["guide", "hworker", "manager", "hiker"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
 
-    const hut_list = hutList();
+    const huts = await hutList();
     
+    if (!huts) return res.status(404).json({ error: "Hut not found" });
     //add some check 
-    return res.status(200).json(hut_list);
-  
-    /*if you want to filter huts
-    const { name, description, altitude, beds, phone, email, website } = req.query as Record<string, string | undefined>;
-    */
+    return res.status(200).json(huts);
   })
   
   //Get hut by id
   //is necessary the login? 
-  hutRouter.get("/:id", isLoggedIn, async (req: express.Request, res: express.Response) => { 
+  //..Could be i guess
+  hutRouter.get("/:id", bigCheck(["guide", "hworker", "manager", "hiker"]), async (req: express.Request, res: express.Response) => { 
     const id = parseInt(req.params.id, 10);
     const hut = await hutByID(id);
     if (!hut) return res.status(404).json({ error: "Hut not found" });

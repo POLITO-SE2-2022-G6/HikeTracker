@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
-import { isGuide, isGuideOrHiker } from "./authApi";
+import { bigCheck } from "./authApi";
 import { createPoint, editPoint, pointById, fullList, deletePoint } from "../DAO/pointDao";
 
 export const pRouter = Router();
@@ -71,7 +71,7 @@ pRouter.get("/:id", checkSchema({
         in: ['params'],
         isInt: true
     }
-}), isGuide, async (req: express.Request, res: express.Response) => {
+}), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const id = parseInt(req.params.id);
     const point = await pointById(id);
@@ -85,7 +85,7 @@ pRouter.put("/:id", checkSchemaOfPoint(), checkSchema({
         in: ['params'],
         isInt: true
     }
-}), isGuide, async (req: express.Request, res: express.Response) => {
+}), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) 
         return res.status(400).json({ errors: "Illegal Data" });
     const id = parseInt(req.params.id);
@@ -95,14 +95,14 @@ pRouter.put("/:id", checkSchemaOfPoint(), checkSchema({
 });
 
 //New Point in Body
-pRouter.post("", checkSchemaOfPoint(), isGuide, async (req: express.Request, res: express.Response) => {
+pRouter.post("", checkSchemaOfPoint(), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const point = await createPoint(req.body);
     res.send(point);
 });
 
 //Get all points
-pRouter.get("", isGuideOrHiker, checkSchema({
+pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
     hut:{
         in: ['query'],
         optional: true,
@@ -148,7 +148,7 @@ pRouter.delete("/:id", checkSchema({
         in: ['params'],
         isInt: true
     }
-}), isGuide, async (req: express.Request, res: express.Response) => {
+}), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     const id = parseInt(req.params.id);
     await deletePoint(id);

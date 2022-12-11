@@ -77,7 +77,8 @@ model Performance {
   duration   Int    @default(0)
   altitude   Float  @default(0)
   difficulty Int    @default(0)
-  hiker      User?  @relation("perf")
+  hiker      User?  @relation("perf", fields: [hikerid], references: [id], onDelete: SetNull) 
+  hikerid    Int?   @unique
 }
 
 model User {
@@ -88,6 +89,5 @@ model User {
   phoneNumber String        @unique
   verified    Boolean       @default(false)
   hikeslist   Hike[]        @relation("guide")
-  performance Performance?  @relation("perf", references: [id], fields: [performanceid], onDelete: SetNull)
-  performanceid Int?        @unique
+  performance Performance?  @relation("perf")
 }

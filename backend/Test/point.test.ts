@@ -1,7 +1,6 @@
-import { PrismaClient, Point } from "@prisma/client";
-const prisma = new PrismaClient();
+import { Point } from "@prisma/client";
 import { pointById, createPoint, fullList, newPoint, pointQuery, deletePoint } from "../DAO/pointDao";
-import request, { agent } from 'supertest'
+import request from 'supertest'
 
 const baseURL = "http://localhost:3001/api/";
 

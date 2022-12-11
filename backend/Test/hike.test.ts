@@ -1,6 +1,5 @@
-import { PrismaClient, Prisma } from "@prisma/client";
-import request, { agent } from 'supertest'
-const prisma = new PrismaClient();
+import { Prisma } from "@prisma/client";
+import request from 'supertest'
 import { createHike, deleteHike, hikeById, hikesList  } from "../DAO/hikeDao";
 
 const baseURL = "http://localhost:3001/api/";

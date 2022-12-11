@@ -1,5 +1,4 @@
-import { PrismaClient, Performance, User, Prisma } from "@prisma/client";
-const prisma = new PrismaClient();
+import { Performance } from "@prisma/client";
 import request from 'supertest'
 
 const baseURL = "http://localhost:3001/api/";
@@ -29,7 +28,7 @@ describe("Create performance", () => {
         const response = await agent.post("hiker/performance").send(performance).expect(201);
         const idResponse = await agent.get("hiker/performance").expect(200);
         expect (idResponse.body).toMatchObject(response.body);
-        agent.delete("hiker/performance").expect(204);
+        await agent.delete("hiker/performance").expect(204);
     });
     
 });
@@ -44,7 +43,7 @@ describe("Get list of hikes by perfomance", () => {
 
         //expect (hikes.body.length).toBe(1);
 
-        agent.delete("hiker/performance").expect(204);
+        await agent.delete("hiker/performance").expect(204);
               
     });
     
@@ -54,10 +53,11 @@ describe("check edit perfomance", () => {
     test('check edit of perfomance by user', async () => {
         const agent = request.agent(baseURL); 
         await agent.post('auth/login').send(usr).expect(200);
+        await agent.post("hiker/performance").send(performance).expect(201);
         const response = await agent.put("hiker/performance").send(modifiedPerformance).expect(201);
         expect (response.body).toMatchObject(modifiedPerformance);
               
-        agent.delete("hiker/performance").expect(204);
+        await agent.delete("hiker/performance").expect(204);
     });
     
 });

@@ -1,4 +1,4 @@
-import { Point, PrismaClient, Hike, Prisma } from '@prisma/client'
+import { Point, PrismaClient, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
