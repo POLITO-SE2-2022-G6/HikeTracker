@@ -55,6 +55,8 @@ const HikeForm: React.FC = () => {
              deleted:    number[] } ;
   }
 
+  type inputFields = Fields & { huts?: { created: number[]} };
+
   const form = useForm<Fields>({
     initialValues: {
       title: '',
@@ -116,7 +118,7 @@ const HikeForm: React.FC = () => {
 
 
 
-  const handleSubmit = async (values: Fields) => {
+  const handleSubmit = async ( values: Fields) => {
     console.log('submitting', values)
     if (id) {
       editHike(values)
@@ -128,7 +130,7 @@ const HikeForm: React.FC = () => {
 
   const editHike = async (values: Fields) => {
     try {
-      const response = await API.hike.updateHike(parseInt(id!), values)
+      const response = await API.hike.updateHike(parseInt(id!), {...values,huts:JSON.stringify(values.huts)})
       navigate('/hike/' + id)
 
     } catch (error) {
@@ -136,11 +138,11 @@ const HikeForm: React.FC = () => {
     }
   }
 
-  const addHike = async (values: Fields) => {
+  const addHike = async (values: inputFields) => {
     try {
       console.log(values);
 
-      const res = await API.hike.createHike(values)
+      const res = await API.hike.createHike({...values,huts:JSON.stringify(values.huts)})
       navigate('/hikelist');
 
     } catch (err) {

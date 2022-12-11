@@ -143,6 +143,8 @@ hRouter.post("", bigCheck(["guide"]), checkSchema({
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
 
   try {
+    const gpst = await gpsUpload(req, res);
+    if (typeof gpst !== "string" && gpst !== undefined) return res.status(400).json({ errors: [{ msg: "Invalid GPS Track" }] });
     const newHike = await createHike({
       title: req.body.title,
       length: req.body.length && parseFloat(req.body.length),
@@ -150,7 +152,8 @@ hRouter.post("", bigCheck(["guide"]), checkSchema({
       expected_time: req.body.expected_time && parseInt(req.body.expected_time),
       difficulty: req.body.difficulty && parseInt(req.body.difficulty),
       description: req.body.description,
-      gpstrack: await gpsUpload(req, res),
+      gpstrack: gpst,
+      huts: JSON.parse(req.body.huts),
       startpointid: req.body.startpointid && parseInt(req.body.startpointid),
       endpointid: req.body.endpointid && parseInt(req.body.endpointid),
       reference_points: req.body.reference_points,
@@ -238,31 +241,12 @@ hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
   huts:{
     optional: true,
     in: "body",
-    isObject: true
-  },
-  "huts.created": {
-    optional: true,
-    in: "body",
-    isArray: true
-  },
-  "huts.created.*": {
-    optional: true,
-    in: 'body',
-    isInt: true
-  },
-  "huts.deleted": {
-    optional: true,
-    in: "body",
-    isArray: true
-  },
-  "huts.deleted.*": {
-    optional: true,
-    in: 'body',
-    isInt: true
+    isString: true
   }
 }), async (req: express.Request, res: express.Response) => {
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
   try {
+    console.log(req.body.huts);
     const id: number = parseInt(req.params.id, 10);
     const h = await hikeById(id);
     if (!h) return res.status(404).json({ errors: [{ msg: "Hike not found" }] });
@@ -277,10 +261,10 @@ hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
       difficulty: req.body.difficulty && parseInt(req.body.difficulty),
       description: req.body.description,
       gpstrack: gpst,
-      huts: req.body.huts,
+      huts: JSON.parse(req.body.huts),
       startpointid: req.body.startpointid && parseInt(req.body.startpointid),
       endpointid: req.body.endpointid && parseInt(req.body.endpointid),
-      reference_points: req.body.reference_points,
+      reference_points: JSON.parse(req.body.reference_points),
       localguideid: (req.user as User).id
     });
     return res.status(201).json(modifiedHike);

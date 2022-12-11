@@ -77,8 +77,9 @@ export async function hikeById(id: number) {
   });
 }
 
-export const createHike = async (hike: any) => {
-  const { title, length, expected_time, ascent, difficulty, gpstrack, description, localguideid, startpointid, endpointid } = hike;
+export type newHike = Prisma.HikeCreateInput & { huts: { created: number[], deleted: number[] }, reference_points: { created: number[], deleted: number[] }, startpointid: number, endpointid: number, localguideid: number };
+export const createHike = async (hike: newHike) => {
+  const { huts, title, length, expected_time, ascent, difficulty, gpstrack, description, localguideid, startpointid, endpointid } = hike;
 
   return prisma.hike.create(
     {
@@ -100,16 +101,15 @@ export const createHike = async (hike: any) => {
             id: endpointid
           }
         } : undefined,
+        huts: huts ? { connect: huts.created.map((p) => ({ id: p })) } : undefined,
         localguide: localguideid ? { connect: { id: localguideid } } : undefined,
       },
     }
   );
 };
 
-export type newHike = Prisma.HikeCreateInput & { huts: { created: Point[], deleted: number[] }, reference_points: { created: Point[], deleted: number[] }, startpointid: number, endpointid: number, localguideid: number };
 export const editHike = async (idp: number, params: Partial<newHike>) => {
   const { huts, title, length, expected_time, ascent, difficulty, description, startpointid, endpointid, reference_points, gpstrack, localguideid, conditions, conddescription } = params;
-  
   return prisma.hike.update({
     where: {
       id: idp,
@@ -140,12 +140,12 @@ export const editHike = async (idp: number, params: Partial<newHike>) => {
         }
       },
       reference_points: reference_points ? {
-        connect: reference_points.created.map((p) => ({ id: p.id })),
-        disconnect: reference_points.deleted.map(id => ({ id }))
+        connect: reference_points.created.map((p) => ({ id: p })),
+        disconnect: reference_points.deleted.map((p) => ({ id: p }))
       } : undefined,
       huts: huts ? {
-        connect: huts.created.map((p) => ({ id: p.id })),
-        disconnect: huts.deleted.map(id => ({ id }))
+        connect: huts.created.map((p) => ({ id: p })),
+        disconnect: huts.deleted.map((p) => ({ id: p }))
       } : undefined
     },
     include: {

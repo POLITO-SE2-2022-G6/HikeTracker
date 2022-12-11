@@ -64,8 +64,8 @@ const hikes: Prisma.HikeCreateInput[] = Array(20).fill(0).map(e => {
         city: faker.address.city(),
         region: regioni[Math.floor(Math.random() * regioni.length)],
         province: province[Math.floor(Math.random() * province.length)],
-        latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
-        longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
+        latitude: parseFloat(faker.address.latitude(47.1153931748, 36.619987291)),
+        longitude: parseFloat(faker.address.longitude(18.4802470232, 6.7499552751)),
         hut: {
           create: {
             description: faker.lorem.paragraph(),
@@ -78,8 +78,8 @@ const hikes: Prisma.HikeCreateInput[] = Array(20).fill(0).map(e => {
         city: faker.address.city(),
         region: regioni[Math.floor(Math.random() * regioni.length)],
         province: province[Math.floor(Math.random() * province.length)],
-        latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
-        longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
+        latitude: parseFloat(faker.address.latitude(47.1153931748, 36.619987291)),
+        longitude: parseFloat(faker.address.longitude(18.4802470232, 6.7499552751)),
         parkinglot: {
           create: {
             description: faker.lorem.paragraph(),
@@ -100,8 +100,8 @@ const huts: Prisma.HutCreateInput[] = Array(100).fill(0).map(e => {
         region: regioni[Math.floor(Math.random() * regioni.length)],
         province: province[Math.floor(Math.random() * province.length)],
         label: faker.address.streetName(),
-        latitude: parseFloat(faker.address.latitude(18.4802470232, 6.7499552751)),
-        longitude: parseFloat(faker.address.longitude(47.1153931748, 36.619987291)),
+        latitude: parseFloat(faker.address.latitude(47.1153931748, 36.619987291)),
+        longitude: parseFloat(faker.address.longitude(18.4802470232, 6.7499552751)),
       }
     }
   }
@@ -154,12 +154,19 @@ const usrs =[
 ]
 
 
+const performance = {
+  hikerid: 11,
+  difficulty: 3
+}
+
 const usrsPromises = usrs.map(u => prisma.user.create({data: u}));
 const guidesPromises = guides.map(u => prisma.user.create({ data: u }))
 const hikersPromises = hikers.map(u => prisma.user.create({ data: u }))
 
 const hutsPromises = huts.map(h => prisma.hut.create({ data: h }))
 const parkingsPromises = parkings.map(p => prisma.parkingLot.create({ data: p }))
+const performancePromises = prisma.performance.create({ data: performance })
+
 
 Promise.all(hikersPromises)
   .then(() => Promise.all(guidesPromises))
@@ -178,6 +185,7 @@ Promise.all(hikersPromises)
   .then(() => Promise.all(hutsPromises))
   .then(() => Promise.all(parkingsPromises))
   .then(() => Promise.all(usrsPromises))
+  .then(() => Promise.resolve(performancePromises))
   .then(() => {
     console.log('Seed finished')
     process.exit(0)
