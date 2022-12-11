@@ -8,6 +8,7 @@ export async function hutList() {
 
 export async function hutByID(id:number) {
     return prisma.hut.findUnique({
-        where: {id}
+        where: {id},
+        include: { hikes: true }
     })
 }

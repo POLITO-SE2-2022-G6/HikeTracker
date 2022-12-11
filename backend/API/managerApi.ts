@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
 import { bigCheck } from "./authApi";
-import {validateGuide,uGuidesList} from "../DAO/managerDao";
+import { validateGuide, uGuidesList } from "../DAO/managerDao";
 
 export const mRouter = Router();
 
@@ -11,14 +11,22 @@ mRouter.put("/validate/:id", checkSchema({
         in: ['params'],
         isInt: true,
     }
-}), bigCheck(["manager"]), async(req:express.Request,res:express.Response)=>{
+}), bigCheck(["manager"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const id: number = parseInt(req.params.id, 10);
-    const validatedGuide= await validateGuide(id);
-    return res.status(201).json(validatedGuide);
+    try {
+        const id: number = parseInt(req.params.id, 10);
+        const validatedGuide = await validateGuide(id);
+        return res.status(201).json(validatedGuide);
+    } catch (e) {
+        return res.status(500).json({ error: "Internal Server Error: " + e });
+    }
 })
 
-mRouter.get("", bigCheck(["manager"]), async(req:express.Request,res:express.Response)=>{
-    const unverifiedGuides= await uGuidesList();
-    return res.status(201).json(unverifiedGuides);
+mRouter.get("", bigCheck(["manager"]), async (req: express.Request, res: express.Response) => {
+    try {
+        const unverifiedGuides = await uGuidesList();
+        return res.status(201).json(unverifiedGuides);
+    } catch (e) {
+        return res.status(500).json({ error: "Internal Server Error: " + e });
+    }
 })

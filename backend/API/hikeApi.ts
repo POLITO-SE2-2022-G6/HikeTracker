@@ -48,24 +48,31 @@ hRouter.get("", checkSchema({
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
 
   const { city, province, region, difficulty, length, ascent, expected_time } = req.query as Record<string, string | undefined>;
-
-  res.send(await hikesList({
-    difficulty: difficulty ? parseInt(difficulty) : undefined,
-    city,
-    province,
-    region,
-    length: length ? parseFloat(length) : undefined,
-    ascent: ascent ? parseFloat(ascent) : undefined,
-    expected_time: expected_time ? parseFloat(expected_time) : undefined
-  }));
+  try {
+    res.send(await hikesList({
+      difficulty: difficulty ? parseInt(difficulty) : undefined,
+      city,
+      province,
+      region,
+      length: length ? parseFloat(length) : undefined,
+      ascent: ascent ? parseFloat(ascent) : undefined,
+      expected_time: expected_time ? parseFloat(expected_time) : undefined
+    }));
+  } catch (e) {
+    return res.status(500).json({ error: "Internal Server Error: " + e });
+  }
 })
 
 //Get hike by id
 hRouter.get("/:id", isLoggedIn, async (req: express.Request, res: express.Response) => {
-  const id = parseInt(req.params.id, 10);
-  const hike = await hikeById(id);
-  if (!hike) return res.status(404).json({ error: "Hike not found" });
-  return res.status(200).json(hike);
+  try {
+    const id = parseInt(req.params.id, 10);
+    const hike = await hikeById(id);
+    if (!hike) return res.status(404).json({ error: "Hike not found" });
+    return res.status(200).json(hike);
+  } catch (e) {
+    return res.status(500).json({ error: "Internal Server Error: " + e });
+  }
 })
 
 
@@ -135,20 +142,24 @@ hRouter.post("", bigCheck(["guide"]), checkSchema({
 }), async (req: express.Request, res: express.Response) => {
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
 
-  const newHike = await createHike({
-    title: req.body.title,
-    length: req.body.length && parseFloat(req.body.length),
-    ascent: req.body.ascent && parseFloat(req.body.ascent),
-    expected_time: req.body.expected_time && parseInt(req.body.expected_time),
-    difficulty: req.body.difficulty && parseInt(req.body.difficulty),
-    description: req.body.description,
-    gpstrack: await gpsUpload(req, res),
-    startpointid: req.body.startpointid && parseInt(req.body.startpointid),
-    endpointid: req.body.endpointid && parseInt(req.body.endpointid),
-    reference_points: req.body.reference_points,
-    localguideid: (req.user as User).id
-  });
-  return res.status(201).json(newHike);
+  try {
+    const newHike = await createHike({
+      title: req.body.title,
+      length: req.body.length && parseFloat(req.body.length),
+      ascent: req.body.ascent && parseFloat(req.body.ascent),
+      expected_time: req.body.expected_time && parseInt(req.body.expected_time),
+      difficulty: req.body.difficulty && parseInt(req.body.difficulty),
+      description: req.body.description,
+      gpstrack: await gpsUpload(req, res),
+      startpointid: req.body.startpointid && parseInt(req.body.startpointid),
+      endpointid: req.body.endpointid && parseInt(req.body.endpointid),
+      reference_points: req.body.reference_points,
+      localguideid: (req.user as User).id
+    });
+    return res.status(201).json(newHike);
+  } catch (e) {
+    return res.status(500).json({ error: "Internal Server Error: " + e });
+  }
 })
 
 
@@ -223,41 +234,79 @@ hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
     optional: true,
     in: 'body',
     isObject: true
+  },
+  huts:{
+    optional: true,
+    in: "body",
+    isObject: true
+  },
+  "huts.created": {
+    optional: true,
+    in: "body",
+    isArray: true
+  },
+  "huts.created.*": {
+    optional: true,
+    in: 'body',
+    isInt: true
+  },
+  "huts.deleted": {
+    optional: true,
+    in: "body",
+    isArray: true
+  },
+  "huts.deleted.*": {
+    optional: true,
+    in: 'body',
+    isInt: true
   }
 }), async (req: express.Request, res: express.Response) => {
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-  const id: number = parseInt(req.params.id, 10);
-  
-  const modifiedHike = await editHike(id, {
-    title: req.body.title,
-    length: req.body.length && parseFloat(req.body.length),
-    expected_time: req.body.expected_time && parseInt(req.body.expected_time),
-    ascent: req.body.ascent && parseFloat(req.body.ascent),
-    difficulty: req.body.difficulty && parseInt(req.body.difficulty),
-    description: req.body.description,
-    gpstrack: await(gpsUpload(req, res)) || null,
-    startpointid: req.body.startpointid && parseInt(req.body.startpointid),
-    endpointid: req.body.endpointid && parseInt(req.body.endpointid),
-    reference_points: req.body.reference_points,
-    localguideid: (req.user as User).id
-  });
-  return res.status(201).json(modifiedHike);
+  try {
+    const id: number = parseInt(req.params.id, 10);
+    const h = await hikeById(id);
+    if (!h) return res.status(404).json({ errors: [{ msg: "Hike not found" }] });
+    if (h.localguideid !== (req.user as User).id) return res.status(403).json({ errors: [{ msg: "You are not the owner of this hike" }] });
+    const gpst = await gpsUpload(req, res);
+    if (typeof gpst !== "string" && gpst !== undefined) return res.status(400).json({ errors: [{ msg: "Invalid GPS Track" }] });
+    const modifiedHike = await editHike(id, {
+      title: req.body.title,
+      length: req.body.length && parseFloat(req.body.length),
+      expected_time: req.body.expected_time && parseInt(req.body.expected_time),
+      ascent: req.body.ascent && parseFloat(req.body.ascent),
+      difficulty: req.body.difficulty && parseInt(req.body.difficulty),
+      description: req.body.description,
+      gpstrack: gpst,
+      huts: req.body.huts,
+      startpointid: req.body.startpointid && parseInt(req.body.startpointid),
+      endpointid: req.body.endpointid && parseInt(req.body.endpointid),
+      reference_points: req.body.reference_points,
+      localguideid: (req.user as User).id
+    });
+    return res.status(201).json(modifiedHike);
+  } catch (e) {
+    return null;
+  }
 })
 
 async function gpsUpload(req: express.Request, res: express.Response) {
   let file = undefined
-  if (req.files) {
-    const track = req.files.gpstrack
-    if (!(track instanceof Array)) {
-      const rand = (Math.random() + 1).toString(36).substring(7)
-      const trackPath = path.join(path.resolve(__dirname, '..'), 'gpstracks', rand, track.name);
-      track.mv(trackPath, (err) => {
-        if (err) return res.status(500).send(err);
-      });
-      file = `api/gpstracks/${rand}/${track.name}`;
+  try {
+    if (req.files) {
+      const track = req.files.gpstrack
+      if (!(track instanceof Array)) {
+        const rand = (Math.random() + 1).toString(36).substring(7)
+        const trackPath = path.join(path.resolve(__dirname, '..'), 'gpstracks', rand, track.name);
+        track.mv(trackPath, (err) => {
+          if (err) return res.status(500);
+        });
+        file = `api/gpstracks/${rand}/${track.name}`;
+      }
     }
+    return file;
+  } catch (e) {
+    return res.status(500);
   }
-  return file;
 }
 
 //Delete Hike
@@ -268,10 +317,14 @@ hRouter.delete("/:id", bigCheck(["guide"]), checkSchema({
   }
 }), async (req: express.Request, res: express.Response) => {
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-  const id: number = parseInt(req.params.id, 10);
-  const h = await hikeById(id);
-  if (!h) return res.status(404).json({ errors: [{ msg: "Hike not found" }] });
-  if (h.localguideid !== (req.user as User).id) return res.status(403).json({ errors: [{ msg: "You are not the owner of this hike" }] });
-  await deleteHike(id);
-  return res.status(204).send();
+  try {
+    const id: number = parseInt(req.params.id, 10);
+    const h = await hikeById(id);
+    if (!h) return res.status(404).json({ errors: [{ msg: "Hike not found" }] });
+    if (h.localguideid !== (req.user as User).id) return res.status(403).json({ errors: [{ msg: "You are not the owner of this hike" }] });
+    await deleteHike(id);
+    return res.status(204).send();
+  } catch (e) {
+    return res.status(500).json({ error: "Internal Server Error: " + e });
+  }
 })
