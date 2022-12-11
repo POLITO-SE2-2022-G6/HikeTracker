@@ -10,7 +10,7 @@ const HikerPage: React.FC = () => {
 
     const { state, setState } = useContext(UserContext)
 
-    const params = { length: '3', expected_time: '80', difficulty: '2', ascent: '1.5' };
+    const params = { length: '5', duration: '100', difficulty: '3', ascent: '1.5' };
 
     const navigate = useNavigate()
     const goToSearch = () => {

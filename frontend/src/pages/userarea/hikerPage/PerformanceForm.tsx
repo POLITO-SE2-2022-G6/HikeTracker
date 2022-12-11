@@ -138,6 +138,16 @@ const PerformanceForm: React.FC = () => {
                             Altitude:&nbsp;
                             {form.values.ascent && formatLength(form.values.ascent)}
                         </Text>
+                        <Slider
+                            scale={calcScale}
+                            py={'md'}
+                            min={1}
+                            max={1000}
+                            label={formatLength}
+                            name="length"
+                            defaultValue={10}
+                            {...form.getInputProps('ascent')}
+                        />
                         <Space h={'md'} />
                         <Button fullWidth type='submit'>Save Parameters</Button>
                     </form>
