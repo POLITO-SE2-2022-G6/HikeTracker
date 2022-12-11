@@ -13,6 +13,7 @@ import { MdCabin } from "react-icons/md";
 
 import cabin from './cabin.svg';
 import car from './car.svg';
+import HutsList from '../../components/hutsList/HutsList';
 
 const hutIcon = divIcon({
   html: cabin
@@ -25,13 +26,19 @@ const HikeForm: React.FC = () => {
   const [error, setError] = useState('');
 
   type Points = Point & {
-    Hut?: Hut
-    ParkingLot?: ParkingLot
+    hut?: Hut
+    parkinglot?: ParkingLot
   }
 
 
   const [points, setPoints] = useState<Points[]>([])
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
+  const [hutMarker, setHutMarker] = useState<number | null>(null)
+  const[created,setCreated]=useState<number[]>([]);
+  const[deleted,setDeleted]=useState<number[]>([]);
+
+
+  
 
 
   type Fields = {
@@ -44,6 +51,8 @@ const HikeForm: React.FC = () => {
     endpointid?: number;
     description?: string;
     gpstrack?: File;
+    huts?: {created: number[],
+             deleted:    number[] } ;
   }
 
   const form = useForm<Fields>({
@@ -57,6 +66,8 @@ const HikeForm: React.FC = () => {
       endpointid: undefined,
       description: '',
       gpstrack: undefined,
+      huts: {created: [],
+        deleted:    [] } ,
     },
 
     validate: {
@@ -209,6 +220,10 @@ const HikeForm: React.FC = () => {
               hidden
               {...form.getInputProps('endpointid')}
             />
+              <TextInput
+              hidden
+              {...form.getInputProps('huts')}
+            />
 
             <Space h={'md'} />
             <Flex wrap="wrap">
@@ -219,15 +234,22 @@ const HikeForm: React.FC = () => {
                 <MapContainer center={[41.90, 12.49]} zoom={8} className={s.map}>
                   {
                     points.map((point,id) => {
-                   //   if (point.Hut || point.ParkingLot)
-                      if ( point.parkinglotid || point.hutid)
+                      if (point.hut || point.parkinglot)
+                    //  if ( point.parkinglotid || point.hutid)
                         return( <Marker
                         key={id}
                           position={[point.latitude!, point.longitude!]}
-                           icon={ (point.hutid) ? L.icon({ iconUrl: cabin}) : L.icon({ iconUrl: car})}
+                           icon={ (point.hut) ? L.icon({ iconUrl: cabin}) : L.icon({ iconUrl: car})}
                           eventHandlers={{
                             click: () => {
                               setSelectedMarker(point.id)
+                              if(point.id === point.hut?.pointid){
+                                setHutMarker(point.id);
+                                console.log("selected hut: ", point.hut.pointid);
+                                setCreated([...created,point.id]);
+                                console.log(created);
+                                setDeleted([...deleted,]);
+                              }
                             }
                           }}
                         >
@@ -246,7 +268,9 @@ const HikeForm: React.FC = () => {
                 <Stack p={'md'}>
                   <Button type="button" onClick={() => { selectedMarker && form.setValues({ startpointid: selectedMarker }) }}> Set as Start Point </Button>
                   <Button type="button" onClick={() => { selectedMarker && form.setValues({ endpointid: selectedMarker }) }}> Set as End Point </Button>
-                </Stack>
+                  <Button onClick= {() => {form.setValues({  huts: { created: created , deleted: deleted } }) }}>
+                    Link Hut</Button>
+                </Stack> 
               </Box>
               {/* buttons */}
 
