@@ -234,6 +234,31 @@ hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
     optional: true,
     in: 'body',
     isObject: true
+  },
+  huts:{
+    optional: true,
+    in: "body",
+    isObject: true
+  },
+  "huts.created": {
+    optional: true,
+    in: "body",
+    isArray: true
+  },
+  "huts.created.*": {
+    optional: true,
+    in: 'body',
+    isInt: true
+  },
+  "huts.deleted": {
+    optional: true,
+    in: "body",
+    isArray: true
+  },
+  "huts.deleted.*": {
+    optional: true,
+    in: 'body',
+    isInt: true
   }
 }), async (req: express.Request, res: express.Response) => {
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
@@ -252,6 +277,7 @@ hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
       difficulty: req.body.difficulty && parseInt(req.body.difficulty),
       description: req.body.description,
       gpstrack: gpst,
+      huts: req.body.huts,
       startpointid: req.body.startpointid && parseInt(req.body.startpointid),
       endpointid: req.body.endpointid && parseInt(req.body.endpointid),
       reference_points: req.body.reference_points,
