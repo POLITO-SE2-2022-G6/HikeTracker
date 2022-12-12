@@ -130,6 +130,7 @@ const HikeForm: React.FC = () => {
       try {
         const points = await API.point.getPoints()
         if (!points) return
+        console.log(points)
         setPoints(points)
       } catch (error) {
         console.error(error)
@@ -411,10 +412,11 @@ const HikeForm: React.FC = () => {
   function DisplayPoint(props: { point: Points }) {
     const { point } = props
     let icon = new L.Icon.Default()
+
     if (point.hut)
       icon = L.icon({ iconUrl: cabin })
     else if (point.parkinglot)
-      L.icon({ iconUrl: car })
+      icon = L.icon({ iconUrl: car })
 
 
     return <Marker
@@ -434,7 +436,6 @@ const HikeForm: React.FC = () => {
   }
 
   function ReferencePointClicker() {
-    const [click, setClick] = useState([0, 0])
 
     const map = useMapEvents({
       click: (e) => {
@@ -445,7 +446,6 @@ const HikeForm: React.FC = () => {
           const currDistance = distance([curr[0], curr[1]], [e.latlng.lat, e.latlng.lng])
           return (prevDistance < currDistance) ? prev : curr
         })
-        setClick(closest)
         console.log("closest", closest)
         setNewReferencePoint({
           id: -1,
@@ -460,8 +460,8 @@ const HikeForm: React.FC = () => {
       }
     })
 
-    if (click)
-      return <Marker position={{ lat: click[0], lng: click[1] }} />
+    if (newReferencePoint?.latitude && newReferencePoint?.longitude)
+      return <Marker position={{ lat: newReferencePoint.latitude, lng: newReferencePoint.longitude }} />
 
     return null
   }
