@@ -1,30 +1,21 @@
 import s from './HikesList.module.css';
-import { Table } from '@mantine/core';
+import { Pagination} from '@mantine/core';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
 import { API } from '../../utilities/api/api';
 import { Hike } from '../../generated/prisma-client';
-import {IoIosArrowDropdown } from "react-icons/io";
+import { HikeCardGrid } from '../hikeCardGrid/hikeCardGrid';
 
 type HikeProps = {
   data?: any
 }
-// interface Hike {
-//   id?: number,
-//   Title?: string,
-//   Length?: number,
-//   Expected_time?: number,
-//   Ascent?: number,
-//   Difficulty?: string,
-//   Start_point?: number,
-//   End_point?: number,
-//   Description?: string,
-// }
+
+const elementsPerPage = 12;
 
 const HikesList = ({ data }: HikeProps) => {
 
   const [hikes, setHikes] = useState<Hike[]>([]);
+  const [page, setPage] = useState(1)
 
 
   const getAllHikes = async () => {
@@ -51,44 +42,12 @@ const HikesList = ({ data }: HikeProps) => {
   return (
     <>
       <h2>Available Hikes:</h2>
-      <Table highlightOnHover>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Length</th>
-            <th>Expected Time</th>
-            <th>Ascent</th>
-            <th>Difficulty</th>
-            {/* <th>Start Point</th>
-            <th>End Point</th> */}
-            {/* <th>Description</th> */}
-          </tr>
-        </thead>
-        <tbody>{
-           hikes?.map((h) => <HikeData hike={h} key={h['id']} />)}
-        </tbody>
-      </Table>
-    </>
-  );
-}
-
-function HikeData({ hike }: { hike: Hike }) {
-  const navigate = useNavigate()
-  const { state, setState } = useContext(UserContext)
-
-  return (
-    <>
-      <tr onClick={() => { if (state.loggedIn) navigate(`/hike/${hike.id}`) }}>
-        <td>{hike.title} </td>
-        <td>{hike.length}</td>
-        <td>{hike.expected_time}</td>
-        <td>{hike.ascent}</td>
-        <td>{hike.difficulty}</td>
-        <td> {state.loggedIn ? <IoIosArrowDropdown size="22px"/>: ""}</td>
-        {/* <td>{props.hike['StartPointId']}</td>
-        <td>{props.hike['EndPointId']}</td> */}
-        {/* <td>{props.hike['Description']}</td> */}
-      </tr>
+     <HikeCardGrid hikes={hikes.slice((page - 1) * elementsPerPage, elementsPerPage * page)}/>
+     <Pagination
+              total={hikes.length / elementsPerPage + (hikes.length % elementsPerPage ? 1 : 0)}
+              page={page}
+              onChange={setPage}
+            />
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { Hike, Performance } from "../../generated/prisma-client";
 import { Methods } from "./client";
 import { Resource } from "./resource";
 import { Performance } from "../../generated/prisma-client";
@@ -6,7 +7,7 @@ export class HikerApi extends Resource {
   protected path = "/hiker";
 
   async getPerformance() {
-    return this.client.request({
+    return this.client.request<Performance>({
       method: Methods.GET,
       path: `${this.path}/performance`,
     });
@@ -25,7 +26,7 @@ export class HikerApi extends Resource {
   }
 
   async getRecommendedHikes() {
-    return this.client.request({
+    return this.client.request<Hike[]>({
       method: Methods.GET,
       path: `${this.path}/hikesByPerf`,
     });

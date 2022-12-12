@@ -1,7 +1,17 @@
-import { Hike } from "../../generated/prisma-client";
+import { Hike, Hut, Point } from "../../generated/prisma-client";
 import { Client, Methods } from "./client";
 import { Resource } from "./resource";
 
+export type withPoint<T> = T & {
+  point: Point;
+};
+
+export type fullHike = Hike & {
+  start_point: Point
+  end_point: Point
+  reference_points: Point[]
+  huts: withPoint<Hut>[]
+}
 export class HikeApi extends Resource {
 
   protected path = "hike";
@@ -14,7 +24,7 @@ export class HikeApi extends Resource {
   }
 
   async getHike(id: number) {
-    return this.client.request<Hike>({
+    return this.client.request<fullHike>({
       method: Methods.GET,
       path: `${this.path}/${id}`,
     });

@@ -14,6 +14,7 @@ import PerformanceForm from '../userarea/hikerPage/PerformanceForm';
 import HutsSearchPage from '../huts/HutsSearchPage';
 import HutForm from '../hutForm/HutForm';
 import ParkingLotForm from '../parkingLotForm/ParkingLotForm';
+import Home from '../home/Home';
 
 import { UserContext, UserContextWrapper } from '../../context/userContext';
 import { useContext } from 'react';
@@ -29,10 +30,11 @@ const Index: React.FC = () => {
     <>
       <UserContextWrapper>
         <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<Layout />} >
-              <Route path='hikes' element={<HikesSearchPage />} />
-              <Route path='' element={<Landing />} />
+          <Routes>  
+          <Route path='' element={ <Home/> } />          
+            <Route path='/' element={  <Layout /> } >
+              <Route path='hikes' element={<HikesSearchPage />} />   
+              <Route path='/hikelist' element={ <Landing/> } />
               <Route path='/hike/:id' element={<HikeDetailPage />} />
               <Route path='/hike/edit/' element={<HikeForm />} />
               <Route path='/hike/edit/:id' element={<HikeForm />} />

@@ -14,7 +14,7 @@ export const Landing = () => {
       <Container >
         <h1>Welcome to HikeTracker, {(state.loggedIn? <>{state.data?.username}!</>: <> visitor!</> )}</h1>
 
-        <Link to="hikes">
+        <Link to="/hikes">
           <Button> Search Hikes</Button>
         </Link>
         <HikesList />

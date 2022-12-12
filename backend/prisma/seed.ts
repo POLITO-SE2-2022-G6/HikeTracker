@@ -91,6 +91,7 @@ const hikes: Prisma.HikeCreateInput[] = Array(20).fill(0).map(e => {
   }
 })
 
+
 function getSpecialPoint(){
   return {
     description: faker.lorem.paragraph(),
