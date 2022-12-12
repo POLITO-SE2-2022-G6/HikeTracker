@@ -78,17 +78,23 @@ aRouter.post("/signup", checkSchema({
         in: "body",
         isMobilePhone: true,
         errorMessage: "phoneNumber must be a valid phone number",
-    }
+    },
+    hutid: {
+        in: "body",
+        optional: true,
+        isInt: true,
+        errorMessage: "hutid must be a valid integer",
+    },
 }), async (req: express.Request, res: express.Response) => {
-    const { type, username, email, phoneNumber } = req.body as Record<string, string>;
-
+    const { type, username, email, phoneNumber, hutid } = req.body as Record<string, string>;
+    const id = parseInt(hutid, 10);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
     try {
-        const user = await createUsr(type, username, email, phoneNumber)
+        const user = await createUsr(type, username, email, phoneNumber, id)
         res.status(200).json(user);
     }
     catch (err) {

@@ -8,12 +8,17 @@ import { MapContainer, TileLayer, useMap, Polyline, Marker, Popup } from 'react-
 import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
 import { API } from '../../utilities/api/api';
-import { Hike as HIKE, Point } from '../../generated/prisma-client';
+import { Hike as HIKE, Hut, Point } from '../../generated/prisma-client';
 import { extrackPoints } from '../../utilities/gpx';
+import { withPoint } from '../../utilities/api/hikeApi';
 
 type Hike = HIKE & {
   start_point: Point,
   end_point: Point,
+  huts: (Hut & {
+    point: Point
+  })[],
+  reference_points: Point[]
 }
 
 const HikeDetailPage: React.FC = () => {
@@ -52,7 +57,7 @@ const HikeDetailPage: React.FC = () => {
       try {
         const hike = await fetchHike(id)
         if (!hike) return
-        setHike(hike as Hike)
+        setHike(hike)
         if (hike.gpstrack) {
           console.log("Download track")
           const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
@@ -125,12 +130,22 @@ const HikeDetailPage: React.FC = () => {
               [hike?.start_point && PointMarker(hike.start_point),
               hike?.end_point && PointMarker(hike.end_point)]
             }
+            <DisplayReferencePoints points={hike?.reference_points || []} />
+            <DisplayHuts huts={hike?.huts || []} />
           </MapContainer>
         </Box>
       </Container>
     </>
   );
 };
+
+function DisplayReferencePoints({ points }: { points: Point[] }) {
+  return <>{points.map((p) => PointMarker(p))}</>
+}
+
+function DisplayHuts({ huts }: { huts: withPoint<Hut>[] }) {
+  return <>{huts.map((h) => PointMarker(h.point))}</>
+}
 
 export default HikeDetailPage;
 

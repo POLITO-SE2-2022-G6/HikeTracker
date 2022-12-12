@@ -9,12 +9,14 @@ import { useParams } from 'react-router-dom';
 import { API } from '../../utilities/api/api';
 import { Hut, ParkingLot, Point } from '../../generated/prisma-client';
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMapEvents } from 'react-leaflet';
-import { DivIcon, divIcon } from 'leaflet';
+import L, { DivIcon, divIcon, icon } from 'leaflet';
+
 
 import cabin from './cabin.svg';
 import { extrackPoints } from '../../utilities/gpx';
 import { MapSetter } from '../hike/HikeDetailPage';
 import { fullHike } from '../../utilities/api/hikeApi';
+import car from './car.svg';
 
 const hutIcon = divIcon({
   html: cabin
@@ -48,6 +50,11 @@ const HikeForm: React.FC = () => {
 
   const [points, setPoints] = useState<Points[]>([])
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
+  const [hutsEdit, setHutsEdit] = useState<{ created: number[], deleted: number[] }>({ created: [], deleted: [] })
+
+
+
+
 
 
   type Fields = {
@@ -61,7 +68,13 @@ const HikeForm: React.FC = () => {
     description?: string;
     gpstrack?: File;
     reference_points?: editArray
+    huts?: {
+      created: number[],
+      deleted: number[]
+    };
   }
+
+  type inputFields = Fields & { huts?: { created: number[] } };
 
   const form = useForm<Fields>({
     initialValues: {
@@ -74,6 +87,10 @@ const HikeForm: React.FC = () => {
       endpointid: undefined,
       description: '',
       gpstrack: undefined,
+      huts: {
+        created: [],
+        deleted: []
+      },
     },
 
     validate: {
@@ -100,6 +117,13 @@ const HikeForm: React.FC = () => {
           difficulty: hike.difficulty,
           description: hike.description!,
         })
+
+        if (hike.gpstrack) {
+          const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
+          const points = extrackPoints(xml.data)
+          setTrack(points)
+          setCenter(points[0])
+        }
       }
     }
     fetchHike()
@@ -144,8 +168,16 @@ const HikeForm: React.FC = () => {
     try {
       const response = await API.hike.updateHike(parseInt(id!), {
         ...values,
-        reference_points: JSON.stringify(values.reference_points)
-        // huts: JSON.stringify(values.huts)
+        reference_points: JSON.stringify({
+          created: referencePointsEdit.created.map(e => {
+            return {
+              latitude: e.latitude,
+              longitude: e.longitude,
+            }
+          }),
+          deleted: referencePointsEdit.deleted
+        }),
+        huts: JSON.stringify(hutsEdit)
       })
       navigate('/hike/' + id)
 
@@ -154,16 +186,16 @@ const HikeForm: React.FC = () => {
     }
   }
 
-  const addHike = async (values: Fields) => {
+  const addHike = async (values: inputFields) => {
     try {
       console.log(values);
 
       const res = await API.hike.createHike({
         ...values,
-        reference_points: JSON.stringify(values.reference_points)
-        // huts: JSON.stringify(values.huts)
+        reference_points: JSON.stringify(referencePointsEdit),
+        huts: JSON.stringify(hutsEdit)
       })
-      navigate('/');
+      navigate('/hikelist');
 
     } catch (err) {
       setError('Error - creating a new hike');
@@ -242,6 +274,10 @@ const HikeForm: React.FC = () => {
               hidden
               {...form.getInputProps('endpointid')}
             />
+            <TextInput
+              hidden
+              {...form.getInputProps('huts')}
+            />
 
             <Space h={'md'} />
             <Tabs value={activeTab} onTabChange={setActiveTab} mb="md" >
@@ -261,9 +297,9 @@ const HikeForm: React.FC = () => {
                 <MapContainer center={[41.90, 12.49]} zoom={8} className={s.map}>
                   <DisplayTrack />
 
-                  {activeTab == 'ends' && <DisplayHuts />}
+                  {activeTab == 'ends' && <DisplayHutsAndParkinglots />}
                   {activeTab == 'reference' && [<DisplayReferencePoints />, <ReferencePointClicker />]}
-                  {(activeTab == 'huts' || activeTab == 'ends') && <DisplayHutsAndParkinglots />}
+                  {(activeTab == 'huts' || activeTab == 'ends') && [<DisplayOwnHuts />, <DisplayHuts/>]}
 
                   <MapSetter center={center} />
                   <TileLayer
@@ -282,7 +318,7 @@ const HikeForm: React.FC = () => {
 
             <Group position="center">
               <Button mt="xl" type='submit'>Save</Button>
-              <Link to="/">
+              <Link to="/hikelist">
                 <Button type="button" mt="xl" color="red">Cancel</Button>
               </Link>
             </Group>
@@ -310,11 +346,12 @@ const HikeForm: React.FC = () => {
 
   function HutsButtons() {
     return <>
-      <Button type="button" onClick={() => { }}> Add Hut </Button>
+      <Button type="button" onClick={() => { selectedMarker && setHutsEdit(current => ({ ...current, created: [...current.created, selectedMarker] })) }}> Link Hut </Button>
+      <Button type="button" onClick={() => { selectedMarker && setHutsEdit(current => ({ ...current, deleted: [...current.deleted, selectedMarker] })) }}> Remove Hut </Button>
     </>
   }
 
-  function DisplayHuts() {
+  function DisplayOwnHuts() {
     if (!hike || !hike.huts) return (<></>)
     return <>
       {hike.huts.map((hut) => {
@@ -353,6 +390,15 @@ const HikeForm: React.FC = () => {
     </>
   }
 
+  function DisplayHuts() {
+    return <>
+      {points.map((point) => {
+        if (point.hut)
+          return <DisplayPoint point={point} />
+      })}
+    </>
+  }
+
   function DisplayHutsAndParkinglots() {
     return <>
       {points.map((point) => {
@@ -362,11 +408,18 @@ const HikeForm: React.FC = () => {
     </>
   }
 
-  function DisplayPoint(props: { point: Point }) {
+  function DisplayPoint(props: { point: Points }) {
     const { point } = props
+    let icon = new L.Icon.Default()
+    if (point.hut)
+      icon = L.icon({ iconUrl: cabin })
+    else if (point.parkinglot)
+      L.icon({ iconUrl: car })
+
+
     return <Marker
       position={[point.latitude!, point.longitude!]}
-      // icon={hutIcon}
+      icon={icon}
       eventHandlers={{
         click: () => {
           setSelectedMarker(point.id);
@@ -393,7 +446,7 @@ const HikeForm: React.FC = () => {
           return (prevDistance < currDistance) ? prev : curr
         })
         setClick(closest)
-        console.log(closest)
+        console.log("closest", closest)
         setNewReferencePoint({
           id: -1,
           latitude: closest[0],
@@ -409,8 +462,8 @@ const HikeForm: React.FC = () => {
 
     if (click)
       return <Marker position={{ lat: click[0], lng: click[1] }} />
-    
-      return null
+
+    return null
   }
 
   function distance(a: [number, number], b: [number, number]) {

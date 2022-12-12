@@ -11,7 +11,6 @@ import {
   Flex,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import axios from 'axios';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
@@ -50,7 +49,7 @@ const Login: React.FC = (props) => {
     // })
     if (res) {
       setState({ loggedIn: true, data: res })
-      navigate('/');
+      navigate('/hikelist');
     }
 
 
@@ -74,7 +73,7 @@ const Login: React.FC = (props) => {
               <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} required />
               <Button fullWidth mt="xl" type="submit" >Sign in</Button>
             </form>
-            <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/')}>Proceed as a visitor</Button>
+            <Button fullWidth mt="xl" type="submit" onClick={() => navigate('/hikelist')}>Proceed as a visitor</Button>
           </Paper>
         </Box>
       </Flex>
