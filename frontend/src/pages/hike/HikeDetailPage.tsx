@@ -149,6 +149,19 @@ function DisplayHuts({ huts }: { huts: withPoint<Hut>[] }) {
 
 export default HikeDetailPage;
 
+function DisplayReferencePoints(points: Point[]) {
+  points.forEach((point) => {
+    return <Marker
+      position={[point.latitude!, point.longitude!]}
+    // icon={hutIcon}
+    >
+      <Popup>
+        {point.label}
+      </Popup>
+    </Marker>
+  })
+}
+
 function PointMarker(point: Point) {
   if (!point.latitude || !point.longitude) return null
   return <Marker

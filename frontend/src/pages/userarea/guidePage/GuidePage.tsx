@@ -8,8 +8,6 @@ import { API } from '../../../utilities/api/api';
 import { UserContext } from '../../../context/userContext';
 import UserInfo from '../../../components/userInfo/userInfo';
 
-
-
 const GuidePage = () => {
 
   const navigate = useNavigate();

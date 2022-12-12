@@ -119,7 +119,7 @@ const HikesSearchPage: React.FC = () => {
             />
             <Text fw={500} fz='sm'>
               Length:&nbsp;
-              {form.values.length && formatLength(form.values.length)}
+              {form.values.length && formatLength(calcScale(form.values.length))}
             </Text>
             <Slider
               scale={calcScale}

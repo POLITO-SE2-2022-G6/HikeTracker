@@ -47,7 +47,6 @@ const HikeForm: React.FC = () => {
     parkinglot?: ParkingLot
   }
 
-
   const [points, setPoints] = useState<Points[]>([])
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
   const [hutsEdit, setHutsEdit] = useState<{ created: number[], deleted: number[] }>({ created: [], deleted: [] })
@@ -302,6 +301,7 @@ const HikeForm: React.FC = () => {
                   {(activeTab == 'huts' || activeTab == 'ends') && [<DisplayOwnHuts />, <DisplayHuts/>]}
 
                   <MapSetter center={center} />
+
                   <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />

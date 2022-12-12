@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
 import { hutList, hutByID } from "../DAO/hutDao";
-import { bigCheck, isLoggedIn } from "./authApi";
+import { bigCheck } from "./authApi";
 import { User } from "@prisma/client";
 import { editHike, hikeById } from "../DAO/hikeDao";
 
