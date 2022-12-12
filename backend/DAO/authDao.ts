@@ -20,7 +20,8 @@ export async function createUsr(type: string, username: string, email: string, p
                 connect: {
                     id: hutid
                 }
-            } : undefined
+            } : undefined,
+            performance: (type === 'hiker') ? { create: {} } : undefined
         }})
 }
 

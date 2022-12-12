@@ -2,49 +2,10 @@ import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
 import { bigCheck } from "./authApi";
 import { hikesList } from "../DAO/hikeDao";
-import { createPerformance, deletePerformance, editPerformance, getPerformance } from "../DAO/hikerDao";
+import { deletePerformance, editPerformance, getPerformance } from "../DAO/hikerDao";
 import { User } from "@prisma/client";
 
 export const uRouter = Router();
-
-//Create new performance
-uRouter.post("/performance", bigCheck(["hiker"]),checkSchema({
-    length:{
-        in: ['body'],
-        isFloat: true
-
-    },
-    duration: {
-        in: ['body'],
-        isInt: true
-
-    },
-    altitude: {
-        in: ['body'],
-        isFloat: true
-
-    },
-    difficulty: {
-        in: ['body'],
-        isInt: true
-
-    }
-}), async (req: express.Request, res: express.Response) => {
-    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
-    try {
-        const performance = await createPerformance({
-            length: req.body.length && parseFloat(req.body.length),
-            duration: req.body.duration && parseInt(req.body.duration),
-            altitude: req.body.altitude && parseFloat(req.body.altitude),
-            difficulty: req.body.difficulty && parseInt(req.body.difficulty),
-            hikerid: (req.user as User).id
-
-        });
-        return res.status(201).json(performance);
-    } catch (e) {
-        return res.status(500).json({ error: "Internal Server Error: " + e });
-    }
-})
 
 //edit performance
 uRouter.put("/performance", bigCheck(["hiker"]),checkSchema({

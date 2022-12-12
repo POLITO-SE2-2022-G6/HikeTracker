@@ -33,6 +33,14 @@ const hikers: Prisma.UserCreateInput[] = Array(5).fill(0).map(e => {
     username: faker.internet.userName(),
     email: faker.internet.email(),
     phoneNumber: faker.phone.number(),
+    performance: {
+      create: {
+        length: 0,
+        duration: 0,
+        altitude: 0,
+        difficulty: 0
+      }
+    }
   }
 })
 
@@ -91,8 +99,7 @@ const hikes: Prisma.HikeCreateInput[] = Array(20).fill(0).map(e => {
   }
 })
 
-
-function getSpecialPoint(){
+function getSpecialPoint() {
   return {
     description: faker.lorem.paragraph(),
     point: {
@@ -112,9 +119,9 @@ const huts: Prisma.HutCreateInput[] = Array(100).fill(0).map(e => getSpecialPoin
 
 const parkings: Prisma.ParkingLotCreateInput[] = Array(100).fill(0).map(e => getSpecialPoint())
 
-const usrs =[
+const usrs = [
   {
-    email: "guide@email.com", 
+    email: "guide@email.com",
     type: 'guide',
     username: faker.internet.userName(),
     phoneNumber: faker.phone.number(),
@@ -124,7 +131,15 @@ const usrs =[
     email: "hiker@email.com",
     type: "hiker",
     username: faker.internet.userName(),
-    phoneNumber: faker.phone.number()
+    phoneNumber: faker.phone.number(),
+    performance: {
+      create: {
+        length: 0,
+        duration: 0,
+        altitude: 0,
+        difficulty: 0
+      } 
+    }
   },
   {
     email: "hworker@email.com",
@@ -142,19 +157,12 @@ const usrs =[
   }
 ]
 
-
-const performance = {
-  hikerid: 11,
-  difficulty: 3
-}
-
-const usrsPromises = usrs.map(u => prisma.user.create({data: u}));
+const usrsPromises = usrs.map(u => prisma.user.create({ data: u }));
 const guidesPromises = guides.map(u => prisma.user.create({ data: u }))
 const hikersPromises = hikers.map(u => prisma.user.create({ data: u }))
 
 const hutsPromises = huts.map(h => prisma.hut.create({ data: h }))
 const parkingsPromises = parkings.map(p => prisma.parkingLot.create({ data: p }))
-const performancePromises = prisma.performance.create({ data: performance })
 
 
 Promise.all(hikersPromises)
@@ -174,7 +182,6 @@ Promise.all(hikersPromises)
   .then(() => Promise.all(hutsPromises))
   .then(() => Promise.all(parkingsPromises))
   .then(() => Promise.all(usrsPromises))
-  .then(() => Promise.resolve(performancePromises))
   .then(() => {
     console.log('Seed finished')
     process.exit(0)

@@ -1,9 +1,9 @@
-import s from './userPerformance.module.css';
 import React, { useContext } from 'react';
 import { UserContext } from '../../context/userContext';
 import { Container, Paper, Text, Table } from '@mantine/core';
-
-const UserPerformance = () => {
+import { Performance } from '../../generated/prisma-client'
+import { formatLength, formatTime, formatDifficulty } from '../../utilities/formatters';
+const UserPerformance = ({ performance }: { performance: Performance }) => {
     const { state, setState } = useContext(UserContext)
 
     return (
@@ -29,28 +29,28 @@ const UserPerformance = () => {
                             <tr>
                                 <td>
                                     <Text size="lg" >
-                                        Lenght:
+                                        Lenght: {formatLength(performance.length)}
                                     </Text>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <Text size="lg" >
-                                        Duration:
+                                        Duration: {formatTime(performance.duration)}
                                     </Text>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <Text size="lg" >
-                                        Difficulty:
+                                        Difficulty: {formatDifficulty(performance.difficulty)}
                                     </Text>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <Text size="lg" >
-                                        Altitude:
+                                        Altitude: {formatLength(performance.altitude)}
                                     </Text>
                                 </td>
                             </tr>

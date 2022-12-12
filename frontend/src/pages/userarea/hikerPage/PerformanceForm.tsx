@@ -26,12 +26,12 @@ const PerformanceForm: React.FC = () => {
             difficulty: undefined,
         },
 
-        validate: {
-            length: (value: number) => (!value ? 'Length must not be empty' : null),
-            duration: (value: number) => (!value ? 'Duration time must not be empty' : null),
-            altitude: (value: number) => (!value ? 'Altitude must not be empty' : null),
-            difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
-        },
+        // validate: {
+        //     length: (value: number) => (!value ? 'Length must not be empty' : null),
+        //     duration: (value: number) => (!value ? 'Duration time must not be empty' : null),
+        //     altitude: (value: number) => (!value ? 'Altitude must not be empty' : null),
+        //     difficulty: (value: number) => (!value ? 'Difficulty must not be empty' : null),
+        // },
     });
 
     useEffect(() => {

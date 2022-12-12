@@ -1,7 +1,6 @@
 import { Hike, Performance } from "../../generated/prisma-client";
 import { Methods } from "./client";
 import { Resource } from "./resource";
-import { Performance } from "../../generated/prisma-client";
 
 export class HikerApi extends Resource {
   protected path = "/hiker";

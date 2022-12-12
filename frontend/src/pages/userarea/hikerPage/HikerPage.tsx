@@ -1,29 +1,46 @@
-import s from './HikerPage.module.css';
 import { Button, Container, Paper, Flex } from '@mantine/core';
 import UserInfo from '../../../components/userInfo/userInfo';
 import UserPerformance from '../../../components/userInfo/userPerformance';
 import { useNavigate, createSearchParams } from 'react-router-dom';
 import { UserContext } from '../../../context/userContext';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Performance } from '../../../generated/prisma-client';
+import { API } from "../../../utilities/api/api"
 
 const HikerPage: React.FC = () => {
 
     const { state, setState } = useContext(UserContext)
+    const [performance, setPerformance] = useState<Performance | undefined>(undefined)
 
     const params = { length: '5', duration: '100', difficulty: '3', ascent: '1.5' };
 
+    // function to convert all fields of object performance to string
+    
+    
     const navigate = useNavigate()
     const goToSearch = () => {
+        if (!performance) return
         navigate({
             pathname: '/hikes',
-            search: `?${createSearchParams(params)}`
-        });
+            search: `?${createSearchParams({
+                length: performance.length?.toString(),
+                duration: performance.duration?.toString(),
+                difficulty: performance.difficulty?.toString(),
+                ascent: performance.altitude?.toString()
+            })}`
+        })
     }
+
+    useEffect(() => {
+        API.hiker.getPerformance().then((res) => {
+            setPerformance(res as Performance)
+        })
+    }, [])
 
     return (
         <>
             <UserInfo />
-            <UserPerformance />
+            {performance && <UserPerformance performance={performance} />}
             <Container sx={(t) => {
                 return {
                     display: "flex",
@@ -40,8 +57,8 @@ const HikerPage: React.FC = () => {
                     }
                 }>
                     <Flex direction={{ base: 'column', sm: 'row' }} gap={{ base: 'sm', sm: 'lg' }} justify={{ sm: 'center' }}>
-                        <Button size="md" onClick={() => {navigate('/huts')}}>Search a Hut</Button>
-                        <Button size="md" onClick={() => {navigate('/performances')}}>Modify Performance Parameters</Button>
+                        <Button size="md" onClick={() => { navigate('/huts') }}>Search a Hut</Button>
+                        <Button size="md" onClick={() => { navigate('/performances') }}>Modify Performance Parameters</Button>
                         <Button size="md" onClick={goToSearch}>See filtered hikes</Button>
                     </Flex>
                 </Paper>

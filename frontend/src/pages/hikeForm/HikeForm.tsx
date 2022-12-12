@@ -1,21 +1,20 @@
-import s from './HikeForm.module.css';
-import { useForm } from '@mantine/form'
-import axios from 'axios';
-import { Button, Container, Paper, TextInput, Title, NumberInput, FileInput, Group, Textarea, Box, Space, Flex, Stack, Tabs } from '@mantine/core';
-import { useNavigate, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Box, Button, Container, FileInput, Flex, Group, NumberInput, Paper, Space, Stack, Tabs, Textarea, TextInput, Title } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import { IconUpload } from '@tabler/icons';
-import { useParams } from 'react-router-dom';
-import { API } from '../../utilities/api/api';
-import { Hut, ParkingLot, Point } from '../../generated/prisma-client';
+import axios from 'axios';
+import L, { divIcon } from 'leaflet';
+import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMapEvents } from 'react-leaflet';
-import L, { DivIcon, divIcon, icon } from 'leaflet';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Hut, ParkingLot, Point } from '../../generated/prisma-client';
+import { API } from '../../utilities/api/api';
+import s from './HikeForm.module.css';
 
 
-import cabin from './cabin.svg';
+import { fullHike } from '../../utilities/api/hikeApi';
 import { extrackPoints } from '../../utilities/gpx';
 import { MapSetter } from '../hike/HikeDetailPage';
-import { fullHike } from '../../utilities/api/hikeApi';
+import cabin from './cabin.svg';
 import car from './car.svg';
 
 const hutIcon = divIcon({
@@ -130,7 +129,8 @@ const HikeForm: React.FC = () => {
     const getPoints = async () => {
       try {
         const points = await API.point.getPoints()
-        setPoints(points!)
+        if (!points) return
+        setPoints(points)
       } catch (error) {
         console.error(error)
       }
