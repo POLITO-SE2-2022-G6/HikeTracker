@@ -36,7 +36,7 @@ const HikeForm: React.FC = () => {
   const [center, setCenter] = useState<[number, number]>([41.8, 12.4])
   const [settingRP, setSettingRP] = useState(true)
   const [reference_points, setReferencePoints] = useState<Point[]>([])
-  const [activeTab, setActiveTab] = useState<string | null>('first');
+  const [activeTab, setActiveTab] = useState<string | null>('ends');
 
   const [referencePointsEdit, setReferencePointsEdit] = useState<editArray>({ created: [], deleted: [] })
   const [newReferencePoint, setNewReferencePoint] = useState<Point>()
