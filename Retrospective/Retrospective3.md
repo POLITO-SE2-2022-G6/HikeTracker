@@ -73,26 +73,26 @@ RETROSPECTIVE 2 (Team #6)
 ## ASSESSMENT
 
 - What caused your errors in estimation (if any)?
-- The number of hours per task is higher due to meeting and bug fix but the estimation is not affected and total estimatation error remains low.
+  - The number of hours per task is higher due to meeting and bug fix but the estimation is not affected and total estimatation error remains low.
 
 - What lessons did you learn (both positive and negative) in this sprint?
-- Better communication of backend and frontend is needed in terms of task planning.
-- Plan the time for better technical debt management.
-- Number of people that needs to work on frontend should increase.
+  - Better communication of backend and frontend is needed in terms of task planning.
+  - Plan the time for better technical debt management.
+  - Number of people that needs to work on frontend should increase.
 
 - Which improvement goals set in the previous retrospective were you able to achieve?
-- Code review time is increased significantly.
-- Better work hours's management in terms of spent time is closer to the estimated time.  
+  - Code review time is increased significantly.
+  - Better work hours's management in terms of spent time is closer to the estimated time.  
   
 - Which ones you were not able to achieve? Why?
-- We managed to achieve the goals we set on the preivous sprint.
+  - We managed to achieve the goals we set on the preivous sprint.
 
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-- Better management of technical debt.
-- Better coordination between frontend and backend.
-- Assigning more people or time to complete frontend tasks.
+  - Better management of technical debt.
+  - Better coordination between frontend and backend.
+  - Assigning more people or time to complete frontend tasks.
 
 
 - One thing you are proud of as a Team!!
-- We achieved a working solution.
+  - We achieved a working solution.
   
