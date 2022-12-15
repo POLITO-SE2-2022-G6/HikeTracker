@@ -51,7 +51,7 @@ RETROSPECTIVE 2 (Team #6)
   - Total hours spent  6h 50m
   - Nr of automated unit test cases  16
 - E2E testing:
-  - Total hours estimated  
+  - Total hours estimated 
   - Total hours spent
 - Code review 
   - Total hours estimated  15h
@@ -60,8 +60,8 @@ RETROSPECTIVE 2 (Team #6)
   - Total hours estimated  15h
   - Total hours spent  15h 20m
   - Hours estimated for remediation by SonarQube 15h
-  - Hours estimated for remediation by SonarQube only for the selected and planned issues  // TO complete
-  - Hours spent on remediation  // To complete
+  - Hours estimated for remediation by SonarQube only for the selected and planned issues 8h
+  - Hours spent on remediation  4h
   - debt ratio (as reported by SonarQube under "Measures-Maintainability") 0.8%
   - rating for each quality characteristic reported in SonarQube under "Measures" (namely reliability, security, maintainability )
     Reliability: A
