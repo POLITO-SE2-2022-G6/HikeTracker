@@ -1,4 +1,4 @@
-import { Hut, Point, Prisma } from "../../generated/prisma-client";
+import { Hut, Point } from "../../generated/prisma-client";
 import { Methods } from "./client";
 import { Resource } from "./resource";
 

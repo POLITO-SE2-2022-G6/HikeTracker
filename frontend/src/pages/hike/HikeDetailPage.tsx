@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import s from './HikeDetailPage.module.css';
 import { MapContainer, TileLayer, useMap, Polyline, Marker, Popup } from 'react-leaflet'
-// import * as defaultTrack from './rocciamelone.json'
 import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
 import { API } from '../../utilities/api/api';
@@ -37,7 +36,7 @@ const HikeDetailPage: React.FC = () => {
 
 
 
-  const { state, setState } = useContext(UserContext)
+  const { state } = useContext(UserContext)
   const { loggedIn } = state
 
   const navigate = useNavigate()
@@ -113,8 +112,9 @@ const HikeDetailPage: React.FC = () => {
 
           <Title order={4}>What our local guides have to say:</Title>
           <Blockquote maw={'60%'}>{hike?.description}</Blockquote>
-        </Paper>
 
+        </Paper>
+        
         <Space h={'md'} />
         <Box h={'480px'}>
           { }
@@ -151,7 +151,7 @@ export default HikeDetailPage;
 
 function PointMarker(point: Point) {
   if (!point.latitude || !point.longitude) return null
-  return <Marker
+  return <Marker key={point.id}
     position={[point.latitude, point.longitude]}
   >
     <Popup>

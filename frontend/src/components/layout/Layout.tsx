@@ -1,9 +1,8 @@
-import { createStyles, Header, Container, Button, Title, Footer } from '@mantine/core';
+import { createStyles, Header, Container, Button, Title } from '@mantine/core';
 import { GiHiking } from "react-icons/gi"
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi"
 import { BsPersonCircle } from "react-icons/bs"
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import s from './layout.module.css';
 import React from 'react';
 import { UserContext } from '../../context/userContext';
 import { API } from '../../utilities/api/api';
@@ -36,7 +35,7 @@ const Layout = () => {
                 <Button onClick={() => { navigate("/login"); }}>LOG-IN <BiLogInCircle size="20px" /></Button>
               }
               { loggedIn ?
-              <Button type="button" className="btn btn-primary" onClick={() => {loggedIn? (state.data?.type === "hiker" ? (navigate("/hikerarea")) : (navigate("/guidearea")) )  : navigate("/login") }}>USER AREA <BsPersonCircle color='white' size='20px' /></Button>
+              <Button type="button" className="btn btn-primary" onClick={() => {navigate(state.data?.type === "hiker" ? "/hikerarea" : "guidearea")}}>USER AREA <BsPersonCircle color='white' size='20px' /></Button>
                 : ""}
             </div>
           </div>

@@ -1,7 +1,5 @@
-import s from './HikesList.module.css';
 import { Pagination} from '@mantine/core';
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../context/userContext';
+import { useEffect, useState } from 'react';
 import { API } from '../../utilities/api/api';
 import { Hike } from '../../generated/prisma-client';
 import { HikeCardGrid } from '../hikeCardGrid/hikeCardGrid';
@@ -17,26 +15,15 @@ const HikesList = ({ data }: HikeProps) => {
   const [hikes, setHikes] = useState<Hike[]>([]);
   const [page, setPage] = useState(1)
 
-
-  const getAllHikes = async () => {
-    const hikes = await getHikes();
-    setHikes(hikes);
-  };
-
-  useEffect(() => {
-    if (data) {
-      setHikes(data)
-    } else {
-      getAllHikes();
+  useEffect( () => {
+    const setH = async () => {
+      data ? setHikes(data) : setHikes(await getHikes());
     }
-  }, [data]);
-
-  const { state, setState } = useContext(UserContext)
-
-
+    setH();
+  }, [ data ]);
 
   const getHikes = async () => {
-    return await API.hike.getHikes() as Hike[];
+    return ((await API.hike.getHikes()) as Hike[]);
   };
 
   return (

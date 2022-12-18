@@ -1,5 +1,5 @@
 import { Badge, Card, Group, Image, Text, Title } from "@mantine/core";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { BsClockHistory } from "react-icons/bs";
 import { GiMountains, GiPathDistance } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ export const HikeCard = (props: HikeCardProps) => {
         maw={600}
         miw={350}
 
-        onClick={() => { if (state.loggedIn) navigate(`/hike/${hike.id}`) }}
+        onClick={useCallback(() => { if (state.loggedIn) navigate(`/hike/${hike.id}`) }, [state, hike.id, navigate])}
       >
         <Card.Section>
           <Image

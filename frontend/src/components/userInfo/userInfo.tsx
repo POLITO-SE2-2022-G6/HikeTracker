@@ -1,10 +1,9 @@
-import s from './userInfo.module.css';
-import React, { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { UserContext } from '../../context/userContext';
 import { Container, Paper, Text, Table } from '@mantine/core';
 
 const UserInfo = () => {
-  const { state, setState } = useContext(UserContext)
+  const { state } = useContext(UserContext)
 
   return (
     <>

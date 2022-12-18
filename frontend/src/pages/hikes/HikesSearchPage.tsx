@@ -4,7 +4,6 @@ import { useForm } from '@mantine/form'
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
-import HikesList from '../../components/hikesList/HikesList';
 import { HikeCardGrid } from '../../components/hikeCardGrid/hikeCardGrid';
 import { Hike } from '../../generated/prisma-client/index';
 import { formatDifficulty, formatLength, formatTime } from '../../utilities/formatters';
@@ -14,7 +13,6 @@ const elementsPerPage = 6;
 const HikesSearchPage: React.FC = () => {
   const [params, setParams] = useSearchParams()
   const [result, setResult] = useState<Hike[]>([])
-  const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
 
   type Fields = {
@@ -35,7 +33,6 @@ const HikesSearchPage: React.FC = () => {
   })
 
   const handleSubmit = async (values: Fields) => {
-    setLoading(true)
     console.log(values)
     let len = 0
     if (values.length && values.length < 1000) {
@@ -60,7 +57,6 @@ const HikesSearchPage: React.FC = () => {
         province: values.province || undefined
       }
     })
-    setLoading(false)
 
     setResult(res.data)
     console.log(res.data)

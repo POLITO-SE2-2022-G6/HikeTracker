@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext, useMemo } from "react";
 import { API } from "../utilities/api/api";
 
 type Props = {
@@ -10,7 +9,7 @@ export type UserInfo = {
   loggedIn: boolean;
   data?: {
     id: number;
-    type: string//'Hiker' | 'Guide';
+    type: string;     // 'Hiker'  'Guide'
     email: string;
     username: string;
     phoneNumber: string;
@@ -28,7 +27,6 @@ export const UserContext = createContext<UserContextType>(
 
 export const UserContextWrapper = ({ children }: Props) => {
   const [user, setUser] = useState<UserInfo>({ loggedIn: false });
-  const [loading, setLoading] = useState(true);
 
 
   useEffect(() => {
@@ -37,14 +35,13 @@ export const UserContextWrapper = ({ children }: Props) => {
       if (data) {
         setUser({ loggedIn: true, data });
       }
-      setLoading(false);
     };
 
     fetchUser();
   }, []);
 
   return (
-    <UserContext.Provider value={{ state: user, setState: setUser }}>
+    <UserContext.Provider value={useMemo(() =>({state: user, setState: setUser}), [user,setUser])}>
       {children}
     </UserContext.Provider>
   );

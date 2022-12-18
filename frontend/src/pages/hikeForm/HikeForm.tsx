@@ -1,9 +1,9 @@
-import { Box, Button, Container, FileInput, Flex, Group, NumberInput, Paper, Space, Stack, Tabs, Textarea, TextInput, Title } from '@mantine/core';
+import { Box, Button, Container, CSSObject, FileInput, Flex, Group, NumberInput, Paper, Space, Stack, Tabs, Textarea, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconUpload } from '@tabler/icons';
 import axios from 'axios';
 import L, { divIcon } from 'leaflet';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMapEvents } from 'react-leaflet';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Hut, ParkingLot, Point } from '../../generated/prisma-client';
@@ -35,7 +35,6 @@ const HikeForm: React.FC = () => {
   const [track, setTrack] = useState<[number, number][]>([])
   const [center, setCenter] = useState<[number, number]>([41.8, 12.4])
   const [settingRP, setSettingRP] = useState(true)
-  const [reference_points, setReferencePoints] = useState<Point[]>([])
   const [activeTab, setActiveTab] = useState<string | null>('ends');
 
   const [referencePointsEdit, setReferencePointsEdit] = useState<editArray>({ created: [], deleted: [] })
@@ -51,7 +50,26 @@ const HikeForm: React.FC = () => {
   const [hutsEdit, setHutsEdit] = useState<{ created: number[], deleted: number[] }>({ created: [], deleted: [] })
 
 
+  function EndsButtons() {
+    return <>
+      <Button type="button" onClick={useCallback(() => { selectedMarker && form.setValues({ startpointid: selectedMarker }) },[selectedMarker, form.setValues])}> Set as Start Point </Button>
+      <Button type="button" onClick={useCallback(() => { selectedMarker && form.setValues({ endpointid: selectedMarker }) },[selectedMarker, form.setValues])}> Set as End Point </Button>
+    </>
+  }
 
+  function ReferenceButtons() {
+    return <>
+      <Button type="button" onClick={useCallback(() => { newReferencePoint && setReferencePointsEdit(current => ({ ...current, created: [...current.created, newReferencePoint] })) },[newReferencePoint, setReferencePointsEdit])}> Add Point </Button>
+      <Button type="button" onClick={useCallback(() => { selectedMarker && selectedMarker !== -1 && setReferencePointsEdit(current => ({ ...current, deleted: [...current.deleted, selectedMarker] }))},[selectedMarker, setReferencePointsEdit])}> Remove Point</Button>
+    </>
+  }
+
+  function HutsButtons() {
+    return <>
+      <Button type="button" onClick={useCallback(() => { selectedMarker && setHutsEdit(current => ({ ...current, created: [...current.created, selectedMarker] })) },[selectedMarker, setHutsEdit])}> Link Hut </Button>
+      <Button type="button" onClick={useCallback(() => { selectedMarker && setHutsEdit(current => ({ ...current, deleted: [...current.deleted, selectedMarker] })) },[selectedMarker, setHutsEdit])}> Remove Hut </Button>
+    </>
+  }
 
 
 
@@ -138,7 +156,7 @@ const HikeForm: React.FC = () => {
     }
     getPoints()
 
-  }, [])
+  }, [id, form.setValues])
 
   useEffect(() => {
     if (form.values.gpstrack) {
@@ -166,7 +184,11 @@ const HikeForm: React.FC = () => {
 
   const editHike = async (values: Fields) => {
     try {
-      const response = await API.hike.updateHike(parseInt(id!), {
+      if(!id) {
+        setError("Error while editing hike")
+        return
+      }
+      await API.hike.updateHike(parseInt(id), {
         ...values,
         reference_points: JSON.stringify({
           created: referencePointsEdit.created.map(e => {
@@ -186,11 +208,12 @@ const HikeForm: React.FC = () => {
     }
   }
 
+  
   const addHike = async (values: inputFields) => {
     try {
       console.log(values);
 
-      const res = await API.hike.createHike({
+      await API.hike.createHike({
         ...values,
         reference_points: JSON.stringify(referencePointsEdit),
         huts: JSON.stringify(hutsEdit)
@@ -207,21 +230,15 @@ const HikeForm: React.FC = () => {
       <Title align="center">
         {id ? 'Edit a hike' : 'Add a New Hike'}
       </Title>
-      <Container sx={(t) => {
-        return {
+      <Container sx={{
           display: "flex",
           flexWrap: "wrap",
           alignItems: "flex-start"
-        }
-      }}>
-        <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={
-          (t) => {
-            return {
+        } as CSSObject}>
+        <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={{
               flexGrow: 1,
               flexShrink: 0,
-            }
-          }
-        }>
+            } as CSSObject}>
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <TextInput
               label="Title"
@@ -297,9 +314,9 @@ const HikeForm: React.FC = () => {
                 <MapContainer center={[41.90, 12.49]} zoom={8} className={s.map}>
                   <DisplayTrack />
 
-                  {activeTab == 'ends' && <DisplayHutsAndParkinglots />}
-                  {activeTab == 'reference' && [<DisplayReferencePoints />, <ReferencePointClicker />]}
-                  {(activeTab == 'huts' || activeTab == 'ends') && [<DisplayOwnHuts />, <DisplayHuts/>]}
+                  {activeTab === 'ends' && <DisplayHutsAndParkinglots />}
+                  {activeTab === 'reference' && [<DisplayReferencePoints />, <ReferencePointClicker />]}
+                  {(activeTab === 'huts' || activeTab === 'ends') && [<DisplayOwnHuts />, <DisplayHuts/>]}
 
                   <MapSetter center={center} />
 
@@ -310,9 +327,9 @@ const HikeForm: React.FC = () => {
               </Box>
               <Box>
                 <Stack p={'md'}>
-                  {activeTab == 'ends' && <EndsButtons />}
-                  {activeTab == 'reference' && <ReferenceButtons />}
-                  {activeTab == 'huts' && <HutsButtons />}
+                  {activeTab === 'ends' && <EndsButtons />}
+                  {activeTab === 'reference' && <ReferenceButtons />}
+                  {activeTab === 'huts' && <HutsButtons />}
                 </Stack>
               </Box>
             </Flex>
@@ -327,36 +344,17 @@ const HikeForm: React.FC = () => {
           </form>
         </Paper>
       </Container>
-
     </Container >
   )
 
-  function EndsButtons() {
-    return <>
-      <Button type="button" onClick={() => { selectedMarker && form.setValues({ startpointid: selectedMarker }) }}> Set as Start Point </Button>
-      <Button type="button" onClick={() => { selectedMarker && form.setValues({ endpointid: selectedMarker }) }}> Set as End Point </Button>
-    </>
-  }
 
-  function ReferenceButtons() {
-    return <>
-      <Button type="button" onClick={() => { newReferencePoint && setReferencePointsEdit(current => ({ ...current, created: [...current.created, newReferencePoint] })) }}> Add Point </Button>
-      <Button type="button" onClick={() => { selectedMarker && selectedMarker != -1 && setReferencePointsEdit(current => ({ ...current, deleted: [...current.deleted, selectedMarker] })) }}> Remove Point</Button>
-    </>
-  }
-
-  function HutsButtons() {
-    return <>
-      <Button type="button" onClick={() => { selectedMarker && setHutsEdit(current => ({ ...current, created: [...current.created, selectedMarker] })) }}> Link Hut </Button>
-      <Button type="button" onClick={() => { selectedMarker && setHutsEdit(current => ({ ...current, deleted: [...current.deleted, selectedMarker] })) }}> Remove Hut </Button>
-    </>
-  }
 
   function DisplayOwnHuts() {
     if (!hike || !hike.huts) return (<></>)
     return <>
       {hike.huts.map((hut) => {
         return <Marker
+        key={hut.id}
           position={[hut.point.latitude!, hut.point.longitude!]}
           icon={hutIcon}
           eventHandlers={{
@@ -386,7 +384,7 @@ const HikeForm: React.FC = () => {
       {
         toDisplay
           .map((point) => {
-            return <DisplayPoint point={point} />
+            return <DisplayPoint point={point} key={point.id} />
           })}
     </>
   }
@@ -395,7 +393,7 @@ const HikeForm: React.FC = () => {
     return <>
       {points.map((point) => {
         if (point.hut)
-          return <DisplayPoint point={point} />
+          return <DisplayPoint point={point} key={point.id} />
       })}
     </>
   }
@@ -404,7 +402,7 @@ const HikeForm: React.FC = () => {
     return <>
       {points.map((point) => {
         if (point.hut || point.parkinglot)
-          return <DisplayPoint point={point} />
+          return <DisplayPoint point={point} key={point.id} />
       })}
     </>
   }
@@ -420,6 +418,7 @@ const HikeForm: React.FC = () => {
 
 
     return <Marker
+      key={point.id}
       position={[point.latitude!, point.longitude!]}
       icon={icon}
       eventHandlers={{
@@ -437,7 +436,7 @@ const HikeForm: React.FC = () => {
 
   function ReferencePointClicker() {
 
-    const map = useMapEvents({
+    useMapEvents({
       click: (e) => {
         if (!settingRP || !track) return
         // find closes coordinates belonging to the track to the clicked position

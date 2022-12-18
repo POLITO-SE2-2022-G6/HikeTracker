@@ -1,28 +1,12 @@
-import React, { useContext } from 'react';
-import { UserContext } from '../../context/userContext';
-import { Container, Paper, Text, Table } from '@mantine/core';
+import { Container, Paper, Text, Table, CSSObject } from '@mantine/core';
 import { Performance } from '../../generated/prisma-client'
 import { formatLength, formatTime, formatDifficulty } from '../../utilities/formatters';
 const UserPerformance = ({ performance }: { performance: Performance }) => {
-    const { state, setState } = useContext(UserContext)
 
     return (
         <>
-            <Container sx={(t) => {
-                return {
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "flex-start"
-                }
-            }}>
-                <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={
-                    (t) => {
-                        return {
-                            flexGrow: 1,
-                            flexShrink: 0,
-                        }
-                    }
-                }>
+            <Container sx={{ "display": "flex", "flexWrap": "wrap",  "alignItems": "flex-start" } as CSSObject}>
+                <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={{ "flexGrow": 1, "flexShrink": 0 } as CSSObject}>
                     <h1>My Performance parameters</h1>
                     <Table verticalSpacing="sm">
                         <tbody>

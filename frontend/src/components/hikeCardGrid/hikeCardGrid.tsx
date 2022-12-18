@@ -7,7 +7,7 @@ export const HikeCardGrid = ({ hikes }: { hikes?: Hike[] }) => {
   return (
     <Grid >
       {
-        hikes?.map(h => <Grid.Col span={'auto'}>
+        hikes?.map(h => <Grid.Col key={h.id} span={'auto'}>
           <HikeCard hike={h} />
         </Grid.Col >)
       }
