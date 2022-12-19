@@ -11,7 +11,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API } from '../../utilities/api/api';
 
@@ -44,10 +44,6 @@ const Register: React.FC = () => {
 
   }
 
-
-  function useCallBack(arg0: () => void, arg1: import("react-router-dom").NavigateFunction[]): import("react").MouseEventHandler<HTMLButtonElement> | undefined {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <Container size={420} my={40}>
@@ -82,7 +78,7 @@ const Register: React.FC = () => {
           }
           <Button fullWidth mt="xl" type="submit">Register</Button>
         </form>
-        <Button fullWidth mt="xl" onClick={useCallBack(() => navigate('/hikelist'), [navigate])}>Proceed as a visitor</Button>
+        <Button fullWidth mt="xl" onClick={useCallback(() => navigate('/hikelist'), [navigate])}>Proceed as a visitor</Button>
       </Paper>
     </Container>
   );

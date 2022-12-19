@@ -1,6 +1,6 @@
 import s from './PerformanceForm.module.css';
 import { useForm } from '@mantine/form'
-import { Button, Container, Paper, Title, Text, Slider, Space} from '@mantine/core';
+import { Button, Container, Paper, Title, Text, Slider, Space, CSSObject } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { API } from '../../../utilities/api/api';
@@ -9,6 +9,7 @@ import { Performance } from '../../../generated/prisma-client';
 const PerformanceForm: React.FC = () => {
 
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     type Fields = {
@@ -36,17 +37,20 @@ const PerformanceForm: React.FC = () => {
 
     useEffect(() => {
         const fetchParameters = async () => {
-            const parameters = await API.hiker.getPerformance() as Performance
-            if (!parameters) return
-            form.setValues({
-                length: parameters.length,
-                duration: parameters.duration,
-                altitude: parameters.altitude,
-                difficulty: parameters.difficulty,
-            })
+            if (loading === true) {
+                setLoading(false);
+                const parameters = await API.hiker.getPerformance() as Performance
+                if (!parameters) return
+                form.setValues({
+                    length: parameters.length,
+                    duration: parameters.duration,
+                    altitude: parameters.altitude,
+                    difficulty: parameters.difficulty,
+                })
+            }
         }
         fetchParameters()
-    }, [])
+    }, [form, loading])
 
     const handleSubmit = async (values: Fields) => {
 
@@ -56,7 +60,7 @@ const PerformanceForm: React.FC = () => {
 
     const editParameters = async (values: Fields) => {
         try {
-            const response = await API.hiker.editPerformance(values)
+            await API.hiker.editPerformance(values)
             navigate('/hikerarea/')
         } catch (error) {
             setError("Error while editing hike")
@@ -67,20 +71,15 @@ const PerformanceForm: React.FC = () => {
         <Container>
             <Title align="center"> Edit parameters
             </Title>
-            <Container sx={(t) => {
-                return {
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "flex-start"
-                }
-            }}>
-                <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={
-                    (t) => {
-                        return {
-                            flexGrow: 1,
-                            flexShrink: 0,
-                        }
-                    }
+            <Container sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "flex-start"
+            } as CSSObject}>
+                <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={{
+                    flexGrow: 1,
+                    flexShrink: 0,
+                } as CSSObject
                 }>
                     <form onSubmit={form.onSubmit(handleSubmit)} className={s.form}>
                         <Text fw={500} fz='sm'>

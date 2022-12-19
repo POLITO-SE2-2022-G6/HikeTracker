@@ -1,5 +1,5 @@
 import { Hike, Hut, Point } from "../../generated/prisma-client";
-import { Client, Methods } from "./client";
+import { Methods } from "./client";
 import { Resource } from "./resource";
 
 export type withPoint<T> = T & {

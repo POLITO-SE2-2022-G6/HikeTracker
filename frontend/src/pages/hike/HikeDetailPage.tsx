@@ -1,6 +1,6 @@
-import { Center, Container, Loader, Paper, Title, Text, Space, Blockquote, Group, Stack, Box, Button } from '@mantine/core';
+import { Container, Paper, Title, Text, Space, Blockquote, Group, Stack, Box, Button, LoadingOverlay } from '@mantine/core';
 import axios from 'axios';
-import { /*useCallback,*/ useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import s from './HikeDetailPage.module.css';
 import { MapContainer, TileLayer, useMap, Polyline, Marker, Popup } from 'react-leaflet'
@@ -76,17 +76,17 @@ const HikeDetailPage: React.FC = () => {
 
   }, [id, start])
 
-  if (loading) {
-    return <Center><Loader size={'xl'} mx={'auto'} /></Center>
-  }
 
   return (
     <>
+    <div style={{ width: 400, position: 'relative' }}>
+        <LoadingOverlay visible={loading} overlayBlur={2} />
+      </div>
       <Container>
         <Paper p={'md'} radius={'md'} shadow={'md'} withBorder>
           <Group position='apart'>
             <Title order={1}>{hike?.title}</Title>
-            <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'guide') ? 'visible' : 'hidden' }} onClick={/*useCallback(*/() => {navigate(`/hike/edit/${id}`)}/*, [])*/}>Edit Hike</Button>
+            <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'guide') ? 'visible' : 'hidden' }} onClick={useCallback(() => {navigate(`/hike/edit/${id}`)}, [id, navigate])}>Edit Hike</Button>
           </Group>
           <Space h={'md'} />
 
