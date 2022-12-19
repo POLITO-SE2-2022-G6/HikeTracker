@@ -1,15 +1,13 @@
 import s from './ParkingLotForm.module.css';
 import { useForm } from '@mantine/form'
 import axios from 'axios';
-import { Button, Container, Paper, TextInput, Title, Group, Textarea, Box, Text } from '@mantine/core';
+import { Button, Container, Paper, TextInput, Title, Group, Textarea, Box, Text, CSSObject } from '@mantine/core';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { LatLng } from 'leaflet';
 import { MapContainer, useMapEvent, TileLayer, Marker } from 'react-leaflet';
 import { API } from '../../utilities/api/api';
-import { CiLocationOn } from 'react-icons/ci'
-//import { IconUpload } from '@tabler/icons';
-//import { useParams } from 'react-router-dom';
+import { CiLocationOn } from 'react-icons/ci';
 
 const ParkingLotForm: React.FC = () => {
 
@@ -90,21 +88,15 @@ const ParkingLotForm: React.FC = () => {
   return (
     <Container>
       <Title align="center">Add a new Parking Lot</Title>
-      <Container sx={(t) => {
-        return {
+      <Container sx={{
           display: "flex",
           flexWrap: "wrap",
           alignItems: "flex-start"
-        }
-      }}>
-        <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={
-          (t) => {
-            return {
+        } as CSSObject}>
+        <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={{
               flexGrow: 1,
               flexShrink: 0,
-            }
-          }
-        }>
+            } as CSSObject }>
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <TextInput
               label="Title"
@@ -173,7 +165,7 @@ interface EventHandlerProps {
 
 const EventHandler = (props: EventHandlerProps) => {
   const { choosePosition } = props;
-  const map = useMapEvent('click', (e) => {
+  useMapEvent('click', (e) => {
     choosePosition(e.latlng);
   })
   return null

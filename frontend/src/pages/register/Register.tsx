@@ -7,12 +7,13 @@ import {
   Button,
   Alert,
   Space,
+  CSSObject,
+  useMantineTheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API } from '../../utilities/api/api';
-import s from './Register.module.css';
 
 const Register: React.FC = () => {
 
@@ -34,7 +35,7 @@ const Register: React.FC = () => {
   const handleSubmit = async (values: typeof form.values) => {
 
     try {
-      const res = await API.auth.register(values);
+      await API.auth.register(values);
       navigate('/login');
 
     } catch (err) {
@@ -44,9 +45,13 @@ const Register: React.FC = () => {
   }
 
 
+  function useCallBack(arg0: () => void, arg1: import("react-router-dom").NavigateFunction[]): import("react").MouseEventHandler<HTMLButtonElement> | undefined {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <Container size={420} my={40}>
-      <Title align="center" sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900 })}>
+      <Title align="center" sx={{ fontFamily: `Greycliff CF, ${useMantineTheme}`, fontWeight: 900 } as CSSObject}>
         Create an account!
       </Title>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
@@ -77,7 +82,7 @@ const Register: React.FC = () => {
           }
           <Button fullWidth mt="xl" type="submit">Register</Button>
         </form>
-        <Button fullWidth mt="xl" onClick={() => navigate('/hikelist')}>Proceed as a visitor</Button>
+        <Button fullWidth mt="xl" onClick={useCallBack(() => navigate('/hikelist'), [navigate])}>Proceed as a visitor</Button>
       </Paper>
     </Container>
   );

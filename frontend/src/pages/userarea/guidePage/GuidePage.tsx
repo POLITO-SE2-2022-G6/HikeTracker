@@ -1,9 +1,8 @@
-import s from './GuidePage.module.css';
-import { Container ,Paper,Button,Flex,Grid} from '@mantine/core';
+import { Container ,Paper,Button,Flex,Grid, CSSObject} from '@mantine/core';
 import { useNavigate } from "react-router-dom";
 import { HikeCard } from "../../../components/hikeCard/hikeCard";
 import { Hike } from '../../../generated/prisma-client';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { API } from '../../../utilities/api/api';
 import { UserContext } from '../../../context/userContext';
 import UserInfo from '../../../components/userInfo/userInfo';
@@ -30,41 +29,32 @@ const GuidePage = () => {
     return (
       <>
      <UserInfo/>
-      <Container sx={(t) => {
-        return {
+      <Container sx={{
           display: "flex",
           flexWrap: "wrap",
           alignItems: "flex-start"
-        }
-      }}>  
-         <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={
-          (t) => {
-            return {
+        } as CSSObject}>  
+         <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={{
               flexGrow: 1,
               flexShrink: 0,
-            }
-          }
-        }>
+            } as CSSObject }>
           <h1>Create</h1>      
            <Flex 
                direction={{ base: 'column', sm: 'row' }}
                gap={{ base: 'sm', sm: 'lg' }}
                justify={{ sm: 'center' }} >
-                  <Button size="md" onClick={() => { navigate("/hike/edit") }}>New Hike </Button>             
-                  <Button size="md" onClick={() => { navigate("/hut/edit/") }}>New Hut   </Button>                  
-                 <Button size="md" onClick={() => { navigate("/parkinglot/edit/") }}>New Parking Lot  </Button>  
+                  <Button size="md" onClick={useCallback(() => { navigate("/hike/edit") },[navigate])}>New Hike </Button>             
+                  <Button size="md" onClick={useCallback(() => { navigate("/hut/edit/") },[navigate])}>New Hut   </Button>                  
+                 <Button size="md" onClick={useCallback(() => { navigate("/parkinglot/edit/") },[navigate])}>New Parking Lot  </Button>  
              </Flex>    
          </Paper>
          </Container>
 
          <Container>
-         <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={
-          (t) => {
-            return {
+         <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={{
               flexGrow: 1,
               flexShrink: 0,
-            }
-          }
+            } as CSSObject 
         }>
            <h1>My Hikes</h1>
            <GuideHikeCardGrid hikes = {hikes} />

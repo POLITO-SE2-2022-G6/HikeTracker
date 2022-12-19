@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { BackgroundImage, Center, Text,Flex,Button} from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ const Home = () => {
           <Flex justify="flex-end" align="flex-end">
             <Button variant="outline"  mt="xs" mr="xl"
                     sx={ {  border: "none" , color:"white", fontSize: 18 } }
-                    onClick={() => { navigate("/login"); }}>Login</Button>
+                    onClick={useCallback(() => { navigate("/login"); },[navigate])}>Login</Button>
           </Flex>
           <Center style={{ height: 450 }}>
             <Text color="#fff"  
@@ -27,9 +27,9 @@ const Home = () => {
                gap={{ base: 'sm', sm: 'lg' }}
                justify={{ sm: 'center' }} > 
              <Button variant="outline"  sx={{ border: "none" , color:"white", fontSize: 18}}
-                    onClick={() => { navigate("/hikelist"); }}>Browse Hikes</Button>
+                    onClick={useCallback(() => { navigate("/hikelist"); }, [navigate])}>Browse Hikes</Button>
              <Button variant="outline"  sx={{ border: "none" , color:"white", fontSize: 18}}
-                     onClick={() => { navigate("/register"); }}>Sign up</Button>
+                     onClick={useCallback(() => { navigate("/register"); }, [navigate])}>Sign up</Button>
           </Flex>
              
         </BackgroundImage>       

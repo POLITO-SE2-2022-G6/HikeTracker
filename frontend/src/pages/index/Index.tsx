@@ -1,7 +1,4 @@
-import s from './Index.module.css';
-
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-
 import Layout from '../../components/layout/Layout';
 import Login from '../login/Login';
 import Register from '../register/Register';

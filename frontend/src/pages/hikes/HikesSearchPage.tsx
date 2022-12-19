@@ -1,5 +1,5 @@
 import s from './HikesSearchPage.module.css';
-import { Box, Button, Center, Container, Pagination, Paper, Slider, Space, TextInput, Title, Text } from '@mantine/core';
+import { Box, Button, Center, Container, Pagination, Paper, Slider, Space, TextInput, Title, Text, CSSObject } from '@mantine/core';
 import { useForm } from '@mantine/form'
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
@@ -64,21 +64,15 @@ const HikesSearchPage: React.FC = () => {
   return (
     <Container size="lg">
       <Title >Search a Hike</Title>
-      <Box sx={(t) => {
-        return {
+      <Box sx={{
           display: "flex",
           flexWrap: "wrap",
           alignItems: "flex-start"
-        }
-      }}>
-        <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={
-          (t) => {
-            return {
+        } as CSSObject}>
+        <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={{
               flexGrow: 1,
               flexShrink: 0,
-            }
-          }
-        }>
+            } as CSSObject}>
           <form onSubmit={form.onSubmit(handleSubmit)} className={s.form}>
             <TextInput
               label="Region"
@@ -150,15 +144,11 @@ const HikesSearchPage: React.FC = () => {
             <Button fullWidth type='submit'>Cerca</Button>
           </form>
         </Paper>
-        <Paper withBorder radius={'md'} m={'md'} p={'md'} sx={
-          (t) => {
-            return {
+        <Paper withBorder radius={'md'} m={'md'} p={'md'} sx={{
               flexGrow: 3,
               flexBasis: '60%',
               overflow: 'hidden'
-            }
-          }
-        }>
+            } as CSSObject}>
           {/* <HikesList data={result}></HikesList > */}
           <HikeCardGrid hikes={result.slice((page - 1) * elementsPerPage, elementsPerPage * page)} />
           <Center>

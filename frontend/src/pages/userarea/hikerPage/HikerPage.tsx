@@ -1,9 +1,9 @@
-import { Button, Container, Paper, Flex } from '@mantine/core';
+import { Button, Container, Paper, Flex, CSSObject } from '@mantine/core';
 import UserInfo from '../../../components/userInfo/userInfo';
 import UserPerformance from '../../../components/userInfo/userPerformance';
 import { useNavigate, createSearchParams } from 'react-router-dom';
 import { UserContext } from '../../../context/userContext';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Performance } from '../../../generated/prisma-client';
 import { API } from "../../../utilities/api/api"
 
@@ -41,25 +41,20 @@ const HikerPage: React.FC = () => {
         <>
             <UserInfo />
             {performance && <UserPerformance performance={performance} />}
-            <Container sx={(t) => {
-                return {
+            <Container sx={{
                     display: "flex",
                     flexWrap: "wrap",
                     alignItems: "flex-start"
-                }
-            }}>
-                <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={
-                    (t) => {
-                        return {
+                } as CSSObject}>
+                <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={{
                             flexGrow: 1,
                             flexShrink: 0,
-                        }
-                    }
+                        } as CSSObject
                 }>
                     <Flex direction={{ base: 'column', sm: 'row' }} gap={{ base: 'sm', sm: 'lg' }} justify={{ sm: 'center' }}>
-                        <Button size="md" onClick={() => { navigate('/huts') }}>Search a Hut</Button>
-                        <Button size="md" onClick={() => { navigate('/performances') }}>Modify Performance Parameters</Button>
-                        <Button size="md" onClick={goToSearch}>See filtered hikes</Button>
+                        <Button size="md" onClick={useCallback(() => { navigate('/huts') }, [navigate])}>Search a Hut</Button>
+                        <Button size="md" onClick={useCallback(() => { navigate('/performances') }, [navigate])}>Modify Performance Parameters</Button>
+                        <Button size="md" onClick={useCallback(goToSearch, [navigate, performance])}>See filtered hikes</Button>
                     </Flex>
                 </Paper>
             </Container>
