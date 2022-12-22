@@ -13,18 +13,15 @@ const GuidePage = () => {
   const [hikes, setHikes] = useState<Hike[]>([]);
 
 
-  const getAllHikes = async () => {
-    const hikes = await  getHikes()
-    setHikes(hikes)
-  };
-
   useEffect(() => {
-      getAllHikes();
-  }, []);
+    const getHikes = async () => {
+      const hs = await  API.hike.getHikes() as Hike[];
+      setHikes(hs)
+    };
+
+     if (hikes.length !== 0) getHikes();
+  }, [setHikes, hikes]);
   
-  const getHikes = async () => {
-    return await API.hike.getHikes() as Hike[];
-  };
 
     return (
       <>
@@ -65,7 +62,7 @@ const GuidePage = () => {
   };
 
   function GuideHikeCardGrid  ({ hikes }: { hikes?: Hike[] }) {
-    const { state, setState } = useContext(UserContext);
+    const { state } = useContext(UserContext);
     
     let guideId = state.data?.id;
 

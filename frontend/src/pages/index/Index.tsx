@@ -19,7 +19,7 @@ import { Landing } from '../landing/Landing';
 
 const Index: React.FC = () => {
 
-  const { state, setState } = useContext(UserContext);
+  const { state } = useContext(UserContext);
 
   const { loggedIn } = state;
   

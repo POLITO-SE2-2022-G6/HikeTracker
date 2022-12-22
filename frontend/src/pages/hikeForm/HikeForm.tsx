@@ -14,6 +14,7 @@ import { extrackPoints } from '../../utilities/gpx';
 import { MapSetter } from '../hike/HikeDetailPage';
 import cabin from './cabin.svg';
 import car from './car.svg';
+import ErrorModal from '../../components/errorModal/errorModal';
 
 const hutIcon = divIcon({
   html: cabin
@@ -54,7 +55,7 @@ const HikeForm: React.FC = () => {
   const [error, setError] = useState('');
   const [track, setTrack] = useState<[number, number][]>([])
   const [center, setCenter] = useState<[number, number]>([41.8, 12.4])
-  const [settingRP, setSettingRP] = useState(true)
+  const [settingRP] = useState(true)
   const [activeTab, setActiveTab] = useState<string | null>('ends');
   const [referencePointsEdit, setReferencePointsEdit] = useState<editArray>({ created: [], deleted: [] })
   const [newReferencePoint, setNewReferencePoint] = useState<Point>()
@@ -93,29 +94,33 @@ const HikeForm: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (load === true) {        
-        setLoad(false)
-        setPoints(await API.point.getPoints() as Points[])
-        if (id) {
-          const hike = await API.hike.getHike(parseInt(id))
-          if (!hike) return
-          setHike(hike)
-          form.setValues({
-            title: hike.title,
-            length: hike.length,
-            expected_time: hike.expected_time,
-            ascent: hike.ascent,
-            difficulty: hike.difficulty,
-            description: hike.description!,
-          })
+      try {
+        if (load === true) {
+          setLoad(false)
+          setPoints(await API.point.getPoints() as Points[])
+          if (id) {
+            const hike = await API.hike.getHike(parseInt(id))
+            if (!hike) return
+            setHike(hike)
+            form.setValues({
+              title: hike.title,
+              length: hike.length,
+              expected_time: hike.expected_time,
+              ascent: hike.ascent,
+              difficulty: hike.difficulty,
+              description: hike.description!,
+            })
 
-          if (hike.gpstrack) {
-            const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
-            const points = extrackPoints(xml.data)
-            setTrack(points)
-            setCenter(points[0])
+            if (hike.gpstrack) {
+              const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
+              const points = extrackPoints(xml.data)
+              setTrack(points)
+              setCenter(points[0])
+            }
           }
         }
+      } catch (e: any) {
+        setError(e.message)
       }
     }
     fetchData();
@@ -138,6 +143,7 @@ const HikeForm: React.FC = () => {
 
   return (
     <Container>
+      <ErrorModal error={error} setError={setError} />
       <Title align="center">
         {id ? 'Edit a hike' : 'Add a New Hike'}
       </Title>
@@ -318,8 +324,8 @@ const handleSubmit = async (id: string | undefined, values: Fields, setError: Re
       })
       navigate('/hikelist');
     }
-  } catch (error) {
-    setError(id ? "Error while editing hike" : "Error while creating hike");
+  } catch (error:any) {
+    setError(id ? "Error while editing hike: " + error : "Error while creating hike: " + error.message);
   }
 }
 

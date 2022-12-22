@@ -2,21 +2,15 @@ import { Button, Container, Paper, Flex, CSSObject } from '@mantine/core';
 import UserInfo from '../../../components/userInfo/userInfo';
 import UserPerformance from '../../../components/userInfo/userPerformance';
 import { useNavigate, createSearchParams } from 'react-router-dom';
-import { UserContext } from '../../../context/userContext';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Performance } from '../../../generated/prisma-client';
 import { API } from "../../../utilities/api/api"
 
 const HikerPage: React.FC = () => {
 
-    const { state, setState } = useContext(UserContext)
     const [performance, setPerformance] = useState<Performance | undefined>(undefined)
 
-    const params = { length: '5', duration: '100', difficulty: '3', ascent: '1.5' };
-
     // function to convert all fields of object performance to string
-    
-    
     const navigate = useNavigate()
     const goToSearch = () => {
         if (!performance) return

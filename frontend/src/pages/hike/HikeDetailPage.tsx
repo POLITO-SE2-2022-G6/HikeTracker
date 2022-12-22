@@ -10,6 +10,7 @@ import { API } from '../../utilities/api/api';
 import { Hike as HIKE, Hut, Point } from '../../generated/prisma-client';
 import { extrackPoints } from '../../utilities/gpx';
 import { withPoint } from '../../utilities/api/hikeApi';
+import ErrorModal from '../../components/errorModal/errorModal';
 
 type Hike = HIKE & {
   start_point: Point,
@@ -24,7 +25,7 @@ const HikeDetailPage: React.FC = () => {
 
   const [hike, setHike] = useState<Hike | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string>('')
   const [track, setTrack] = useState<[number, number][] | undefined>(undefined)
   const [center, setCenter] = useState<[number, number]>([41.8, 12.4])
   const [offset, setOffset] = useState(0)
@@ -67,8 +68,8 @@ const HikeDetailPage: React.FC = () => {
           setCenter(points[0])
           start()
         }
-      } catch (error) {
-        setError("There was an error fetching a hike")
+      } catch (error: any) {
+        setError(error.message)
       }
       setLoading(false)
     }
@@ -82,6 +83,7 @@ const HikeDetailPage: React.FC = () => {
     <div style={{ width: 400, position: 'relative' }}>
         <LoadingOverlay visible={loading} overlayBlur={2} />
       </div>
+        <ErrorModal error={error} setError={setError}/>
       <Container>
         <Paper p={'md'} radius={'md'} shadow={'md'} withBorder>
           <Group position='apart'>

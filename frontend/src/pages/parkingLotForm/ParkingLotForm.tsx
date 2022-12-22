@@ -3,11 +3,12 @@ import { useForm } from '@mantine/form'
 import axios from 'axios';
 import { Button, Container, Paper, TextInput, Title, Group, Textarea, Box, Text, CSSObject } from '@mantine/core';
 import { useNavigate, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { LatLng } from 'leaflet';
 import { MapContainer, useMapEvent, TileLayer, Marker } from 'react-leaflet';
 import { API } from '../../utilities/api/api';
 import { CiLocationOn } from 'react-icons/ci';
+import ErrorModal from '../../components/errorModal/errorModal';
 
 const ParkingLotForm: React.FC = () => {
 
@@ -80,13 +81,14 @@ const ParkingLotForm: React.FC = () => {
       console.log(res);
       navigate('/hikelist');
 
-    } catch (err) {
-      setError('Error - creating a new parking lot');
+    } catch (err: any) {
+      setError('Error - creating a new parking lot' + err.message);
     }
   }
 
   return (
     <Container>
+      <ErrorModal error={error} setError={setError} />
       <Title align="center">Add a new Parking Lot</Title>
       <Container sx={{
           display: "flex",
@@ -120,7 +122,7 @@ const ParkingLotForm: React.FC = () => {
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <EventHandler choosePosition={choosePosition} />
+                <EventHandler choosePosition={useCallback(choosePosition,[form])} />
                 {marker && <Marker position={marker} />}
               </MapContainer>
             </Box>

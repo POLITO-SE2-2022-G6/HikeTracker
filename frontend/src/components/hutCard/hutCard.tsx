@@ -15,6 +15,16 @@ interface HutCardProps {
   hut: HutWithPoint;
 }
 
+function IconWithText({ icon, text }: { icon: React.ReactNode, text: React.ReactNode }) {
+  return (<div>
+    <Center inline>
+      {icon}
+      &nbsp;
+      {text}
+    </Center>
+  </div>);
+}
+
 const difficultyColor = ['', 'green', 'yellow', 'red', 'black'];
 export const HutCard = (props: HutCardProps) => {
   const { state } = useContext(UserContext)
@@ -56,14 +66,4 @@ export const HutCard = (props: HutCardProps) => {
       </Card>
     </div>
   );
-
-  function IconWithText({ icon, text }: { icon: React.ReactNode, text: React.ReactNode }) {
-    return (<div>
-      <Center inline>
-        {icon}
-        &nbsp;
-        {text}
-      </Center>
-    </div>);
-  }
 }

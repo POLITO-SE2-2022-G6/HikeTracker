@@ -19,7 +19,7 @@ import { API } from '../../utilities/api/api';
 const Login: React.FC = (props) => {
 
   const navigate = useNavigate();
-  const { state, setState } = useContext(UserContext)
+  const { setState } = useContext(UserContext)
 
   const form = useForm({
     initialValues: { email: '' },

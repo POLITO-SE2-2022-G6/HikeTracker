@@ -1,9 +1,7 @@
-import s from './HutsList.module.css';
 import { Table } from '@mantine/core';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
-import { API } from '../../utilities/api/api';
 import { Hut, Point } from '../../generated/prisma-client';
 
 type HutProps = {
@@ -39,7 +37,7 @@ type HutPoint = Point & {
 
 function HutData({ hut }: { hut: HutPoint }) {
   const navigate = useNavigate()
-  const { state, setState } = useContext(UserContext)
+  const { state } = useContext(UserContext)
 
   return (
     <>

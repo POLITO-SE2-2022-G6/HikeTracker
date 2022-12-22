@@ -6,7 +6,7 @@ import { useContext } from 'react';
 import s from './Landing.module.css'
 
 export const Landing = () => {
-  const { state, setState } = useContext(UserContext)
+  const { state } = useContext(UserContext)
 
   return (
     <div className={s.main}>

@@ -18,7 +18,7 @@ import { API } from '../../utilities/api/api';
 const Register: React.FC = () => {
 
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>('');
 
   const form = useForm({
     initialValues: { email: '', type: '', username: '', phoneNumber: '' },
@@ -38,8 +38,8 @@ const Register: React.FC = () => {
       await API.auth.register(values);
       navigate('/login');
 
-    } catch (err) {
-      setError('Something went wrong');
+    } catch (err: any) {
+      setError('Something went wrong: ' + err.message);
     }
 
   }

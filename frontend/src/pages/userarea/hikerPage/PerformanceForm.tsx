@@ -1,10 +1,10 @@
-import s from './PerformanceForm.module.css';
 import { useForm } from '@mantine/form'
 import { Button, Container, Paper, Title, Text, Slider, Space, CSSObject } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { API } from '../../../utilities/api/api';
 import { Performance } from '../../../generated/prisma-client';
+import ErrorModal from '../../../components/errorModal/errorModal';
 
 const PerformanceForm: React.FC = () => {
 
@@ -69,6 +69,7 @@ const PerformanceForm: React.FC = () => {
 
     return (
         <Container>
+            <ErrorModal error={error} setError={setError} />
             <Title align="center"> Edit parameters
             </Title>
             <Container sx={{
@@ -81,7 +82,7 @@ const PerformanceForm: React.FC = () => {
                     flexShrink: 0,
                 } as CSSObject
                 }>
-                    <form onSubmit={form.onSubmit(handleSubmit)} className={s.form}>
+                    <form onSubmit={form.onSubmit(handleSubmit)}>
                         <Text fw={500} fz='sm'>
                             Difficulty:&nbsp;
                             {form.values.difficulty && formatDifficulty(form.values.difficulty)}
