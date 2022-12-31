@@ -1,5 +1,5 @@
 import { Box, Button, Container, CSSObject, FileInput, Flex, Group, NumberInput, Paper, Space, Stack, Tabs, Textarea, TextInput, Title } from '@mantine/core';
-import { useForm, UseFormReturnType } from '@mantine/form';
+import { useForm } from '@mantine/form';
 import { IconUpload } from '@tabler/icons';
 import axios from 'axios';
 import L, { divIcon } from 'leaflet';
@@ -63,6 +63,8 @@ const HikeForm: React.FC = () => {
   const [points, setPoints] = useState<Points[]>([])
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
   const [hutsEdit, setHutsEdit] = useState<{ created: number[], deleted: number[] }>({ created: [], deleted: [] })
+  const [sPoint, setSPoint] = useState<number>()
+  const [ePoint, setEPoint] = useState<number>()
 
 
   const form = useForm<Fields>({
@@ -95,35 +97,33 @@ const HikeForm: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (load === true) {
-          setLoad(false)
-          setPoints(await API.point.getPoints() as Points[])
-          if (id) {
-            const hike = await API.hike.getHike(parseInt(id))
-            if (!hike) return
-            setHike(hike)
-            form.setValues({
-              title: hike.title,
-              length: hike.length,
-              expected_time: hike.expected_time,
-              ascent: hike.ascent,
-              difficulty: hike.difficulty,
-              description: hike.description!,
-            })
+        setLoad(false)
+        setPoints(await API.point.getPoints() as Points[])
+        if (id) {
+          const hike = await API.hike.getHike(parseInt(id))
+          if (!hike) return
+          setHike(hike)
+          form.setValues({
+            title: hike.title,
+            length: hike.length,
+            expected_time: hike.expected_time,
+            ascent: hike.ascent,
+            difficulty: hike.difficulty,
+            description: hike.description!,
+          })
 
-            if (hike.gpstrack) {
-              const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
-              const points = extrackPoints(xml.data)
-              setTrack(points)
-              setCenter(points[0])
-            }
+          if (hike.gpstrack) {
+            const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
+            const points = extrackPoints(xml.data)
+            setTrack(points)
+            setCenter(points[0])
           }
         }
       } catch (e: any) {
         setError(e.message)
       }
     }
-    fetchData();
+    if (load === true) fetchData();
 
   }, [load, form, id])
 
@@ -133,13 +133,9 @@ const HikeForm: React.FC = () => {
         const data = extrackPoints(content)
         setCenter(data[0])
         setTrack(data)
-      }
-
-      )
+      })
     }
   }, [form.values.gpstrack])
-
-
 
   return (
     <Container>
@@ -156,7 +152,7 @@ const HikeForm: React.FC = () => {
           flexGrow: 1,
           flexShrink: 0,
         } as CSSObject}>
-          <form onSubmit={form.onSubmit(async (values) => await handleSubmit(id, values, setError, referencePointsEdit, hutsEdit, navigate))}>
+          <form onSubmit={form.onSubmit(async (values) => {form.setFieldValue("startpointid", sPoint); form.setFieldValue("endpointid", ePoint); await handleSubmit(id, values, setError, referencePointsEdit, hutsEdit, navigate)})}>
             <TextInput
               label="Title"
               placeholder="Title of the hike"
@@ -244,7 +240,7 @@ const HikeForm: React.FC = () => {
               </Box>
               <Box>
                 <Stack p={'md'}>
-                  {activeTab === 'ends' && <EndsButtons selectedMarker={selectedMarker} form={form} />}
+                  {activeTab === 'ends' && <EndsButtons selectedMarker={selectedMarker} setSPoint={setSPoint} setEPoint={setEPoint} />}
                   {activeTab === 'reference' && <ReferenceButtons newReferencePoint={newReferencePoint} selectedMarker={selectedMarker} setReferencePointsEdit={setReferencePointsEdit} />}
                   {activeTab === 'huts' && <HutsButtons selectedMarker={selectedMarker} setHutsEdit={setHutsEdit} />}
                 </Stack>
@@ -266,10 +262,10 @@ const HikeForm: React.FC = () => {
 }
 
 
-function EndsButtons({ selectedMarker, form }: { selectedMarker: number | null; form: UseFormReturnType<Fields, (values: Fields) => Fields> }) {
+function EndsButtons({ selectedMarker, setSPoint, setEPoint }: { selectedMarker: number | null; setSPoint: React.Dispatch<React.SetStateAction<number | undefined>>; setEPoint: React.Dispatch<React.SetStateAction<number | undefined>> }) {
   return <>
-    <Button type="button" onClick={useCallback(() => { selectedMarker && form.setValues({ startpointid: selectedMarker }) }, [selectedMarker, form])}> Set as Start Point </Button>
-    <Button type="button" onClick={useCallback(() => { selectedMarker && form.setValues({ endpointid: selectedMarker }) }, [selectedMarker, form])}> Set as End Point </Button>
+    <Button type="button" onClick={useCallback(() => { selectedMarker && setSPoint(selectedMarker) }, [selectedMarker, setSPoint])}> Set as Start Point </Button>
+    <Button type="button" onClick={useCallback(() => { selectedMarker && setEPoint(selectedMarker) }, [selectedMarker, setEPoint])}> Set as End Point </Button>
   </>
 }
 
@@ -324,7 +320,7 @@ const handleSubmit = async (id: string | undefined, values: Fields, setError: Re
       })
       navigate('/hikelist');
     }
-  } catch (error:any) {
+  } catch (error: any) {
     setError(id ? "Error while editing hike: " + error : "Error while creating hike: " + error.message);
   }
 }
