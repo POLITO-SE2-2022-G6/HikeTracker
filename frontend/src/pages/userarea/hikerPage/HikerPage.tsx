@@ -1,6 +1,7 @@
 import { Button, Container, Paper, Flex, CSSObject } from '@mantine/core';
 import UserInfo from '../../../components/userInfo/userInfo';
 import UserPerformance from '../../../components/userInfo/userPerformance';
+import UserActivities from '../../../components/userInfo/userActivities';
 import { useNavigate, createSearchParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Performance } from '../../../generated/prisma-client';
@@ -9,6 +10,7 @@ import { API } from "../../../utilities/api/api"
 const HikerPage: React.FC = () => {
 
     const [performance, setPerformance] = useState<Performance | undefined>(undefined)
+    const [activities, setActivities] = useState<any>([])
 
     // function to convert all fields of object performance to string
     const navigate = useNavigate()
@@ -28,12 +30,13 @@ const HikerPage: React.FC = () => {
     useEffect(() => {
         API.hiker.getPerformance().then((res) => {
             setPerformance(res as Performance)
-        })
+        }).then(() => API.hiker.getActivities().then((res) => { setActivities(res) }))
     }, [])
 
     return (
         <>
             <UserInfo />
+            {activities && <UserActivities activities={activities} />}
             {performance && <UserPerformance performance={performance} />}
             <Container sx={{
                     display: "flex",

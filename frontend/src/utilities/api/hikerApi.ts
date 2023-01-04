@@ -20,6 +20,13 @@ export class HikerApi extends Resource {
     });
   }
 
+  async getActivities() {
+    return this.client.request</*userHike[]*/any[]>({
+      method: Methods.GET,
+      path: `${this.path}/hikes`,
+    });
+  }
+
   async getProfile() {
     // TODO: implement
   }
