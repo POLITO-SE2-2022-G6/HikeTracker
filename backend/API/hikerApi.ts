@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import { checkSchema, validationResult } from 'express-validator';
 import { bigCheck } from "./authApi";
 import { hikesList } from "../DAO/hikeDao";
-import { deletePerformance, editPerformance, getPerformance } from "../DAO/hikerDao";
+import { assignHike, deletePerformance, editPerformance, getHike, getPerformance, hikesListByUser, modifyHike } from "../DAO/hikerDao";
 import { User } from "@prisma/client";
 
 export const uRouter = Router();
@@ -76,6 +76,92 @@ uRouter.delete("/performance", bigCheck(["hiker"]), async (req: express.Request,
         const hikerId = (req.user as User).id;
         await deletePerformance(hikerId);
         return res.status(204).json({ message: "Performance deleted" });
+    } catch (e) {
+        return res.status(500).json({ error: "Internal Server Error: " + e });
+    }
+})
+
+//assign hike to hiker
+uRouter.post("/hike/:id", bigCheck(["hiker"]), checkSchema({
+    id: {
+        in: ['params'],
+        isInt: true
+    },
+    refPointId: {
+        in: ['body'],
+        isInt: true
+    }
+}), async (req: express.Request, res: express.Response) => {
+    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+    try {
+        const hikerId = (req.user as User).id;
+        const hikeId = parseInt(req.params.id);
+        const refPointId = req.body.refPointId;
+        const hike = await assignHike(hikerId, hikeId, refPointId);
+        return res.status(201).json(hike);
+    } catch (e) {
+        return res.status(500).json({ error: "Internal Server Error: " + e });
+    }
+})
+
+//modify hike
+uRouter.put("/hike/:id", bigCheck(["hiker"]), checkSchema({
+    id: {
+        in: ['params'],
+        isInt: true
+    },
+    status: {
+        in: ['body'],
+        optional: true,
+        notEmpty: true
+    },
+    refPointId: {
+        in: ['body'],
+        optional: true,
+        isInt: true
+    }
+}), async (req: express.Request, res: express.Response) => {
+    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+    try {
+        const hike = await modifyHike(parseInt(req.params.id), req.body.status ? req.body.status : undefined, req.body.refPointId ? parseInt(req.body.refPointId) : undefined);
+        return res.status(201).json(hike);
+    } catch (e) {
+        return res.status(500).json({ error: "Internal Server Error: " + e });
+    }
+})
+
+//get hike
+uRouter.get("/hike/:id", bigCheck(["hiker"]), checkSchema({
+    id: {
+        in: ['params'],
+        isInt: true
+    }
+}), async (req: express.Request, res: express.Response) => {
+    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+    try {
+        const hike = await getHike(parseInt(req.params.id));
+        const newHike= hike && {
+            "hike.reference_points": hike.refPoint ? hike.hike.reference_points.splice(0, hike.hike.reference_points.indexOf(hike.refPoint)) : hike.hike.reference_points,
+        }
+        return res.status(201).json(newHike);
+    } catch (e) {
+        return res.status(500).json({ error: "Internal Server Error: " + e });
+    }
+})
+
+//get list of hikes
+uRouter.get("/hikes", bigCheck(["hiker"]), checkSchema({
+    completed: {
+        in: ['query'],
+        optional: true,
+        isBoolean: true
+    }
+}), async (req: express.Request, res: express.Response) => {
+    if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
+    try { 
+        const { completed } = req.query as Record<string, string | undefined>;
+        const hikes = await hikesListByUser((req.user as User).id, completed ? "completed" : undefined);
+        return res.status(201).json(hikes);
     } catch (e) {
         return res.status(500).json({ error: "Internal Server Error: " + e });
     }

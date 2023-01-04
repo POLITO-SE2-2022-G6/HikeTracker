@@ -51,10 +51,11 @@ model Point {
   endof      Hike[]      @relation("end")
   startof    Hike[]      @relation("start")
   hikes      Hike[]      @relation("hikes")
+  hikers     UserHikes[] @relation("hiker")
 }
 
 model Hike {
-  id               Int     @id @default(autoincrement())
+  id               Int         @id @default(autoincrement())
   title            String
   length           Float
   expected_time    Int
@@ -64,14 +65,15 @@ model Hike {
   startpointid     Int?
   endpointid       Int?
   gpstrack         String?
-  conditions       String  @default("open")
+  conditions       String      @default("open")
   conddescription  String?
   localguideid     Int?
-  localguide       User?   @relation("guide", fields: [localguideid], references: [id])
-  end_point        Point?  @relation("end", fields: [endpointid], references: [id])
-  start_point      Point?  @relation("start", fields: [startpointid], references: [id])
-  reference_points Point[] @relation("hikes")
-  huts             Hut[]   @relation("huts")
+  localguide       User?       @relation("guide", fields: [localguideid], references: [id])
+  end_point        Point?      @relation("end", fields: [endpointid], references: [id])
+  start_point      Point?      @relation("start", fields: [startpointid], references: [id])
+  reference_points Point[]     @relation("hikes")
+  huts             Hut[]       @relation("huts")
+  hikers           UserHikes[] @relation("hikes")
 }
 
 model Performance {
@@ -94,5 +96,18 @@ model User {
   hut         Hut?         @relation("hworker", fields: [hutid], references: [id], onDelete: SetNull)
   hutid       Int?         @unique
   hikeslist   Hike[]       @relation("guide")
+  hikesDone   UserHikes[]  @relation("hiker")
   performance Performance? @relation("perf")
+}
+
+model UserHikes {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation("hiker", fields: [user_id], references: [id])
+  user_id     Int
+  hike        Hike     @relation("hikes", fields: [hike_id], references: [id])
+  hike_id     Int
+  status      String   @default("ongoing")
+  startedAt   DateTime @default(now()) 
+  refPoint    Point    @relation("hiker", fields: [refPoint_id], references: [id])
+  refPoint_id Int
 }

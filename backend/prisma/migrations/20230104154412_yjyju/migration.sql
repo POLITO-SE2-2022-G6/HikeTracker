@@ -8,7 +8,8 @@ CREATE TABLE "Hut" (
     "phone" TEXT,
     "email" TEXT,
     "website" TEXT,
-    "pointid" INTEGER
+    "pointid" INTEGER,
+    CONSTRAINT "Hut_pointid_fkey" FOREIGN KEY ("pointid") REFERENCES "Point" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -18,7 +19,8 @@ CREATE TABLE "ParkingLot" (
     "name" TEXT,
     "position" TEXT,
     "capacity" INTEGER,
-    "pointid" INTEGER
+    "pointid" INTEGER,
+    CONSTRAINT "ParkingLot_pointid_fkey" FOREIGN KEY ("pointid") REFERENCES "Point" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -30,11 +32,7 @@ CREATE TABLE "Point" (
     "elevation" REAL,
     "city" TEXT,
     "region" TEXT,
-    "province" TEXT,
-    "hutid" INTEGER,
-    "parkinglotid" INTEGER,
-    CONSTRAINT "Point_parkinglotid_fkey" FOREIGN KEY ("parkinglotid") REFERENCES "ParkingLot" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "Point_hutid_fkey" FOREIGN KEY ("hutid") REFERENCES "Hut" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    "province" TEXT
 );
 
 -- CreateTable
@@ -49,6 +47,8 @@ CREATE TABLE "Hike" (
     "startpointid" INTEGER,
     "endpointid" INTEGER,
     "gpstrack" TEXT,
+    "conditions" TEXT NOT NULL DEFAULT 'open',
+    "conddescription" TEXT,
     "localguideid" INTEGER,
     CONSTRAINT "Hike_localguideid_fkey" FOREIGN KEY ("localguideid") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Hike_endpointid_fkey" FOREIGN KEY ("endpointid") REFERENCES "Point" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -58,12 +58,12 @@ CREATE TABLE "Hike" (
 -- CreateTable
 CREATE TABLE "Performance" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "length" REAL NOT NULL,
-    "duration" INTEGER NOT NULL,
-    "altitude" REAL NOT NULL,
-    "difficulty" INTEGER NOT NULL,
-    "hikerid" INTEGER NOT NULL,
-    CONSTRAINT "Performance_hikerid_fkey" FOREIGN KEY ("hikerid") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "length" REAL NOT NULL DEFAULT 0,
+    "duration" INTEGER NOT NULL DEFAULT 0,
+    "altitude" REAL NOT NULL DEFAULT 0,
+    "difficulty" INTEGER NOT NULL DEFAULT 0,
+    "hikerid" INTEGER,
+    CONSTRAINT "Performance_hikerid_fkey" FOREIGN KEY ("hikerid") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -73,7 +73,21 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "phoneNumber" TEXT NOT NULL,
-    "verified" BOOLEAN NOT NULL DEFAULT false
+    "verified" BOOLEAN NOT NULL DEFAULT false,
+    "hutid" INTEGER,
+    CONSTRAINT "User_hutid_fkey" FOREIGN KEY ("hutid") REFERENCES "Hut" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "UserHikes" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "user_id" INTEGER NOT NULL,
+    "hike_id" INTEGER NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'ongoing',
+    "refPoint_id" INTEGER,
+    CONSTRAINT "UserHikes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "UserHikes_hike_id_fkey" FOREIGN KEY ("hike_id") REFERENCES "Hike" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "UserHikes_refPoint_id_fkey" FOREIGN KEY ("refPoint_id") REFERENCES "Point" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -93,10 +107,10 @@ CREATE TABLE "_huts" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Point_hutid_key" ON "Point"("hutid");
+CREATE UNIQUE INDEX "Hut_pointid_key" ON "Hut"("pointid");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Point_parkinglotid_key" ON "Point"("parkinglotid");
+CREATE UNIQUE INDEX "ParkingLot_pointid_key" ON "ParkingLot"("pointid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Performance_hikerid_key" ON "Performance"("hikerid");
@@ -106,6 +120,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_hutid_key" ON "User"("hutid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_hikes_AB_unique" ON "_hikes"("A", "B");

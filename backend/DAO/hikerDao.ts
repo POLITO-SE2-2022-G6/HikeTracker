@@ -28,3 +28,57 @@ export async function getPerformance(id: number){
 export async function deletePerformance(id: number){
     return prisma.performance.delete({ where: { hikerid: id} })
 }
+
+export async function assignHike(hikerId: number, hikeId: number, refPointId: number){
+    return prisma.userHikes.create({
+        data:{
+            user: {
+                connect: {
+                    id: hikerId
+                }
+            },
+            hike: {
+                connect: {
+                    id: hikeId
+                }
+            },
+            refPoint: {
+                connect: {
+                    id: refPointId
+                }
+            }
+        } 
+    })
+}
+
+export async function modifyHike(id: number, status: string | undefined, refPointId: number | undefined){
+    return prisma.userHikes.update({
+        where: {
+            id
+        },
+        data: {
+            status,
+            refPoint: {
+                disconnect: refPointId ? true : false,
+                connect: {
+                    id: refPointId
+                }
+            }
+        }
+    })
+}
+
+export async function getHike(id: number){
+    return prisma.userHikes.findUnique({ where: { id }, include: { hike: true && { include: { reference_points: true, start_point: true, end_point: true } }, refPoint: true } })
+}
+
+export async function hikesListByUser(id: number, status: string | undefined){
+    return prisma.userHikes.findMany({
+        where: {
+            user: {
+                id
+            },
+            status
+        }
+    })
+}
