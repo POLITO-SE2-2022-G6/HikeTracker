@@ -81,7 +81,7 @@ uRouter.delete("/performance", bigCheck(["hiker"]), async (req: express.Request,
     }
 })
 
-//assign hike to hiker
+//assign hike to hiker (activity)
 uRouter.post("/hike/:id", bigCheck(["hiker"]), checkSchema({
     id: {
         in: ['params'],
@@ -97,6 +97,7 @@ uRouter.post("/hike/:id", bigCheck(["hiker"]), checkSchema({
         const hikerId = (req.user as User).id;
         const hikeId = parseInt(req.params.id);
         const refPointId = req.body.refPointId;
+        if ((await hikesListByUser(hikerId, "ongoing")).length !== 0) return res.status(400).json({ error: "You already have an ongoing hike" });
         const hike = await assignHike(hikerId, hikeId, refPointId);
         return res.status(201).json(hike);
     } catch (e) {
@@ -104,7 +105,7 @@ uRouter.post("/hike/:id", bigCheck(["hiker"]), checkSchema({
     }
 })
 
-//modify hike
+//modify activity
 uRouter.put("/hike/:id", bigCheck(["hiker"]), checkSchema({
     id: {
         in: ['params'],
@@ -130,7 +131,7 @@ uRouter.put("/hike/:id", bigCheck(["hiker"]), checkSchema({
     }
 })
 
-//get hike
+//get activity
 uRouter.get("/hike/:id", bigCheck(["hiker"]), checkSchema({
     id: {
         in: ['params'],
@@ -149,7 +150,7 @@ uRouter.get("/hike/:id", bigCheck(["hiker"]), checkSchema({
     }
 })
 
-//get list of hikes
+//get list of activities
 uRouter.get("/hikes", bigCheck(["hiker"]), checkSchema({
     completed: {
         in: ['query'],
@@ -160,6 +161,7 @@ uRouter.get("/hikes", bigCheck(["hiker"]), checkSchema({
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
     try { 
         const { completed } = req.query as Record<string, string | undefined>;
+        console.log((req.user as User).id + "" + ( completed ? "completed" : undefined))
         const hikes = await hikesListByUser((req.user as User).id, completed ? "completed" : undefined);
         return res.status(201).json(hikes);
     } catch (e) {

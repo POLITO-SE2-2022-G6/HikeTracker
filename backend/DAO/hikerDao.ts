@@ -59,7 +59,6 @@ export async function modifyHike(id: number, status: string | undefined, refPoin
         data: {
             status,
             refPoint: {
-                disconnect: refPointId ? true : false,
                 connect: {
                     id: refPointId
                 }
@@ -69,7 +68,7 @@ export async function modifyHike(id: number, status: string | undefined, refPoin
 }
 
 export async function getHike(id: number){
-    return prisma.userHikes.findUnique({ where: { id }, include: { hike: true && { include: { reference_points: true, start_point: true, end_point: true } }, refPoint: true } })
+    return prisma.userHikes.findUnique({ where: { id }, include: { hike: { include: { reference_points: true, start_point: true, end_point: true } }, refPoint: true } })
 }
 
 export async function hikesListByUser(id: number, status: string | undefined){
@@ -78,7 +77,7 @@ export async function hikesListByUser(id: number, status: string | undefined){
             user: {
                 id
             },
-            status
+            status: status ? status : undefined
         }
     })
 }

@@ -125,7 +125,7 @@ const HikeForm: React.FC = () => {
     }
     if (load === true) fetchData();
 
-  }, [load, form, id])
+  })
 
   useEffect(() => {
     if (form.values.gpstrack) {
@@ -367,7 +367,7 @@ function DisplayHuts({ points }: { points: Points[] }) {
 }
 
 function DisplayHutsAndParkinglots({ points }: { points: Points[] }) {
-  console.log(points)
+  //console.log(points)
   return <>
     {points.map((point) => {
       if (point.hut || point.parkinglot) return <DisplayPoint point={point} key={point.id} />
