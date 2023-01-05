@@ -10,6 +10,18 @@ Team members:
 * s289262 Sansone Adamo
 * s305007 Ünlüsoy Ege
 
+## User Description 
+
+
+
+| User| 
+| ----------- | 
+|guide@email.com| 
+|hiker@email.com|
+|hworker@email.com|
+|manager@email.com|
+
+In the email of each user is specified its type, if you are not logged in you are guests. 
 
 ## API Description 
 - POST `/api/signup`
