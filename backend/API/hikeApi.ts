@@ -233,8 +233,8 @@ hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
       description: req.body.description,
       gpstrack: gpst,
       huts: JSON.parse(req.body.huts),
-      startpointid: req.body.startpointid && parseInt(req.body.startpointid),
-      endpointid: req.body.endpointid && parseInt(req.body.endpointid),
+      startpointid: stPoint,
+      endpointid: enPoint,
       reference_points: listRefPoint,
       localguideid: (req.user as User).id
     });
