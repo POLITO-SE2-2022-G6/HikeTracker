@@ -19,7 +19,7 @@ const GuidePage = () => {
       setHikes(hs)
     };
 
-     if (hikes.length !== 0) getHikes();
+     if (hikes.length === 0) getHikes();
   }, [setHikes, hikes]);
   
 

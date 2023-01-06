@@ -121,13 +121,13 @@ hRouter.post("", bigCheck(["guide"]), checkSchema({
   try {
     const gpst = await gpsUpload(req, res);
     if (typeof gpst !== "string" && gpst !== undefined) return res.status(400).json({ errors: [{ msg: "Invalid GPS Track" }] });
-    const listRefPoint = JSON.parse(req.body.reference_points);
-    const stPoint = req.body.startpointid && pointById(parseInt(req.body.startpointid));
+    let listRefPoint = JSON.parse(req.body.reference_points);
+    const stPoint = req.body.startpointid && await pointById(parseInt(req.body.startpointid));
     if (!stPoint) return res.status(400).json({ errors: [{ msg: "Invalid Start Point" }] });
-    listRefPoint.unshift(stPoint);
-    const enPoint = req.body.endpointid && pointById(parseInt(req.body.endpointid));
+    listRefPoint.created = [stPoint, ...listRefPoint.created];
+    const enPoint = req.body.endpointid && await pointById(parseInt(req.body.endpointid));
     if (!enPoint) return res.status(400).json({ errors: [{ msg: "Invalid End Point" }] });
-    listRefPoint.push(enPoint);
+    listRefPoint.created.push(enPoint);
     const newHike = await createHike({
       title: req.body.title,
       length: req.body.length && parseFloat(req.body.length),
@@ -215,15 +215,14 @@ hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
     const gpst = await gpsUpload(req, res);
     if (typeof gpst !== "string" && gpst !== undefined) return res.status(400).json({ errors: [{ msg: "Invalid GPS Track" }] });
 
-    const listRefPoint = JSON.parse(req.body.reference_points);
-    const stPoint = req.body.startpointid && pointById(parseInt(req.body.startpointid));
+    let listRefPoint = JSON.parse(req.body.reference_points);
+    const stPoint = req.body.startpointid && await pointById(parseInt(req.body.startpointid));
     if (!stPoint) return res.status(400).json({ errors: [{ msg: "Invalid Start Point" }] });
-    listRefPoint.unshift(stPoint);
+    listRefPoint.created = [stPoint, ...listRefPoint.created];
 
-    const enPoint = req.body.endpointid && pointById(parseInt(req.body.endpointid));
+    const enPoint = req.body.endpointid && await pointById(parseInt(req.body.endpointid));
     if (!enPoint) return res.status(400).json({ errors: [{ msg: "Invalid End Point" }] });
-    listRefPoint.push(enPoint);
-
+    listRefPoint.created.push(enPoint);
     const modifiedHike = await editHike(id, {
       title: req.body.title,
       length: req.body.length && parseFloat(req.body.length),
@@ -233,8 +232,8 @@ hRouter.put("/:id", bigCheck(["guide"]), checkSchema({
       description: req.body.description,
       gpstrack: gpst,
       huts: JSON.parse(req.body.huts),
-      startpointid: stPoint,
-      endpointid: enPoint,
+      startpointid: stPoint.id,
+      endpointid: enPoint.id,
       reference_points: listRefPoint,
       localguideid: (req.user as User).id
     });

@@ -103,6 +103,9 @@ const HikeForm: React.FC = () => {
           const hike = await API.hike.getHike(parseInt(id))
           if (!hike) return
           setHike(hike)
+          setSPoint(hike.startpointid || undefined);
+          setEPoint(hike.endpointid || undefined);
+          setReferencePointsEdit({ created: [], deleted: hike.reference_points.map((p) => p.id) })
           form.setValues({
             title: hike.title,
             length: hike.length,
@@ -110,8 +113,9 @@ const HikeForm: React.FC = () => {
             ascent: hike.ascent,
             difficulty: hike.difficulty,
             description: hike.description!,
+            //startpointid: sPoint,
+            //endpointid: ePoint,
           })
-
           if (hike.gpstrack) {
             const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
             const points = extrackPoints(xml.data)
@@ -152,7 +156,7 @@ const HikeForm: React.FC = () => {
           flexGrow: 1,
           flexShrink: 0,
         } as CSSObject}>
-          <form onSubmit={form.onSubmit(async (values) => {form.setFieldValue("startpointid", sPoint); form.setFieldValue("endpointid", ePoint); await handleSubmit(id, values, setError, referencePointsEdit, hutsEdit, navigate)})}>
+          <form onSubmit={form.onSubmit(async (values) => {await handleSubmit(id, values, setError, referencePointsEdit, hutsEdit, navigate)})}>
             <TextInput
               label="Title"
               placeholder="Title of the hike"
@@ -227,9 +231,9 @@ const HikeForm: React.FC = () => {
                 <MapContainer center={[41.90, 12.49]} zoom={8} className={s.map}>
                   <DisplayTrack track={track} />
 
-                  {activeTab === 'ends' && <DisplayHutsAndParkinglots points={points} />}
-                  {activeTab === 'reference' && [<DisplayReferencePoints key="RPS" hike={hike} referencePointsEdit={referencePointsEdit} />, <ReferencePointClicker key="RPC" settingRP={settingRP} newReferencePoint={newReferencePoint} setNewReferencePoint={setNewReferencePoint} track={track} />]}
-                  {(activeTab === 'huts' || activeTab === 'ends') && [<DisplayOwnHuts key="ownH" hike={hike} setSelectedMarker={setSelectedMarker} />, <DisplayHuts key="aH" points={points} />]}
+                  {activeTab === 'ends' && <DisplayHutsAndParkinglots points={points} setSelectedMarker={setSelectedMarker} />}
+                  {activeTab === 'reference' && [<DisplayReferencePoints key="RPS" hike={hike} referencePointsEdit={referencePointsEdit} setSelectedMarker={setSelectedMarker} />, <ReferencePointClicker key="RPC" settingRP={settingRP} newReferencePoint={newReferencePoint} setNewReferencePoint={setNewReferencePoint} track={track} />]}
+                  {(activeTab === 'huts' || activeTab === 'ends') && [<DisplayOwnHuts key="ownH" hike={hike} setSelectedMarker={setSelectedMarker} />, <DisplayHuts key="aH" points={points} setSelectedMarker={setSelectedMarker} />]}
 
                   <MapSetter center={center} />
 
@@ -248,7 +252,7 @@ const HikeForm: React.FC = () => {
             </Flex>
 
             <Group position="center">
-              <Button mt="xl" type='submit'>Save</Button>
+              <Button mt="xl" type='submit' onClick={useCallback(() => {form.setFieldValue("startpointid", sPoint); form.setFieldValue("endpointid", ePoint)}, [ePoint, form, sPoint])}>Save</Button>
               <Link to="/hikelist">
                 <Button type="button" mt="xl" color="red">Cancel</Button>
               </Link>
@@ -297,6 +301,7 @@ const handleSubmit = async (id: string | undefined, values: Fields, setError: Re
         setError("Error while parsing hike's id: not a number")
         return
       }
+      console.log(hutsEdit)
       await API.hike.updateHike(intId, {
         ...values,
         reference_points: JSON.stringify({
@@ -310,6 +315,7 @@ const handleSubmit = async (id: string | undefined, values: Fields, setError: Re
         }),
         huts: JSON.stringify(hutsEdit)
       })
+
       navigate('/hike/' + id)
     } else {
 
@@ -324,6 +330,7 @@ const handleSubmit = async (id: string | undefined, values: Fields, setError: Re
     setError(id ? "Error while editing hike: " + error : "Error while creating hike: " + error.message);
   }
 }
+
 
 const DisplayOwnHuts = memo(({ hike, setSelectedMarker }: { hike: fullHike | null; setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) => {
   if (!hike || !hike.huts) return (<></>)
@@ -341,35 +348,54 @@ const DisplayOwnHuts = memo(({ hike, setSelectedMarker }: { hike: fullHike | nul
   })}</>
 })
 
-const DisplayReferencePoints = memo(({ hike, referencePointsEdit }: { hike: fullHike | null; referencePointsEdit: editArray }) => {
+const DisplayReferencePoints = memo(({ hike, referencePointsEdit, setSelectedMarker }: { hike: fullHike | null; referencePointsEdit: editArray, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) => {
   if (!hike || !hike.reference_points) return (<></>)
 
   const toDisplay = [...hike.reference_points, ...referencePointsEdit.created].filter(p => p.id ? !referencePointsEdit.deleted.includes(p.id) : true);
   return <>{toDisplay.map((point) => {
-      return <DisplayPoint point={point} key={point.id} />
+      return <DisplayPoint point={point} key={point.id} setSelectedMarker={setSelectedMarker} />
     })}</>
 })
 
-const DisplayHuts = memo(({ points }: { points: Points[] }) => {
+const DisplayHuts = memo(({ points, setSelectedMarker }: { points: Points[], setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) => {
   return <>{points.map((point) => {
-    if (point.hut) return <DisplayPoint point={point} key={point.id} />
+    if (point.hut) return <DisplayPoint point={point} key={point.id} setSelectedMarker={setSelectedMarker} />
     return null;
   })}</>
 })
 
-const DisplayHutsAndParkinglots = memo(({ points }: { points: Points[] }) => {
+const DisplayHutsAndParkinglots = memo(({ points, setSelectedMarker }: { points: Points[], setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) => {
   return <>
     {points.map((point) => {
-      if (point.hut || point.parkinglot) return <DisplayPoint point={point} key={point.id} />
+      if (point.hut || point.parkinglot) return <DisplayPoint point={point} key={point.id} setSelectedMarker={setSelectedMarker} />
       return null;
     })}
   </>
 })
 
-function DisplayPoint(props: { point: Points }, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>>) {
+function DisplayPoint({point, setSelectedMarker}: {point: Points, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>>}) {
+  let icon = new L.Icon.Default()
+  if (point.hut)
+    icon = L.icon({ iconUrl: cabin })
+  else if (point.parkinglot)
+    icon = L.icon({ iconUrl: car })
+
+  return <Marker
+    position={[point.latitude!, point.longitude!]}
+    icon={icon}
+    eventHandlers={{ click: () => setSelectedMarker(point.id) }}>
+    <Popup>
+      {point.label}
+    </Popup>
+  </Marker>;
+}
+
+
+
+
+/*function DisplayPoint(props: { point: Points }, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>>) {
   const { point } = props
   let icon = new L.Icon.Default()
-
   if (point.hut)
     icon = L.icon({ iconUrl: cabin })
   else if (point.parkinglot)
@@ -377,21 +403,14 @@ function DisplayPoint(props: { point: Points }, setSelectedMarker: React.Dispatc
 
 
   return <Marker
-    key={point.id}
     position={[point.latitude!, point.longitude!]}
     icon={icon}
-    eventHandlers={{
-      click: () => {
-        setSelectedMarker(point.id);
-      }
-    }}
-
-  >
+    eventHandlers={{ click: () => setSelectedMarker(point.id) }}>
     <Popup>
       {point.label}
     </Popup>
   </Marker>;
-}
+}*/
 
 function ReferencePointClicker({ settingRP, newReferencePoint, setNewReferencePoint, track }: { settingRP: boolean, newReferencePoint: Point | undefined, setNewReferencePoint: React.Dispatch<React.SetStateAction<Points | undefined>>, track: [number, number][] }) {
   useMapEvents({
