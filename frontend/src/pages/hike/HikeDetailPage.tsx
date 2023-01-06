@@ -88,7 +88,7 @@ const HikeDetailPage: React.FC = () => {
         <Paper p={'md'} radius={'md'} shadow={'md'} withBorder>
           <Group position='apart'>
             <Title order={1}>{hike?.title}</Title>
-            <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'guide') ? 'visible' : 'hidden' }} onClick={useCallback(() => {navigate(`/hike/edit/${id}`)}, [id, navigate])}>Edit Hike</Button>
+            <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'guide' && state.data?.id === hike?.localguideid) ? 'visible' : 'hidden' }} onClick={useCallback(() => {navigate(`/hike/edit/${id}`)}, [id, navigate])}>Edit Hike</Button>
             <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'hiker') ? 'visible' : 'hidden' }} onClick={useCallback( async () => await API.hiker.startActivity(id!, hike?.startpointid!).catch(function (error) {
               console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)))
               // In error there is no response body for the reason why the request failed
