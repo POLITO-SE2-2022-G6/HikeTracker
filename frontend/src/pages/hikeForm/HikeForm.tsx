@@ -3,7 +3,7 @@ import { useForm } from '@mantine/form';
 import { IconUpload } from '@tabler/icons';
 import axios from 'axios';
 import L, { divIcon } from 'leaflet';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, memo } from 'react';
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMapEvents } from 'react-leaflet';
 import { Link, NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import { Hut, ParkingLot, Point } from '../../generated/prisma-client';
@@ -325,56 +325,46 @@ const handleSubmit = async (id: string | undefined, values: Fields, setError: Re
   }
 }
 
-function DisplayOwnHuts({ hike, setSelectedMarker }: { hike: fullHike | null; setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) {
+const DisplayOwnHuts = memo(({ hike, setSelectedMarker }: { hike: fullHike | null; setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) => {
   if (!hike || !hike.huts) return (<></>)
-  return <>
-    {hike.huts.map((hut) => {
-      return <Marker
-        key={hut.id}
-        position={[hut.point.latitude!, hut.point.longitude!]}
-        icon={hutIcon}
-        eventHandlers={{
-          click: () => {
-            setSelectedMarker(hut.id)
-          }
-        }}
-      />
-    })}
-  </>
-}
+  return <>{hike.huts.map((hut) => {
+    return <Marker
+      key={hut.id}
+      position={[hut.point.latitude!, hut.point.longitude!]}
+      icon={hutIcon}
+      eventHandlers={{
+        click: () => {
+          setSelectedMarker(hut.id)
+        }
+      }}
+    />
+  })}</>
+})
 
-function DisplayReferencePoints({ hike, referencePointsEdit }: { hike: (fullHike | null); referencePointsEdit: editArray }) {
+const DisplayReferencePoints = memo(({ hike, referencePointsEdit }: { hike: fullHike | null; referencePointsEdit: editArray }) => {
   if (!hike || !hike.reference_points) return (<></>)
 
-  const toDisplay = [...hike.reference_points, ...referencePointsEdit.created]
-    .filter(p => p.id ? !referencePointsEdit.deleted.includes(p.id) : true);
-  return <>
-    {
-      toDisplay
-        .map((point) => {
-          return <DisplayPoint point={point} key={point.id} />
-        })}
-  </>
-}
+  const toDisplay = [...hike.reference_points, ...referencePointsEdit.created].filter(p => p.id ? !referencePointsEdit.deleted.includes(p.id) : true);
+  return <>{toDisplay.map((point) => {
+      return <DisplayPoint point={point} key={point.id} />
+    })}</>
+})
 
-function DisplayHuts({ points }: { points: Points[] }) {
-  return <>
-    {points.map((point) => {
-      if (point.hut) return <DisplayPoint point={point} key={point.id} />
-      return null;
-    })}
-  </>
-}
+const DisplayHuts = memo(({ points }: { points: Points[] }) => {
+  return <>{points.map((point) => {
+    if (point.hut) return <DisplayPoint point={point} key={point.id} />
+    return null;
+  })}</>
+})
 
-function DisplayHutsAndParkinglots({ points }: { points: Points[] }) {
-  //console.log(points)
+const DisplayHutsAndParkinglots = memo(({ points }: { points: Points[] }) => {
   return <>
     {points.map((point) => {
       if (point.hut || point.parkinglot) return <DisplayPoint point={point} key={point.id} />
       return null;
     })}
   </>
-}
+})
 
 function DisplayPoint(props: { point: Points }, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>>) {
   const { point } = props
@@ -413,7 +403,6 @@ function ReferencePointClicker({ settingRP, newReferencePoint, setNewReferencePo
         const currDistance = distance([curr[0], curr[1]], [e.latlng.lat, e.latlng.lng])
         return (prevDistance < currDistance) ? prev : curr
       })
-      //console.log("closest", closest)
       setNewReferencePoint({
         id: -1,
         latitude: closest[0],
