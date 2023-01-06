@@ -78,6 +78,9 @@ export async function hikesListByUser(id: number, status: string | undefined){
                 id
             },
             status: status ? status : undefined
+        },
+        include: {
+            hike: true
         }
     })
 }

@@ -13,14 +13,12 @@ const UserActivities = ({ activities }: { activities: any }) => {
                             <tr>
                                 <td>
                                     <Text size="lg" >
-                                        {activity.hike.name}
+                                        {activity.hike.title}
                                     </Text>
                                 </td>
-                            </tr>
-                            <tr>
                                 <td>
                                     <Text size="lg" >
-                                        {activity.hike.status}
+                                        {activity.status}
                                     </Text>
                                 </td>
                             </tr>

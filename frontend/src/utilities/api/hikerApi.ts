@@ -27,6 +27,19 @@ export class HikerApi extends Resource {
     });
   }
 
+  async startActivity(hikeId: string, refPointId: number) {
+    return this.client.request({
+      headers: {
+      'Content-Type': 'multipart/form-data'
+      },
+      method: Methods.POST,
+      path: `${this.path}/hike/${hikeId}`,
+      body: {
+        refPointId: JSON.stringify(refPointId)
+      }
+    });
+  }
+
   async getProfile() {
     // TODO: implement
   }

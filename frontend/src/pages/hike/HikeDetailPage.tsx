@@ -73,9 +73,9 @@ const HikeDetailPage: React.FC = () => {
       }
       setLoading(false)
     }
-    run()
+    if(loading) run()
 
-  }, [id, start])
+  }, [id, start, loading])
 
 
   return (
@@ -89,6 +89,11 @@ const HikeDetailPage: React.FC = () => {
           <Group position='apart'>
             <Title order={1}>{hike?.title}</Title>
             <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'guide') ? 'visible' : 'hidden' }} onClick={useCallback(() => {navigate(`/hike/edit/${id}`)}, [id, navigate])}>Edit Hike</Button>
+            <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'hiker') ? 'visible' : 'hidden' }} onClick={useCallback( async () => await API.hiker.startActivity(id!, hike?.startpointid!).catch(function (error) {
+              console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)))
+              // In error there is no response body for the reason why the request failed
+              setError(error.message)
+              }), [id, hike?.startpointid])}>Start Activity</Button>
           </Group>
           <Space h={'md'} />
 
