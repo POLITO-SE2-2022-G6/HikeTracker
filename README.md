@@ -204,12 +204,12 @@ In the email of each user is specified its type, if you are not logged in you ar
          }
       }
      ```
-   - It returns the new point or 400 in case of error
+  - It returns the new point or 400 in case of error
   
 - PUT `api/point/:id`
     - Description: it updates the fields of a point
-     - It requires the id of the point in the params and properties mentioned in the POST of the point are optional in the body
-     - It returns the modified point or 400 in case of error;
+    - It requires the id of the point in the params and properties mentioned in the POST of the point are optional in the body
+    - It returns the modified point or 400 in case of error;
        
 - GET `api/point/`
    - Description: Gets list of filtered points
@@ -230,6 +230,33 @@ In the email of each user is specified its type, if you are not logged in you ar
    ```
    - It returns the list of point with the filter applied
 ### API about hiker
+- PUT `api/hiker/performance`
+   - Description: it updates the fields of a performance
+   - It requires the fields of performance to update
+   - It returns the modified performance or 500 in case of error;
+- GET `api/hiker/performance`
+   - Description: it returns the performance of the logged in user
+   - It returns the performance or 404 in case of error;
+- GET `api/hiker/hikesByPerf`
+   - Description: it returns the list of hikes with performance parameters
+   - It returns the list or 404 in case of error;
+- POST `api/hiker/hike/:id`
+   - Description: it creates a new activity of an hiker
+    - It requires the id of the hike in the params 
+    - It returns the modified point or 400 in case of error;
+- PUT `api/hiker/hike/:id`
+   - Description: it updates the fields of a point
+    - It requires the id of the point in the params and properties mentioned in the POST of the point are optional in the body
+    - It returns the modified point or 400 in case of error;
+- GET `api/hiker/hike/:id`
+   - Description: it updates the fields of a point
+    - It requires the id of the point in the params and properties mentioned in the POST of the point are optional in the body
+    - It returns the modified point or 400 in case of error;
+- GET `api/hiker/hikes`
+   - Description: it updates the fields of a point
+    - It requires the id of the point in the params and properties mentioned in the POST of the point are optional in the body
+    - It returns the modified point or 400 in case of error;
+
 
 
 
