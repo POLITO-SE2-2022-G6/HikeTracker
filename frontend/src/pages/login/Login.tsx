@@ -8,10 +8,12 @@ import {
   Button,
   Box,
   Flex,
+  Alert,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { CSSObject, useMantineTheme } from '@mantine/styles';
-import { useCallback, useContext } from 'react';
+import { IconAlertCircle } from '@tabler/icons';
+import { useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
 import { API } from '../../utilities/api/api';
@@ -20,6 +22,7 @@ const Login: React.FC = (props) => {
 
   const navigate = useNavigate();
   const { setState } = useContext(UserContext)
+  const [error, setError] = useState('')
 
   const form = useForm({
     initialValues: { email: '' },
@@ -33,13 +36,22 @@ const Login: React.FC = (props) => {
 
 
   const handleSubmit = async (values: any) => {
-    const res = await API.auth.login({
-      email: values.email,
-      password: 'password'
-    })
-    if (res) {
-      setState({ loggedIn: true, data: res })
-      navigate('/hikelist');
+    setError('')
+    try {
+      const res = await API.auth.login({
+        email: values.email,
+        password: 'password'
+      })
+
+      if (res) {
+        setState({ loggedIn: true, data: res })
+        navigate('/hikelist');
+      } else {
+        setError('Invalid email')
+      }
+      
+    } catch (err) {
+      setError("There was an error processing your request.")
     }
 
 
@@ -59,6 +71,9 @@ const Login: React.FC = (props) => {
             <Anchor<'a'> href="#" size="sm" onClick={useCallback(() => { navigate("/register") }, [navigate])}> Create account</Anchor>
           </Text>
           <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+
+            {error && <Alert icon={<IconAlertCircle size={16} />} title="Error!" color="red"> {error} </Alert>}
+
             <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
               <TextInput mt="sm" label="Email" placeholder="Email" {...form.getInputProps('email')} required />
               <Button fullWidth mt="xl" type="submit" >Sign in</Button>
