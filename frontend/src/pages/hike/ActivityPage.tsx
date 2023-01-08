@@ -1,6 +1,6 @@
 import { Container, Paper, Title, Text, Space, Group, Stack, Box, Button, LoadingOverlay, Flex } from '@mantine/core';
 import axios from 'axios';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import s from './HikeDetailPage.module.css';
 import { MapContainer, TileLayer, useMap, Polyline, Marker, Popup } from 'react-leaflet'
@@ -12,6 +12,15 @@ import { UserHikes } from '../../generated/prisma-client';
 import { extrackPoints } from '../../utilities/gpx';
 import { withPoint } from '../../utilities/api/hikeApi';
 import ErrorModal from '../../components/errorModal/errorModal';
+import green from './marker-icon-green.png'
+import L from 'leaflet';
+
+const greenIcon = L.icon({
+    iconUrl: green,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+})
 
 type Hike = HIKE & {
     start_point: Point,
@@ -33,32 +42,41 @@ const ActivityPage: React.FC = () => {
     const [center, setCenter] = useState<[number, number]>([41.8, 12.4])
     const [offset, setOffset] = useState(0)
     const { id } = useParams()
-    const { start } = useInterval(() => {setOffset((o) => o - 1)}, 16 * 2)
+    const { start } = useInterval(() => { setOffset((o) => o - 1) }, 16 * 2)
     const { state } = useContext(UserContext)
     const { loggedIn } = state
 
-    const  [statusHike, setStatusHike] = useState<string>('on going');
-    const  [currentCheckPoint, setCurrentCheckPoint] = useState<Point | null>(null);
+    const [selected, setSelected] = useState<number | null>(null)
 
     const navigate = useNavigate()
 
-    const fetchHike = async (id: string) => {
-        let hike= await API.hike.getHike(parseInt(id));
-        //fare la fetch di currentCeckPoint e statusHike
-        return hike
-    }
+    // const fetchHike = async (id: number) => {
+    //     const hike = await API.hike.getHike(id);
+    //     return hike
+    // }
+
+    // const fetchActivity = async (id: number) => {
+    //     const result = await API.hiker.getActivity(id)
+    //     return result
+    // }
+
 
     useEffect(() => {
         if (!id) {
-            setError('Invalid Hike')
+            setError('Invalid Activity')
             setLoading(false)
             return
         }
         const run = async () => {
             try {
-                const hike = await fetchHike(id)
-                if (!hike) return
-                setHike(hike)
+                const activity = await API.hiker.getActivity(parseInt(id))
+                if (!activity) return
+                console.log(activity);
+                const hike = activity.hike
+
+                setHike(activity.hike)
+                setActivity(activity)
+                
                 if (hike.gpstrack) {
                     console.log("Download track")
                     const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
@@ -77,15 +95,18 @@ const ActivityPage: React.FC = () => {
         if (loading) run()
 
     }, [id, start, loading])
-    
+
+
     async function handleSubmit() {
         try {
             // update/endActivity API
             navigate('/hikerarea');
         } catch (error: any) {
-          setError("Error while updating activity: ");
+            setError("Error while updating activity: ");
         }
-      }
+    }
+
+    useEffect(() => { console.log(activity) }, [activity])
 
     return (
         <>
@@ -111,30 +132,54 @@ const ActivityPage: React.FC = () => {
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 />
                                 <Polyline pathOptions={{ dashArray: '10', dashOffset: offset.toString() }} positions={track || []} />
-                                <MapSetter center={center} />
-                                {
-                                    [hike?.start_point && PointMarker(hike.start_point),
-                                    hike?.end_point && PointMarker(hike.end_point)]
-                                }
-                                <DisplayReferencePoints points={hike?.reference_points || []} />
-                                <DisplayHuts huts={hike?.huts || []} />
+                                {useMemo(() =>
+                                    <>
+                                        <MapSetter center={center} />
+                                        {
+                                            [hike?.start_point && <PointMarker point={hike.start_point} />,
+                                            hike?.end_point && <PointMarker point={hike.end_point} />]}
+                                    </>
+                                    , [hike?.start_point, hike?.end_point, center])}
+                                {useMemo(() => <DisplayReferencePoints points={hike?.reference_points || []} action={setSelected} current={activity?.refPoint_id} />, [activity?.refPoint_id, hike?.reference_points])}
+                                {useMemo(() => <DisplayHuts huts={hike?.huts || []} />, [hike?.huts])}
                             </MapContainer>
                         </Box>
                         <Box>
                             <Stack p={'md'}>
-                                <ActionsButtons setStatusHike={setStatusHike} setCurrentCheckPoint={setCurrentCheckPoint}/>
+                                <>
+                                    <Button disabled={!activity || activity.status !== "ongoing" || !selected} type="button" onClick={useCallback(() => {
+                                        setActivity((a) => {
+                                            if (!a) return null
+                                            if (!selected) return a
+                                            return { ...a, refPoint_id: selected }
+                                        })
+                                    }, [selected])}> Select Checkpoint </Button>
+                                    <Button disabled={activity?.status !== "ongoing"} type="button" color="red" onClick={useCallback(() => {
+                                        setActivity((a) => {
+                                            if (!a) return null
+                                            return { ...a, status: "completed" }
+                                        })
+                                    }, [])}> Finish Activity </Button>
+                                </>
                                 <Text fw={700}>Current Checkpoint:</Text>
-                                <>{currentCheckPoint}</>
+                                <>{selected || activity?.refPoint_id}</>
                                 <Text fw={700}>Current Status Hike:</Text>
-                                <>{statusHike}</>
+                                <>{activity?.status}</>
                             </Stack>
                         </Box>
                     </Flex>
 
                     <Space h={'md'} />
                     <Flex direction={{ base: 'column', sm: 'row' }} gap={{ base: 'sm', sm: 'lg' }} justify={{ sm: 'center' }}>
-                        <Button size="md" onClick={useCallback(() => { navigate('/hikerarea') }, [navigate])}>Save</Button>
-                        <Button size="md" color="red" onClick={useCallback(() => { navigate('/hikerarea') }, [navigate])}>Go back</Button>
+                        <Button size="md" onClick={useCallback(async () => {
+                            console.log(activity);
+                            try {
+                                const response = await API.hiker.updateActivity(id!, activity!.refPoint_id, activity!.status)
+                            } catch (e) {
+                                setError('Error while updating activity')
+                            }
+                        }, [id, activity])}>Save</Button>
+                        <Button size="md" color="red" onClick={() => { navigate('/hikerarea') }}>Go back</Button>
                     </Flex>
                 </Paper>
                 <Space h={'md'} />
@@ -144,31 +189,29 @@ const ActivityPage: React.FC = () => {
     );
 };
 
-function ActionsButtons({setStatusHike, setCurrentCheckPoint }: {setStatusHike: React.Dispatch<React.SetStateAction<string>> ; setCurrentCheckPoint: React.Dispatch<React.SetStateAction<Point | null>>}) {
-    return <>
-        <Button type="button" onClick={useCallback(() => { }, [])}> Select Checkpoint </Button>
-        <Button type="button" color="red" onClick={useCallback(() => {setStatusHike('completed') }, [setStatusHike])}> Finish Activity </Button>
-    </>
-}
 
-function DisplayReferencePoints({ points }: { points: Point[] }) {
-    return <>{points.map((p) => PointMarker(p))}</>
+function DisplayReferencePoints({ points, action, current }: { points: Point[], action: Function, current?: number }) {
+    return <>{points.map((p) => <PointMarker point={p} clickEvent={() => action(p.id)} icon={current === p.id ? greenIcon : undefined} />)}</>
 }
 
 function DisplayHuts({ huts }: { huts: withPoint<Hut>[] }) {
-    return <>{huts.map((h) => PointMarker(h.point))}</>
+    return <>{huts.map((h) => <PointMarker point={h.point} />)}</>
 }
 
 export default ActivityPage;
 
-function PointMarker(point: Point) {
+function PointMarker({ point, clickEvent, icon }: { point: Point, clickEvent?: () => void, icon?: L.Icon }) {
     if (!point.latitude || !point.longitude) return null
     return <Marker key={point.id}
         position={[point.latitude, point.longitude]}
+        eventHandlers={{
+            click: clickEvent || (() => { })
+        }}
+        icon={icon || new L.Icon.Default()}
     >
-        <Popup>
+        {/* <Popup>
             {point.label}
-        </Popup>
+        </Popup> */}
     </Marker>;
 }
 

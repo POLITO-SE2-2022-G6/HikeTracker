@@ -141,10 +141,10 @@ uRouter.get("/hike/:id", bigCheck(["hiker"]), checkSchema({
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: validationResult(req).array() });
     try {
         const hike = await getHike(parseInt(req.params.id));
-        const newHike= hike && {
-            "hike.reference_points": hike.refPoint ? hike.hike.reference_points.splice(0, hike.hike.reference_points.indexOf(hike.refPoint)) : hike.hike.reference_points,
-        }
-        return res.status(201).json(newHike);
+        // const newHike= hike && {
+        //     "hike.reference_points": hike.refPoint ? hike.hike.reference_points.splice(0, hike.hike.reference_points.indexOf(hike.refPoint)) : hike.hike.reference_points,
+        // }
+        return res.status(200).json(hike);
     } catch (e) {
         return res.status(500).json({ error: "Internal Server Error: " + e });
     }

@@ -1,6 +1,19 @@
-import { Hike, Performance, UserHikes } from "../../generated/prisma-client";
+import { Hike as HIKE, Hut, Performance, Point, User, UserHikes } from "../../generated/prisma-client";
 import { Methods } from "./client";
 import { Resource } from "./resource";
+
+type Hike = HIKE & {
+  start_point: Point,
+  end_point: Point,
+  huts: (Hut & {
+    point: Point
+  })[],
+  reference_points: Point[]
+}
+type Activity = UserHikes & {
+  hike: Hike;
+
+}
 
 export class HikerApi extends Resource {
   protected path = "/hiker";
@@ -28,16 +41,16 @@ export class HikerApi extends Resource {
   }
 
   async getActivity(id: number) {
-    return this.client.request<UserHikes[]>({
+    return this.client.request<Activity>({
       method: Methods.GET,
       path: `${this.path}/hike/${id}`,
     });
   }
 
   async startActivity(hikeId: string, refPointId: number) {
-    return this.client.request({
+    return this.client.request<UserHikes>({
       headers: {
-      'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data'
       },
       method: Methods.POST,
       path: `${this.path}/hike/${hikeId}`,
@@ -56,7 +69,7 @@ export class HikerApi extends Resource {
       path: `${this.path}/hike/${hikeId}`,
       body: {
         refPointId: JSON.stringify(refPointId),
-        status : JSON.stringify(refPointId)
+        status: status
       }
     });
   }
