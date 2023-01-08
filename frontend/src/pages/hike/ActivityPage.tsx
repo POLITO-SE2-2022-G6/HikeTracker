@@ -65,7 +65,6 @@ const ActivityPage: React.FC = () => {
             try {
                 const activity = await API.hiker.getActivity(parseInt(id))
                 if (!activity) return
-                console.log(activity);
                 const hike = activity.hike
 
                 setHike(activity.hike)
@@ -89,9 +88,6 @@ const ActivityPage: React.FC = () => {
         if (loading) run()
 
     }, [id, start, loading, loggedIn])
-
-
-    useEffect(() => { console.log(activity) }, [activity])
 
     return (
         <>
@@ -157,9 +153,8 @@ const ActivityPage: React.FC = () => {
                     <Space h={'md'} />
                     <Flex direction={{ base: 'column', sm: 'row' }} gap={{ base: 'sm', sm: 'lg' }} justify={{ sm: 'center' }}>
                         <Button size="md" onClick={useCallback(async () => {
-                            console.log(activity);
                             try {
-                                await API.hiker.updateActivity(id!, activity!.refPoint_id, activity!.status)
+                                id && activity && await API.hiker.updateActivity(id, activity.refPoint_id, activity.status)
                             } catch (e) {
                                 setError('Error while updating activity')
                             }

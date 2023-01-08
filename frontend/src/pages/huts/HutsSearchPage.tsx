@@ -1,4 +1,3 @@
-import s from './HutsSearchPage.module.css';
 import { Box, Button, Center, Container, CSSObject, LoadingOverlay, Pagination, Paper, Space, TextInput, Title, NumberInput } from '@mantine/core';
 import { useForm } from '@mantine/form'
 import { useSearchParams } from 'react-router-dom';
@@ -107,7 +106,7 @@ const HutsSearchPage: React.FC = () => {
             flexShrink: 0,
           } as CSSObject
           }>
-            <form onSubmit={form.onSubmit(handleSubmit)} className={s.form}>
+            <form onSubmit={form.onSubmit(handleSubmit)}>
               <TextInput
                 label="Region"
                 placeholder="Piemonte"

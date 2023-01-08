@@ -171,7 +171,7 @@ pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
     const { label, latitude, longitude, elevation, city, region, province, hut, hutphone, hutemail,hutwebsite, hutbeds, hutaltitude, hutdescription, parkinglot, parkinglotdescription } = req.query as Record<string, string | undefined>;
 
     try {
-        const points = await fullList({
+        res.send(await fullList({
             label,
             latitude: latitude ? parseFloat(latitude) : undefined,
             longitude: longitude ? parseFloat(longitude) : undefined,
@@ -188,10 +188,7 @@ pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
             hutaltitude: hutaltitude ? parseFloat(hutaltitude) : undefined,
             parkinglot: parkinglot ? parkinglot === "true" : undefined,
             parkinglotdescription
-        });
-
-        console.log("points", points);
-        res.send(points);
+        }));
 
     } catch (error) {
         return res.status(500).json({ error: "Server Error: " + error });
