@@ -2,7 +2,7 @@ import { Container, Paper, Title, Text, Space, Group, Stack, Box, Button, Loadin
 import axios from 'axios';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import s from './HikeDetailPage.module.css';
+import s from './ActivityPage.module.css';
 import { MapContainer, TileLayer, useMap, Polyline, Marker } from 'react-leaflet'
 import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
@@ -91,15 +91,6 @@ const ActivityPage: React.FC = () => {
     }, [id, start, loading, loggedIn])
 
 
-    async function handleSubmit() {
-        try {
-            // update/endActivity API
-            navigate('/hikerarea');
-        } catch (error: any) {
-            setError("Error while updating activity: ");
-        }
-    }
-
     useEffect(() => { console.log(activity) }, [activity])
 
     return (
@@ -168,7 +159,7 @@ const ActivityPage: React.FC = () => {
                         <Button size="md" onClick={useCallback(async () => {
                             console.log(activity);
                             try {
-                                const response = await API.hiker.updateActivity(id!, activity!.refPoint_id, activity!.status)
+                                await API.hiker.updateActivity(id!, activity!.refPoint_id, activity!.status)
                             } catch (e) {
                                 setError('Error while updating activity')
                             }

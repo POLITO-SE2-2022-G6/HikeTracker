@@ -116,6 +116,36 @@ pRouter.post("", checkSchemaOfPoint(), bigCheck(["guide"]), async (req: express.
 
 //Get all points
 pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
+    hutphone: {
+        in: ['query'],
+        optional: true,
+        notEmpty: true
+    },
+    hutemail: {
+        in: ['query'],
+        optional: true,
+        notEmpty: true
+    },
+    hutwebsite: {
+        in: ['query'],
+        optional: true,
+        notEmpty: true
+    },
+    hutbeds: {
+        in: ['query'],
+        optional: true,
+        isInt: true
+    },
+    hutaltitude: {
+        in: ['query'],
+        optional: true,
+        isFloat: true
+    },
+    region: {
+        in: ['query'],
+        optional: true,
+        notEmpty: true
+    },
     hut: {
         in: ['query'],
         optional: true,
@@ -138,10 +168,10 @@ pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
     }
 }), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-    const { label, latitude, longitude, elevation, city, region, province, hut, hutdescription, parkinglot, parkinglotdescription } = req.query as Record<string, string | undefined>;
+    const { label, latitude, longitude, elevation, city, region, province, hut, hutphone, hutemail,hutwebsite, hutbeds, hutaltitude, hutdescription, parkinglot, parkinglotdescription } = req.query as Record<string, string | undefined>;
 
     try {
-        res.send(await fullList({
+        const points = await fullList({
             label,
             latitude: latitude ? parseFloat(latitude) : undefined,
             longitude: longitude ? parseFloat(longitude) : undefined,
@@ -151,9 +181,17 @@ pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
             province,
             hut: hut ? hut === "true" : undefined,
             hutdescription,
+            hutphone,
+            hutemail,
+            hutwebsite,
+            hutbeds: hutbeds ? parseInt(hutbeds) : undefined,
+            hutaltitude: hutaltitude ? parseFloat(hutaltitude) : undefined,
             parkinglot: parkinglot ? parkinglot === "true" : undefined,
             parkinglotdescription
-        }));
+        });
+
+        console.log("points", points);
+        res.send(points);
 
     } catch (error) {
         return res.status(500).json({ error: "Server Error: " + error });

@@ -46,8 +46,9 @@ hutRouter.get("", checkSchema({
   },
 
 }), bigCheck(["guide", "hworker", "manager", "hiker"]), async (req: express.Request, res: express.Response) => {
+  console.log("whifuwi")
   if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
-
+  
   try {
     const huts = await hutList();
     if (!huts) return res.status(404).json({ error: "Hut not found" });
@@ -60,8 +61,6 @@ hutRouter.get("", checkSchema({
 })
 
 //Get hut by id
-//is necessary the login? 
-//..Could be i guess
 hutRouter.get("/:id", bigCheck(["guide", "hworker", "manager", "hiker"]), async (req: express.Request, res: express.Response) => {
   try {
     const id = parseInt(req.params.id, 10);

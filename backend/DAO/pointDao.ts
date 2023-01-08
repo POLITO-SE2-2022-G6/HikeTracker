@@ -68,7 +68,7 @@ export async function editPoint(id: number, point: newPoint) {
     })
 }
 
-export type pointQuery = Prisma.PointCreateInput & { hut?: boolean, parkinglot?: boolean, hutdescription?: string, parkinglotdescription?: string };
+export type pointQuery = Prisma.PointCreateInput & { hut?: boolean, parkinglot?: boolean, hutdescription?: string, parkinglotdescription?: string, hutphone?: string, hutbeds?: number, hutemail?: string, hutaltitude?: number, hutwebsite?: string };
 export async function fullList(fields: pointQuery) {
     return prisma.point.findMany({
         where: {
@@ -79,7 +79,14 @@ export async function fullList(fields: pointQuery) {
             city: fields.city && { startsWith: fields.city },
             region: fields.region && { startsWith: fields.region },
             province: fields.province && { startsWith: fields.province },
-            hut: fields.hut && { description: { contains: fields.hutdescription } },
+            hut: fields.hut && { 
+                description: { contains: fields.hutdescription },
+                phone: { contains: fields.hutphone },
+                beds: { lte: fields.hutbeds },
+                email: { contains: fields.hutemail },
+                altitude: { lte: fields.hutaltitude },
+                website: { contains: fields.hutwebsite }
+         },
             parkinglot: fields.parkinglot && { description: { contains: fields.parkinglotdescription } }
         },
         include: {

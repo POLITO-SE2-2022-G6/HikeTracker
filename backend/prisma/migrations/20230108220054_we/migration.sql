@@ -84,10 +84,11 @@ CREATE TABLE "UserHikes" (
     "user_id" INTEGER NOT NULL,
     "hike_id" INTEGER NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'ongoing',
-    "refPoint_id" INTEGER,
+    "startedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "refPoint_id" INTEGER NOT NULL,
     CONSTRAINT "UserHikes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "UserHikes_hike_id_fkey" FOREIGN KEY ("hike_id") REFERENCES "Hike" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "UserHikes_refPoint_id_fkey" FOREIGN KEY ("refPoint_id") REFERENCES "Point" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "UserHikes_refPoint_id_fkey" FOREIGN KEY ("refPoint_id") REFERENCES "Point" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

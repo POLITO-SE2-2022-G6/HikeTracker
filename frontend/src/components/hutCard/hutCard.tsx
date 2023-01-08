@@ -1,12 +1,6 @@
-import { Badge, Card, Center, Group, Image, Text, Title } from "@mantine/core";
-import { IconBed, IconMap, IconMap2, IconMountain, IconPhone, IconWorldWww } from "@tabler/icons";
-import { useContext } from "react";
-import { Stack } from "react-bootstrap";
-import { BsClockHistory } from "react-icons/bs";
-import { GiMountains, GiPathDistance } from "react-icons/gi";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/userContext";
-import { Hut } from "../../generated/prisma-client";
+import { Card, Center, Text, Title } from "@mantine/core";
+import { IconBed, IconMap2, IconMountain, IconPhone, IconWorldWww } from "@tabler/icons";
+
 import { HutWithPoint } from "../../utilities/api/hutApi";
 
 
@@ -25,11 +19,10 @@ function IconWithText({ icon, text }: { icon: React.ReactNode, text: React.React
   </div>);
 }
 
-const difficultyColor = ['', 'green', 'yellow', 'red', 'black'];
 export const HutCard = (props: HutCardProps) => {
-  const { state } = useContext(UserContext)
-  const navigate = useNavigate()
   const { hut } = props;
+
+  console.log("inside", hut)
 
   return (
     <div>
@@ -55,7 +48,7 @@ export const HutCard = (props: HutCardProps) => {
           </Text>
         </Card.Section>
         <Card.Section p="md">
-          {IconWithText({ icon: <IconMap2 />, text: <Text>{hut.point.city}, {hut.point.province}</Text> })}
+          {IconWithText({ icon: <IconMap2 />, text: <Text>{hut.point.region}, {hut.point.province}</Text> })}
           {IconWithText({ icon: <IconMountain />, text: <Text><b>{hut.point.elevation}</b> m</Text> })}
           {IconWithText({ icon: <IconBed />, text: <Text><b>{Math.floor(Math.random() * 5)}</b> beds</Text> })}
           {IconWithText({ icon: <IconPhone />, text: "123345456" })}

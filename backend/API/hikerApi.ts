@@ -97,7 +97,7 @@ uRouter.post("/hike/:id", bigCheck(["hiker"]), checkSchema({
         const hikerId = (req.user as User).id;
         const hikeId = parseInt(req.params.id);
         const refPointId = parseInt(req.body.refPointId);
-        if ((await hikesListByUser(hikerId, "ongoing")).length !== 0) return res.status(400).json({ error: "You already have an ongoing hike" });
+        if ((await hikesListByUser(hikerId, "ongoing")).find((a) => a.hike_id === hikeId)) return res.status(400).json({ error: "You already have an ongoing hike" });
         const hike = await assignHike(hikerId, hikeId, refPointId);
         return res.status(201).json(hike);
     } catch (e) {
