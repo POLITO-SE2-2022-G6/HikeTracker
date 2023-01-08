@@ -24,6 +24,7 @@ Team members:
 In the email of each user is specified its type, if you are not logged in you are guests. 
 
 ## API Description 
+# API signup e login
 - POST `/api/signup`
    - Description: it adds a new user;
    - It requires the user to be entered; Request body example:
@@ -38,7 +39,34 @@ In the email of each user is specified its type, if you are not logged in you ar
    
     ```
    - No response body;It responds with 500 in case of error;
+- POST `/api/sessions`
+  - Description: send email logIn;
+  - It requires an object representing a user (Content-Type: `application/json`):
+  ```
+    {
+      user: 'testuser@polito.it', 
+    }
+  ```
+  - No response body; It responds with `200 OK` (success) or `500 Internal Server Error` (generic error);
 
+- DELETE `/api/sessions/current`
+  - Description: Log-Out;
+  - No request parameters and body;
+  - No response body; It responds with `200 OK` (success) or `500 Internal Server Error` (generic error);
+
+- GET `/api/sessions/current`
+  - Description: Get all the user;
+  - No request parameters and body;
+  - It responds with `200 OK` (success) or `401` in case of unauthenticated user or `500` in case of generic error; Response body example:
+  ```
+    {
+      id: 3,
+      type: 'hiker'
+      email:  'testuser@polito.it'
+      username: Pippo
+    }
+  ```
+# API about hike(edit,create and get)
 - GET `/api/hike`       
     - Description: it returns the list of filtered hikes 
     - request body example:
@@ -82,6 +110,9 @@ In the email of each user is specified its type, if you are not logged in you ar
         "LocalGuideId": 1
     },
     ...]
+- GET `/api/hike/:id`       
+  - it returns the point associated with the id
+  - It requires an object with the id in the params
      
 
 - POST `/api/hike` 
@@ -130,34 +161,7 @@ In the email of each user is specified its type, if you are not logged in you ar
       id:21
     }
 - It returns the modified Hike or 400 in case of error;
-- POST `/api/sessions`
-  - Description: send email logIn;
-  - It requires an object representing a user (Content-Type: `application/json`):
-  ```
-    {
-      user: 'testuser@polito.it', 
-    }
-  ```
-  - No response body; It responds with `200 OK` (success) or `500 Internal Server Error` (generic error);
-
-- DELETE `/api/sessions/current`
-  - Description: Log-Out;
-  - No request parameters and body;
-  - No response body; It responds with `200 OK` (success) or `500 Internal Server Error` (generic error);
-
-- GET `/api/sessions/current`
-  - Description: Get all the user;
-  - No request parameters and body;
-  - It responds with `200 OK` (success) or `401` in case of unauthenticated user or `500` in case of generic error; Response body example:
-  ```
-    {
-      id: 3,
-      type: 'hiker'
-      email:  'testuser@polito.it'
-      username: Pippo
-    }
-  ```
-  
+# API about point(edit,create and get)
 - GET `api/point/:id`
   - Description: it returns the point associated with the id
   - It requires an object with the id in the params:
@@ -226,21 +230,43 @@ In the email of each user is specified its type, if you are not logged in you ar
    ```
    - It returns the list of point with the filter applied
 
+
 ## Database 
 Tables
 
-- Table `Hike` - Contains (id, Title, Length, Expected_time, Ascent, Difficulty, StartPointId, EndPointId, Description, GpsTrack)
+- Table `Hike` - Contains (id, title, length, expected_time, ascent, difficulty,descricption,startpointid,endpointid,gpstrack,conditions,conddescription,localguideid)
 
-- Table `Performance` - Contains (id, duration, altitude, UserId)
+- Table `Performance` - Contains (id,lenght, duration, altitude,difficulty,hikerid)
 
 - Table `Point` - Contains (Id, Latitude, Longitude, Elevation, CIty, Region, Province, Type, Description)
 
-- Table `User` - Contains (id, type, email, username, phoneNumber) with email being unique 
+- Table `User` - Contains (id, type, email, username, phoneNumber,verified,hutid) 
+
+- Table `UserHikes` - Contains (id,user_id,hike_id, status , startedAt,refPoint_id)
+
+- Table `ParkingLot` - Contains (id,description,name,position,capacity,pointid)
+
+- Table `Hut` - Contains (id,name,description,altitude,beds,phone,email,website,pointid)
+
 
 Relationships
 
-- User -n Performance
+- Hut Point 1:1 (refHut)
 
-- Point -n Hike.StartPoint
+- Hut Hike n:n (huts)
 
-- Point -n Hike.EndPoint
+- Hut User n:1 (hworker)
+
+- ParkingLot Point 1:1 (refPL)
+
+- Point Hike n:n (end,start,hikes)
+
+- Point UserHikes n:n (hiker)
+
+- Hike User 1:n (guide)
+
+- Hike UserHikes n:n (hikes)
+
+- Performance User 1:1 (perf)
+
+- User UserHikes n:1 (hiker)
