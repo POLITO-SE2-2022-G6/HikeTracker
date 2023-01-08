@@ -4,8 +4,12 @@ import UserPerformance from '../../../components/userInfo/userPerformance';
 import UserActivities from '../../../components/userInfo/userActivities';
 import { useNavigate, createSearchParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Performance, UserHikes } from '../../../generated/prisma-client';
+import { Performance, UserHikes as USERHIKES, Hike } from '../../../generated/prisma-client';
 import { API } from "../../../utilities/api/api"
+
+type UserHikes = USERHIKES & {
+    hike: Hike,
+}
 
 const HikerPage: React.FC = () => {
 
@@ -30,7 +34,9 @@ const HikerPage: React.FC = () => {
     useEffect(() => {
         API.hiker.getPerformance().then((res) => {
             setPerformance(res as Performance)
-        }).then(() => API.hiker.getActivities().then((res) => { setActivities(res as UserHikes[]) }))
+        })
+            .then(() => API.hiker.getActivities()
+                .then((res) => { setActivities(res as UserHikes[]) }))
     }, [])
 
     return (
@@ -39,14 +45,14 @@ const HikerPage: React.FC = () => {
             {activities && <UserActivities activities={activities} />}
             {performance && <UserPerformance performance={performance} />}
             <Container sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "flex-start"
-                } as CSSObject}>
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "flex-start"
+            } as CSSObject}>
                 <Paper withBorder shadow="md" radius="md" p="md" m="md" sx={{
-                            flexGrow: 1,
-                            flexShrink: 0,
-                        } as CSSObject
+                    flexGrow: 1,
+                    flexShrink: 0,
+                } as CSSObject
                 }>
                     <Flex direction={{ base: 'column', sm: 'row' }} gap={{ base: 'sm', sm: 'lg' }} justify={{ sm: 'center' }}>
                         <Button size="md" onClick={useCallback(() => { navigate('/huts') }, [navigate])}>Search a Hut</Button>
