@@ -13,7 +13,7 @@ interface HikeCardProps {
   hike: Hike;
 }
 
-const difficultyColor = ['', 'green', 'yellow', 'red', 'black'];
+const difficultyColor = ['green', 'blue', 'yellow', 'orange', 'red'];
 export const HikeCard = (props: HikeCardProps) => {
   const { state } = useContext(UserContext)
   const navigate = useNavigate()
@@ -50,10 +50,7 @@ export const HikeCard = (props: HikeCardProps) => {
 
         <Text size='sm' lineClamp={3}>{hike.description}</Text>
 
-        <Card.Section
-          p='md'
-        >
-
+        <Card.Section p='md'>
           <Group position="center">
             <Badge
               variant="outline"
@@ -74,7 +71,6 @@ export const HikeCard = (props: HikeCardProps) => {
               }</Badge>
           </Group>
         </Card.Section>
-
       </Card>
     </div>
   );

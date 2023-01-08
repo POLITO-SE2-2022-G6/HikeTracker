@@ -253,7 +253,7 @@ const HikeForm: React.FC = () => {
 
             <Group position="center">
               <Button mt="xl" type='submit' onClick={useCallback(() => {form.setFieldValue("startpointid", sPoint); form.setFieldValue("endpointid", ePoint)}, [ePoint, form, sPoint])}>Save</Button>
-              <Link to="/hikelist">
+              <Link to="/guidearea">
                 <Button type="button" mt="xl" color="red">Cancel</Button>
               </Link>
             </Group>
