@@ -315,8 +315,18 @@ function HutsButtons({ selectedMarker, setHutsEdit }: {
     deleted: number[];
   }>>
 }) {
+  const [hutOpened, sethutOpened] = useState(false);
+  
   return <>
-    <Button type="button" onClick={useCallback(() => { selectedMarker && setHutsEdit(current => ({ ...current, created: [...current.created, selectedMarker] })) }, [selectedMarker, setHutsEdit])}> Link Hut </Button>
+  <Popover width={150} position="bottom" withArrow shadow="md" opened={hutOpened} onChange={sethutOpened} >
+      <Popover.Target>
+    <Button type="button" onClick={useCallback(() => { selectedMarker && setHutsEdit(current => ({ ...current, created: [...current.created, selectedMarker] })); if(selectedMarker!==null){sethutOpened(true);} }, [selectedMarker, setHutsEdit,sethutOpened])}> Link Hut </Button>
+    </Popover.Target>
+    <Popover.Dropdown>
+        <Text size="sm">Hut linked successfully!</Text>
+      </Popover.Dropdown>
+    </Popover>
+
     <Button type="button" onClick={useCallback(() => { selectedMarker && setHutsEdit(current => ({ ...current, deleted: [...current.deleted, selectedMarker] })) }, [selectedMarker, setHutsEdit])}> Remove Hut </Button>
   </>
 }
