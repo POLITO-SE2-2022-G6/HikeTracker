@@ -184,9 +184,9 @@ In the email of each user is specified its type, if you are not logged in you ar
         }
     }
     
-  - POST `api/point/`
-   - Description: It adds a point
-   - The properties put in the body are optional:
+- POST `api/point/`
+  - Description: It adds a point
+  - The properties put in the body are optional:
      ```
       Point {
          Label: string
@@ -206,12 +206,12 @@ In the email of each user is specified its type, if you are not logged in you ar
      ```
    - It returns the new point or 400 in case of error
   
-  - PUT `api/point/:id`
-     - Description: it updates the fields of a point
+- PUT `api/point/:id`
+    - Description: it updates the fields of a point
      - It requires the id of the point in the params and properties mentioned in the POST of the point are optional in the body
      - It returns the modified point or 400 in case of error;
        
-  - GET `api/point/`
+- GET `api/point/`
    - Description: Gets list of filtered points
    - Hut Description and ParkingLot object are optional and can function as filters:
    ```
@@ -230,6 +230,7 @@ In the email of each user is specified its type, if you are not logged in you ar
    ```
    - It returns the list of point with the filter applied
 ### API about hiker
+
 
 
 ## Database 
