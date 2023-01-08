@@ -292,8 +292,19 @@ function EndsButtons({ selectedMarker, setSPoint, setEPoint }: { selectedMarker:
 }
 
 function ReferenceButtons({ newReferencePoint, selectedMarker, setReferencePointsEdit }: { newReferencePoint: Point | undefined, selectedMarker: number | null, setReferencePointsEdit: React.Dispatch<React.SetStateAction<editArray>> }) {
+  const [refOpened, setRefOpened] = useState(false);
+
   return <>
-    <Button type="button" onClick={useCallback(() => { newReferencePoint && setReferencePointsEdit(current => ({ ...current, created: [...current.created, newReferencePoint] })) }, [newReferencePoint, setReferencePointsEdit])}> Add Point </Button>
+   <Popover width={150} position="bottom" withArrow shadow="md" opened={refOpened} onChange={setRefOpened} >
+      <Popover.Target>
+    <Button type="button" onClick={useCallback(() => { newReferencePoint && setReferencePointsEdit(current => ({ ...current, created: [...current.created, newReferencePoint] })); if(newReferencePoint!==undefined){setRefOpened(true);} }, [newReferencePoint, setReferencePointsEdit,setRefOpened])}> Add Point </Button>
+    </Popover.Target>
+    <Popover.Dropdown>
+        <Text size="sm">Reference Point set successfully!</Text>
+      </Popover.Dropdown>
+    </Popover>
+
+
     <Button type="button" onClick={useCallback(() => { selectedMarker && selectedMarker !== -1 && setReferencePointsEdit(current => ({ ...current, deleted: [...current.deleted, selectedMarker] })) }, [selectedMarker, setReferencePointsEdit])}> Remove Point</Button>
   </>
 }
