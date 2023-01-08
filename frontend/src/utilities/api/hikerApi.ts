@@ -1,4 +1,4 @@
-import { Hike as HIKE, Hut, Performance, Point, User, UserHikes } from "../../generated/prisma-client";
+import { Hike as HIKE, Hut, Performance, Point, UserHikes } from "../../generated/prisma-client";
 import { Methods } from "./client";
 import { Resource } from "./resource";
 
@@ -72,10 +72,6 @@ export class HikerApi extends Resource {
         status: status
       }
     });
-  }
-
-  async getProfile() {
-    // TODO: implement
   }
 
   async getRecommendedHikes() {

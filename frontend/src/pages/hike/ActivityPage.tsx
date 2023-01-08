@@ -3,12 +3,11 @@ import axios from 'axios';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import s from './HikeDetailPage.module.css';
-import { MapContainer, TileLayer, useMap, Polyline, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap, Polyline, Marker } from 'react-leaflet'
 import { UserContext } from '../../context/userContext';
 import { useInterval } from '@mantine/hooks';
 import { API } from '../../utilities/api/api';
-import { Hike as HIKE, Hut, Point } from '../../generated/prisma-client';
-import { UserHikes } from '../../generated/prisma-client';
+import { Hike as HIKE, Hut, Point, UserHikes } from '../../generated/prisma-client';
 import { extrackPoints } from '../../utilities/gpx';
 import { withPoint } from '../../utilities/api/hikeApi';
 import ErrorModal from '../../components/errorModal/errorModal';
@@ -50,20 +49,15 @@ const ActivityPage: React.FC = () => {
 
     const navigate = useNavigate()
 
-    // const fetchHike = async (id: number) => {
-    //     const hike = await API.hike.getHike(id);
-    //     return hike
-    // }
-
-    // const fetchActivity = async (id: number) => {
-    //     const result = await API.hiker.getActivity(id)
-    //     return result
-    // }
-
 
     useEffect(() => {
         if (!id) {
             setError('Invalid Activity')
+            setLoading(false)
+            return
+        }
+        if(!loggedIn) {
+            setError('You need to be logged in to view this page')
             setLoading(false)
             return
         }
@@ -94,7 +88,7 @@ const ActivityPage: React.FC = () => {
         }
         if (loading) run()
 
-    }, [id, start, loading])
+    }, [id, start, loading, loggedIn])
 
 
     async function handleSubmit() {
@@ -179,7 +173,7 @@ const ActivityPage: React.FC = () => {
                                 setError('Error while updating activity')
                             }
                         }, [id, activity])}>Save</Button>
-                        <Button size="md" color="red" onClick={() => { navigate('/hikerarea') }}>Go back</Button>
+                        <Button size="md" color="red" onClick={useCallback(() => { navigate('/hikerarea') }, [navigate])}>Go back</Button>
                     </Flex>
                 </Paper>
                 <Space h={'md'} />
@@ -191,11 +185,11 @@ const ActivityPage: React.FC = () => {
 
 
 function DisplayReferencePoints({ points, action, current }: { points: Point[], action: Function, current?: number }) {
-    return <>{points.map((p) => <PointMarker point={p} clickEvent={() => action(p.id)} icon={current === p.id ? greenIcon : undefined} />)}</>
+    return <>{points.map((p) => <PointMarker point={p} key={p.id} clickEvent={action(p.id)} icon={current === p.id ? greenIcon : undefined} />)}</>
 }
 
 function DisplayHuts({ huts }: { huts: withPoint<Hut>[] }) {
-    return <>{huts.map((h) => <PointMarker point={h.point} />)}</>
+    return <>{huts.map((h) => <PointMarker key={h.id} point={h.point} />)}</>
 }
 
 export default ActivityPage;
