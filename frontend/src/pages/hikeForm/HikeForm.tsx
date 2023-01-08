@@ -1,4 +1,4 @@
-import { Box, Button, Container, CSSObject, FileInput, Flex, Group, NumberInput, Paper, Space, Stack, Tabs, Textarea, TextInput, Title } from '@mantine/core';
+import { Box, Button, Container, CSSObject, FileInput, Flex, Group, NumberInput, Paper, Space, Stack, Tabs, Textarea, TextInput, Title,Popover,Text} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconUpload } from '@tabler/icons';
 import axios from 'axios';
@@ -267,9 +267,27 @@ const HikeForm: React.FC = () => {
 
 
 function EndsButtons({ selectedMarker, setSPoint, setEPoint }: { selectedMarker: number | null; setSPoint: React.Dispatch<React.SetStateAction<number | undefined>>; setEPoint: React.Dispatch<React.SetStateAction<number | undefined>> }) {
+  const [startOpened, setStartOpened] = useState(false);
+  const [endOpened, setEndOpened] = useState(false);
+  
   return <>
-    <Button type="button" onClick={useCallback(() => { selectedMarker && setSPoint(selectedMarker) }, [selectedMarker, setSPoint])}> Set as Start Point </Button>
-    <Button type="button" onClick={useCallback(() => { selectedMarker && setEPoint(selectedMarker) }, [selectedMarker, setEPoint])}> Set as End Point </Button>
+  <Popover width={150} position="bottom" withArrow shadow="md" opened={startOpened} onChange={setStartOpened} >
+      <Popover.Target>
+    <Button type="button" onClick={useCallback(() => {   selectedMarker  &&  setSPoint(selectedMarker); if(selectedMarker !== null) {setStartOpened(true); } }, [selectedMarker, setSPoint,setStartOpened])}> Set as Start Point </Button>
+    </Popover.Target>
+    <Popover.Dropdown>
+        <Text size="sm">Start Point set successfully!</Text>
+      </Popover.Dropdown>
+    </Popover>
+
+    <Popover width={150} position="bottom" withArrow shadow="md" opened={endOpened} onChange={setEndOpened} >
+      <Popover.Target>
+    <Button type="button" onClick={useCallback(() => { selectedMarker && setEPoint(selectedMarker); if(selectedMarker !== null) {setEndOpened(true); }}, [selectedMarker, setEPoint,setEndOpened])}> Set as End Point </Button>
+    </Popover.Target> 
+    <Popover.Dropdown>
+        <Text size="sm">End Point set successfully!</Text>
+      </Popover.Dropdown>
+    </Popover>
   </>
 }
 
