@@ -24,7 +24,7 @@ Team members:
 In the email of each user is specified its type, if you are not logged in you are guests. 
 
 ## API Description 
-# API signup e login
+### API signup e login
 - POST `/api/signup`
    - Description: it adds a new user;
    - It requires the user to be entered; Request body example:
@@ -66,7 +66,7 @@ In the email of each user is specified its type, if you are not logged in you ar
       username: Pippo
     }
   ```
-# API about hike(edit,create and get)
+### API about hike(edit,create and get)
 - GET `/api/hike`       
     - Description: it returns the list of filtered hikes 
     - request body example:
@@ -161,7 +161,7 @@ In the email of each user is specified its type, if you are not logged in you ar
       id:21
     }
 - It returns the modified Hike or 400 in case of error;
-# API about point(edit,create and get)
+### API about point(edit,create and get)
 - GET `api/point/:id`
   - Description: it returns the point associated with the id
   - It requires an object with the id in the params:
@@ -229,6 +229,7 @@ In the email of each user is specified its type, if you are not logged in you ar
       
    ```
    - It returns the list of point with the filter applied
+### API about hiker
 
 
 ## Database 
