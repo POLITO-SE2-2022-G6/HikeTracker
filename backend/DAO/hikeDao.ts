@@ -87,6 +87,7 @@ export type newHike = Prisma.HikeCreateInput & { huts: { created: number[], dele
 export const createHike = async (hike: newHike) => {
   const { huts, reference_points, title, length, expected_time, ascent, difficulty, gpstrack, description, localguideid, startpointid, endpointid } = hike;
 
+
   return prisma.hike.create(
     {
       data: {
@@ -108,7 +109,7 @@ export const createHike = async (hike: newHike) => {
           }
         } : undefined,
         huts: huts ? { connect: huts.created.map((p) => ({ id: p })) } : undefined,
-        reference_points: { create: reference_points.created },
+        reference_points: { create: reference_points.created },  //here it's not working 
         localguide: localguideid ? { connect: { id: localguideid } } : undefined,
       },
     }
