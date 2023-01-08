@@ -73,30 +73,35 @@ const HikeDetailPage: React.FC = () => {
       }
       setLoading(false)
     }
-    if(loading) run()
+    if (loading) run()
 
   }, [id, start, loading])
 
 
   return (
     <>
-    <div style={{ width: 400, position: 'relative' }}>
+      <div style={{ width: 400, position: 'relative' }}>
         <LoadingOverlay visible={loading} overlayBlur={2} />
       </div>
-        <ErrorModal error={error} setError={setError}/>
+      <ErrorModal error={error} setError={setError} />
       <Container>
+        <Space h={'md'} />
+
         <Paper p={'md'} radius={'md'} shadow={'md'} withBorder>
           <Group position='apart'>
             <Title order={1}>{hike?.title}</Title>
-            <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'guide' && state.data?.id === hike?.localguideid) ? 'visible' : 'hidden' }} onClick={useCallback(() => {navigate(`/hike/edit/${id}`)}, [id, navigate])}>Edit Hike</Button>
-            <Button type="button" style={{visibility: (loggedIn && state.data?.type === 'hiker') ? 'visible' : 'hidden' }} onClick={useCallback( async () => id && hike && hike.startpointid && await API.hiker.startActivity(id, hike.startpointid).catch(function (error) {
-              console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)))
-              // In error there is no response body for the reason why the request failed
-              setError(error.message)
-              }), [id, hike])}>Start Activity</Button>
+            <Button type="button" style={{ visibility: (loggedIn && state.data?.type === 'guide' && state.data?.id === hike?.localguideid) ? 'visible' : 'hidden' }} onClick={useCallback(() => { navigate(`/hike/edit/${id}`) }, [id, navigate])}>Edit Hike</Button>
+            <Button type="button" style={{ visibility: (loggedIn && state.data?.type === 'hiker') ? 'visible' : 'hidden' }}
+              onClick={useCallback(async () => {
+                id && hike && hike.startpointid && await API.hiker.startActivity(id, hike.startpointid).catch(function (error) {
+                  console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)))
+                  // In error there is no response body for the reason why the request failed
+                  setError(error.message)
+                })
+                navigate(`/hikestarted/${id}`)
+              }, [id, hike, navigate])}>Start Activity</Button>
           </Group>
           <Space h={'md'} />
-
           <Stack maw='15em'>
             <Group position='apart' >
               <Text>Length:</Text>
@@ -114,33 +119,29 @@ const HikeDetailPage: React.FC = () => {
               <Text>Difficulty:</Text>
               <Text>{hike?.difficulty}</Text>
             </Group>
-
           </Stack>
-
           <Title order={4}>What our local guides have to say:</Title>
           <Blockquote maw={'60%'}>{hike?.description}</Blockquote>
-
+          <Box h={'480px'}>
+            { }
+            <MapContainer center={center} zoom={12} className={s.map} style={{
+              // height: '300px',
+            }} >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Polyline pathOptions={{ dashArray: '10', dashOffset: offset.toString() }} positions={track || []} />
+              <MapSetter center={center} />
+              {
+                [hike?.start_point && PointMarker(hike.start_point),
+                hike?.end_point && PointMarker(hike.end_point)]
+              }
+              <DisplayReferencePoints points={hike?.reference_points || []} />
+              <DisplayHuts huts={hike?.huts || []} />
+            </MapContainer>
+          </Box>
         </Paper>
-        
         <Space h={'md'} />
-        <Box h={'480px'}>
-          { }
-          <MapContainer center={center} zoom={12} className={s.map} style={{
-            // height: '300px',
-          }} >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Polyline pathOptions={{ dashArray: '10', dashOffset: offset.toString() }} positions={track || []} />
-            <MapSetter center={center} />
-            {
-              [hike?.start_point && PointMarker(hike.start_point),
-              hike?.end_point && PointMarker(hike.end_point)]
-            }
-            <DisplayReferencePoints points={hike?.reference_points || []} />
-            <DisplayHuts huts={hike?.huts || []} />
-          </MapContainer>
-        </Box>
       </Container>
     </>
   );

@@ -4,13 +4,13 @@ import UserPerformance from '../../../components/userInfo/userPerformance';
 import UserActivities from '../../../components/userInfo/userActivities';
 import { useNavigate, createSearchParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Performance } from '../../../generated/prisma-client';
+import { Performance, UserHikes } from '../../../generated/prisma-client';
 import { API } from "../../../utilities/api/api"
 
 const HikerPage: React.FC = () => {
 
     const [performance, setPerformance] = useState<Performance | undefined>(undefined)
-    const [activities, setActivities] = useState<any>([])
+    const [activities, setActivities] = useState<UserHikes[] | undefined>([])
 
     // function to convert all fields of object performance to string
     const navigate = useNavigate()
@@ -30,7 +30,7 @@ const HikerPage: React.FC = () => {
     useEffect(() => {
         API.hiker.getPerformance().then((res) => {
             setPerformance(res as Performance)
-        }).then(() => API.hiker.getActivities().then((res) => { setActivities(res) }))
+        }).then(() => API.hiker.getActivities().then((res) => { setActivities(res as UserHikes[]) }))
     }, [])
 
     return (
