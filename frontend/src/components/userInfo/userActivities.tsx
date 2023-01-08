@@ -43,7 +43,7 @@ const UserActivities = ({ activities }: { activities: any }) => {
                                 }
                             }).map((activity: UserHikes) => (
                                 <>
-                                    <tr onClick={() => { }}>
+                                    <tr onClick={() => { navigate(`/hikestarted/${activity.id}`) }}>
                                         <td>
                                             <Text size="lg" >
                                                 {activity.hike.title}
