@@ -141,7 +141,7 @@ const HikesSearchPage: React.FC = () => {
               {...form.getInputProps('expected_time')}
             />
             <Space h={'md'} />
-            <Button fullWidth type='submit'>Cerca</Button>
+            <Button fullWidth type='submit'>Search</Button>
           </form>
         </Paper>
         <Paper withBorder radius={'md'} m={'md'} p={'md'} sx={{
@@ -149,7 +149,6 @@ const HikesSearchPage: React.FC = () => {
               flexBasis: '60%',
               overflow: 'hidden'
             } as CSSObject}>
-          {/* <HikesList data={result}></HikesList > */}
           <HikeCardGrid hikes={result.slice((page - 1) * elementsPerPage, elementsPerPage * page)} />
           <Center>
             <Pagination
