@@ -50,8 +50,9 @@ const Login: React.FC = (props) => {
         setError('Invalid email')
       }
       
-    } catch (err) {
-      setError("There was an error processing your request.")
+    } catch (err: any) {
+      console.log(err)
+      setError(err || "There was an error processing your request.")
     }
 
 

@@ -141,9 +141,8 @@ aRouter.get("/verify/:code", isLoggedIn, async (req: express.Request, res: expre
 // Login --> POST /sessions
 aRouter.post("/login", function (req, res, next) {
     passport.authenticate("local", (err, user, info) => {
-        if (err) return next(err);
-        if (!user) return res.status(401).json(info);
-
+        // if (err) return next(err);
+        if (err || !user) return res.status(401).json(err);
         // success, perform the login
         req.login(user, (err) => {
             if (err) return next(err);
