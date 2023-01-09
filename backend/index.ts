@@ -47,6 +47,7 @@ app.use('/api/hut', hutRouter);
 
 // GPS APIs
 app.use("/api/gpstracks", isLoggedIn, express.static(path.join(__dirname, "gpstracks")));
+app.use("/api/images", isLoggedIn, express.static(path.join(__dirname, "images")));
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);

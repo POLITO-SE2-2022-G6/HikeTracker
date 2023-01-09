@@ -9,13 +9,21 @@ export async function pointById(id: number) {
 export type newPoint = Prisma.PointCreateInput & {
     hut?: {
         description: string,
+        altitude: number,
+        beds: number,
+        phone: string,
+        email: string,
+        website: string, 
+        image?: string  
     },
     parkinglot?: {
         description: string,
+        capacity: number,
     }
 }
 
 export async function createPoint(point: newPoint) {
+    console.log(point)
     return prisma.point.create({
         data: {
             label: point.label || undefined,
@@ -27,12 +35,20 @@ export async function createPoint(point: newPoint) {
             province: point.province,
             hut: point.hut ? {
                 create: {
-                    description: point.hut.description
+                    name: point.label,
+                    description: point.hut.description,
+                    altitude: point.hut.altitude,
+                    beds: point.hut.beds,
+                    phone: point.hut.phone,
+                    email: point.hut.email,
+                    website: point.hut.website,
+                    image: point.hut.image
                 }
             } : undefined,
             parkinglot: point.parkinglot ? {
                 create: {
                     description: point.parkinglot.description,
+                    capacity: point.parkinglot.capacity,
                 }
             } : undefined
         }

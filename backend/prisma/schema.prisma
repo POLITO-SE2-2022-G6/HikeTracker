@@ -18,6 +18,7 @@ model Hut {
   description String?
   altitude    Float?
   beds        Int?
+  image       String?
   phone       String?
   email       String?
   website     String?
@@ -108,7 +109,7 @@ model UserHikes {
   hike        Hike     @relation("hikes", fields: [hike_id], references: [id])
   hike_id     Int
   status      String   @default("ongoing")
-  startedAt   DateTime @default(now()) 
+  startedAt   DateTime @default(now())
   refPoint    Point    @relation("hiker", fields: [refPoint_id], references: [id])
   refPoint_id Int
 }

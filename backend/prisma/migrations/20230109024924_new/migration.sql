@@ -5,6 +5,7 @@ CREATE TABLE "Hut" (
     "description" TEXT,
     "altitude" REAL,
     "beds" INTEGER,
+    "image" TEXT,
     "phone" TEXT,
     "email" TEXT,
     "website" TEXT,
@@ -74,6 +75,7 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "phoneNumber" TEXT NOT NULL,
     "verified" BOOLEAN NOT NULL DEFAULT false,
+    "code" TEXT NOT NULL DEFAULT '',
     "hutid" INTEGER,
     CONSTRAINT "User_hutid_fkey" FOREIGN KEY ("hutid") REFERENCES "Hut" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );

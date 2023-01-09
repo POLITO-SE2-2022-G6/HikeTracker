@@ -3,6 +3,8 @@ import { checkSchema, validationResult } from 'express-validator';
 import { bigCheck } from "./authApi";
 import { createPoint, editPoint, pointById, fullList, deletePoint } from "../DAO/pointDao";
 
+import path from "path";
+
 export const pRouter = Router();
 
 function checkSchemaOfPoint() {
@@ -45,19 +47,9 @@ function checkSchemaOfPoint() {
         hut: {
             in: ['body'],
             optional: true,
-            isObject: true
-        },
-        "hut.description": {
-            in: ['body'],
-            optional: true,
             notEmpty: true
-        },
+        },            
         parkinglot: {
-            in: ['body'],
-            optional: true,
-            isObject: true
-        },
-        "parkinglot.description": {
             in: ['body'],
             optional: true,
             notEmpty: true
@@ -95,7 +87,30 @@ pRouter.put("/:id", checkSchemaOfPoint(), checkSchema({
         return res.status(400).json({ errors: "Illegal Data" });
     try {
         const id = parseInt(req.params.id);
-        const point = await editPoint(id, req.body);
+        req.body.hut = req.body.hut && JSON.parse(req.body.hut);
+        req.body.parkinglot = req.body.parkinglot && JSON.parse(req.body.parkinglot);
+
+        const point = await editPoint(id, {
+            label: req.body.label,
+            latitude: req.body.latitude && parseFloat(req.body.latitude),
+            longitude: req.body.longitude && parseFloat(req.body.longitude),
+            elevation: req.body.elevation && parseFloat(req.body.elevation),
+            city: req.body.city,
+            region: req.body.region,
+            province: req.body.province,
+            hut: req.body.hut && {
+                phone: req.body.hut.phone,
+                email: req.body.hut.email,
+                website: req.body.hut.website,
+                beds: req.body.hut.beds && parseInt(req.body.hut.beds),
+                altitude: req.body.hut.altitude && parseFloat(req.body.hut.altitude),
+                description: req.body.hut.description
+            },
+            parkinglot: req.body.parkinglot && {
+                description: req.body.parkinglot.description,
+                capacity: req.body.parkinglot.capacity && parseInt(req.body.parkinglot.capacity)
+            }
+        });
         if (!point) return res.status(404).json({ error: "Point not found" });
         res.send(point);
     } catch (e) {
@@ -107,7 +122,34 @@ pRouter.put("/:id", checkSchemaOfPoint(), checkSchema({
 pRouter.post("", checkSchemaOfPoint(), bigCheck(["guide"]), async (req: express.Request, res: express.Response) => {
     if (!validationResult(req).isEmpty()) return res.status(400).json({ errors: "Illegal Data" });
     try {
-        const point = await createPoint(req.body);
+        req.body.hut = req.body.hut ? JSON.parse(req.body.hut) : undefined;
+        req.body.parkinglot = req.body.parkinglot ? JSON.parse(req.body.parkinglot) : undefined;
+
+        const image = await imageUpload(req, res)
+        if (typeof image !== "string" && image !== undefined) return res.status(400).json({ errors: [{ msg: "Invalid Image" }] });
+
+        const point = await createPoint({
+            label: req.body.label,
+            latitude: req.body.latitude && parseFloat(req.body.latitude),
+            longitude: req.body.longitude && parseFloat(req.body.longitude),
+            elevation: req.body.elevation && parseFloat(req.body.elevation),
+            city: req.body.city,
+            region: req.body.region,
+            province: req.body.province,
+            hut: req.body.hut && {
+                phone: req.body.hut.phone,
+                email: req.body.hut.email,
+                website: req.body.hut.website,
+                beds: req.body.hut.beds && parseInt(req.body.hut.beds),
+                altitude: req.body.hut.altitude && parseFloat(req.body.hut.altitude),
+                description: req.body.hut.description || '',
+                image: image || ''
+            },
+            parkinglot: req.body.parkinglot && {
+                description: req.body.parkinglot.description,
+                capacity: req.body.parkinglot.capacity && parseInt(req.body.parkinglot.capacity)
+            }
+        });
         res.send(point);
     } catch (e) {
         return res.status(500).json({ error: "Server Error: " + e });
@@ -189,7 +231,6 @@ pRouter.get("", bigCheck(["guide", "hiker"]), checkSchema({
             parkinglot: parkinglot ? parkinglot === "true" : undefined,
             parkinglotdescription
         }));
-
     } catch (error) {
         return res.status(500).json({ error: "Server Error: " + error });
     }
@@ -211,3 +252,23 @@ pRouter.delete("/:id", checkSchema({
         return res.status(500).json({ error: "Server Error: " + e });
     }
 });
+
+async function imageUpload(req: express.Request, res: express.Response) {
+    let file = undefined
+    try {
+      if (req.files) {
+        const image = req.files.image
+        if (!(image instanceof Array)) {
+          const rand = (Math.random() + 1).toString(36).substring(7)
+          const trackPath = path.join(path.resolve(__dirname, '..'), 'images', rand, image.name);
+          image.mv(trackPath, (err) => {
+            if (err) return res.status(500);
+          });
+          file = `api/images/${rand}/${image.name}`;
+        }
+      }
+      return file;
+    } catch (e) {
+      return res.status(500);
+    }
+  }
