@@ -26,9 +26,9 @@ const HikesSearchPage: React.FC = () => {
     initialValues: {
       region: params.get('region') || '',
       province: params.get('province') || '',
-      difficulty: parseInt(params.get('difficulty') || '1') || undefined,
-      length: parseInt(params.get('length') || '1') || undefined,
-      expected_time: parseInt(params.get('duration') || '') || undefined,
+      difficulty: parseInt(params.get('difficulty') || '5') || undefined,
+      length: parseInt(params.get('length') || '1000') || undefined,
+      expected_time: parseInt(params.get('duration') || '1440') || undefined,
     },
   })
 
