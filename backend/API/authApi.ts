@@ -4,8 +4,9 @@ import passportLocal from "passport-local";
 import session from "express-session";
 import { app } from "../index";
 import { checkSchema, validationResult } from 'express-validator';
-import { createUsr, getUserByEmail } from "../DAO/authDao";
+import { createUsr, getUserByEmail, verifyCode } from "../DAO/authDao";
 import { User } from "@prisma/client";
+import nodemailer from "nodemailer";
 
 export const aRouter = Router();
 
@@ -14,12 +15,24 @@ export const isLoggedIn: RequestHandler = (req, res, next) => {
     return res.status(401).json({ error: "not authenticated" });
 };
 
-export const bigCheck = (role: string[]) =>{
+const transporter = nodemailer.createTransport({
+    host: "smtp.studenti.polito.it",
+    port: 465,
+    secure: true,
+    requireTLS: true,
+    auth: {
+        user: process.env.EMAIL_USER || "",
+        pass: process.env.EMAIL_PASSWORD || ""
+    },
+    logger: true
+});
+
+export const bigCheck = (role: string[]) => {
     return (req: express.Request, res: express.Response, next: express.NextFunction) => {
         if (!req.isAuthenticated()) return res.status(401).json({ error: "not authenticated" });
 
         if (!role.includes((req.user as User).type) && ((req.user as User).type) !== "manager") return res.status(401).json({ error: "not authorized" });
-        
+
         if (((req.user as User).type) === "guide" && (req.user as User).verified === false) return res.status(401).json({ error: "guide not verified" });
 
         return next();
@@ -94,12 +107,34 @@ aRouter.post("/signup", checkSchema({
     }
 
     try {
-        const user = await createUsr(type, username, email, phoneNumber, id)
+        const verificationCode = Math.floor(Math.random() * 1000000).toString();
+        const user = await createUsr(type, username, email, phoneNumber, id, verificationCode)
+        await transporter.sendMail({
+            from: '"HikeTracker" <s303395@studenti.polito.it>',
+            to: email,
+            subject: "Verification",
+            text: ("Verification Link: https://localhost:3001/api/auth/verify/" + verificationCode)
+        });
         res.status(200).json(user);
     }
     catch (err) {
         return res.status(400).json(err);
     }
+})
+
+aRouter.get("/verify/:code", isLoggedIn, async (req: express.Request, res: express.Response) => {
+    const { code } = req.params;
+
+    try {
+        const response = await verifyCode((req.user as User).email, code);
+        if (!response) return res.status(400).json({ error: "Code not found" });
+        res.status(200).send("OK")
+
+    } catch(err) {
+        return res.status(500).send("error")
+    }
+
+
 })
 
 

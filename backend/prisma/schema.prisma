@@ -93,6 +93,7 @@ model User {
   username    String
   phoneNumber String       @unique
   verified    Boolean      @default(false)
+  code        String       @default("")
   hut         Hut?         @relation("hworker", fields: [hutid], references: [id], onDelete: SetNull)
   hutid       Int?         @unique
   hikeslist   Hike[]       @relation("guide")
