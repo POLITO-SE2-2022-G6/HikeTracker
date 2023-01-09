@@ -1,7 +1,7 @@
 import s from './HutForm.module.css';
 import { useForm } from '@mantine/form'
 import axios from 'axios';
-import { Button, Container, Paper, TextInput, Title, Group, Textarea, Box, Text, CSSObject } from '@mantine/core';
+import { Button, Container, Paper, TextInput, Title, Group, Textarea, Box, Text, CSSObject, NumberInput, FileInput } from '@mantine/core';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCallback, useState } from 'react';
 import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet';
@@ -9,6 +9,7 @@ import { LatLng } from 'leaflet';
 import { API } from '../../utilities/api/api';
 import { CiLocationOn } from 'react-icons/ci';
 import ErrorModal from '../../components/errorModal/errorModal';
+import { Hut, Point } from '../../generated/prisma-client';
 
 const HutForm: React.FC = () => {
 
@@ -30,16 +31,22 @@ const HutForm: React.FC = () => {
 
   }
 
+  type PointWithHut = Point & { hut: Hut }
 
   type Fields = {
     title?: string;
     description?: string;
     latitude?: number;
     longitude?: number;
+    altitude?: number;
+    beds?: number;
+    phone?: string;
+    email?: string;
+    website?: string;
     province?: string;
     region?: string;
     city?: string;
-    //gpstrack?: File;
+    image?: File;
   }
 
   const form = useForm<Fields>({
@@ -49,12 +56,21 @@ const HutForm: React.FC = () => {
       province: '',
       region: '',
       city: '',
-      //gpstrack: undefined,
+      altitude: 0,
+      beds: 0,
+      phone: '',
+      email: '',
+      website: '',
+      image: undefined
     },
 
     validate: {
       title: (value: string) => (!value ? 'Title must not be empty' : null),
       description: (value: string) => (!value ? 'Description must not be empty' : null),
+      altitude: (value: number) => (!value ? 'Altitude must not be empty' : null),
+      beds: (value: number) => (!value ? 'Beds must not be empty' : null),
+      phone: (value: string) => (!value ? 'Phone must not be empty' : null),
+      email: (value: string) => (!value ? 'Email must not be empty' : null),
     },
   });
 
@@ -63,6 +79,8 @@ const HutForm: React.FC = () => {
     addHut(values)
 
   }
+
+
 
   const addHut = async (values: Fields) => {
     try {
@@ -76,7 +94,13 @@ const HutForm: React.FC = () => {
         label: values.title,
         hut: {
           description: values.description,
-        }
+          beds: values.beds,
+          phone: values.phone,
+          email: values.email,
+          website: values.website,
+          altitude: values.altitude,
+        },
+        image: values.image
       });
       console.log(res);
       navigate('/hikelist');
@@ -91,14 +115,14 @@ const HutForm: React.FC = () => {
       <ErrorModal error={error} setError={setError} />
       <Title align="center">Add a new Hut</Title>
       <Container sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "flex-start"
-        } as CSSObject}>
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "flex-start"
+      } as CSSObject}>
         <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={{
-              flexGrow: 1,
-              flexShrink: 0,
-            } as CSSObject
+          flexGrow: 1,
+          flexShrink: 0,
+        } as CSSObject
         }>
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <TextInput
@@ -109,7 +133,31 @@ const HutForm: React.FC = () => {
               label="Description"
               placeholder="Description of the hut"
               {...form.getInputProps('description')} />
-
+            <TextInput
+              label="Altitude"
+              placeholder="Altitude of the hut"
+              {...form.getInputProps('altitude')} />
+            <NumberInput
+              label="Beds"
+              placeholder="Number of beds"
+              {...form.getInputProps('beds')} />
+            <TextInput
+              label="Phone"
+              placeholder="Phone of the hut"
+              {...form.getInputProps('phone')} />
+            <TextInput
+              label="Email"
+              placeholder="Email of the hut"
+              {...form.getInputProps('email')} />
+            <TextInput
+              label="Website"
+              placeholder="Website of the hut"
+              {...form.getInputProps('website')} />
+            <FileInput
+              label="Upload files"
+              placeholder="Upload Image"
+              accept="image/png,image/jpeg"
+              {...form.getInputProps('image')} />;
             {display_name && <Paper p={'sm'} withBorder mt={'md'}>
               <Group>
                 <CiLocationOn style={{ verticalAlign: 'middle' }} size='2em' />

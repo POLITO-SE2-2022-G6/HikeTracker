@@ -1,4 +1,4 @@
-import { Card, Center, Text, Title } from "@mantine/core";
+import { Card, Center, Text, Title,Image } from "@mantine/core";
 import { IconBed, IconMap2, IconMountain, IconPhone, IconWorldWww } from "@tabler/icons";
 
 import { HutWithPoint } from "../../utilities/api/hutApi";
@@ -22,8 +22,6 @@ function IconWithText({ icon, text }: { icon: React.ReactNode, text: React.React
 export const HutCard = (props: HutCardProps) => {
   const { hut } = props;
 
-  console.log("inside", hut)
-
   return (
     <div>
       <Card
@@ -41,8 +39,15 @@ export const HutCard = (props: HutCardProps) => {
             borderBottom: '1px solid #eaeaea',
           }
         }>
+           <Image
+            src={(hut.image  && 'http://localhost:3001/'+hut.image) || `imgs/huts/${hut.id % 7 + 1}.jpg`}
+            alt="Hero image"
+            fit="cover"
+            height={200}
+            withPlaceholder
+          />
           <Title order={4}>{hut.name || "Bellissimo Nome"}</Title>
-
+          
           <Text lineClamp={2}>
             {hut.description}
           </Text>

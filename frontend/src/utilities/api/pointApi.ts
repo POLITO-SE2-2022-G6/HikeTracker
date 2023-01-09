@@ -5,6 +5,7 @@ import { Resource } from "./resource";
 type AddPoint = Partial<Point> & {
   hut?: Partial<Hut>;
   parkingLot?: Partial<ParkingLot>;
+  image?: File
 };
 
 export class PointApi extends Resource {
@@ -30,12 +31,12 @@ export class PointApi extends Resource {
 
   async createPoint(point: AddPoint) {
     return this.client.request<Point>({
-      // headers: {
-      //   'Content-Type': 'multipart/form-data'
-      // },
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
       method: Methods.POST,
       path: this.path,
-      body: point,
+      body: { ...point, hut: JSON.stringify(point.hut || undefined), parkinglot: JSON.stringify(point.parkingLot || undefined)},
     });
   }
 

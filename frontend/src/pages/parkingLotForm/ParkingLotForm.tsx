@@ -1,7 +1,7 @@
 import s from './ParkingLotForm.module.css';
 import { useForm } from '@mantine/form'
 import axios from 'axios';
-import { Button, Container, Paper, TextInput, Title, Group, Textarea, Box, Text, CSSObject } from '@mantine/core';
+import { Button, Container, Paper, TextInput, Title, Group, Textarea, Box, Text, CSSObject, NumberInput } from '@mantine/core';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCallback, useState } from 'react';
 import { LatLng } from 'leaflet';
@@ -38,6 +38,7 @@ const ParkingLotForm: React.FC = () => {
     longitude?: number;
     province?: string;
     region?: string;
+    capacity?: number;
     city?: string;
     //gpstrack?: File;
   }
@@ -49,12 +50,14 @@ const ParkingLotForm: React.FC = () => {
       province: '',
       region: '',
       city: '',
+      capacity: 0,
       //gpstrack: undefined,
     },
 
     validate: {
       title: (value: string) => (!value ? 'Title must not be empty' : null),
       description: (value: string) => (!value ? 'Description must not be empty' : null),
+      capacity: (value: number) => (!value ? 'Capacity must not be empty' : null),
     },
   });
 
@@ -76,6 +79,7 @@ const ParkingLotForm: React.FC = () => {
         label: values.title,
         parkingLot: {
           description: values.description,
+          capacity: values.capacity,
         }
       });
       console.log(res);
@@ -108,7 +112,10 @@ const ParkingLotForm: React.FC = () => {
               label="Description"
               placeholder="Description of the hut"
               {...form.getInputProps('description')} />
-
+            <NumberInput
+              label="Capacity"
+              placeholder="Capacity of the hut"
+              {...form.getInputProps('capacity')} />
             {display_name && <Paper p={'sm'} withBorder mt={'md'}>
               <Group>
                 <CiLocationOn style={{ verticalAlign: 'middle' }} size='2em' />
