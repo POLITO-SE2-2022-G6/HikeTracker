@@ -1,4 +1,4 @@
-import { Box, Button, Container, CSSObject, FileInput, Flex, Group, NumberInput, Paper, Space, Stack, Tabs, Textarea, TextInput, Title,Popover,Text} from '@mantine/core';
+import { Box, Button, Container, CSSObject, FileInput, Flex, Group, NumberInput, Paper, Space, Stack, Tabs, Textarea, TextInput, Title, Popover, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconUpload } from '@tabler/icons';
 import axios from 'axios';
@@ -113,8 +113,6 @@ const HikeForm: React.FC = () => {
             ascent: hike.ascent,
             difficulty: hike.difficulty,
             description: hike.description!,
-            //startpointid: sPoint,
-            //endpointid: ePoint,
           })
           if (hike.gpstrack) {
             const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
@@ -156,7 +154,7 @@ const HikeForm: React.FC = () => {
           flexGrow: 1,
           flexShrink: 0,
         } as CSSObject}>
-          <form onSubmit={form.onSubmit(async (values) => {await handleSubmit(id, values, setError, referencePointsEdit, hutsEdit, navigate)})}>
+          <form onSubmit={form.onSubmit(async (values) => { await handleSubmit(id, values, setError, referencePointsEdit, hutsEdit, navigate) })}>
             <TextInput
               label="Title"
               placeholder="Title of the hike"
@@ -252,7 +250,7 @@ const HikeForm: React.FC = () => {
             </Flex>
 
             <Group position="center">
-              <Button mt="xl" type='submit' onClick={useCallback(() => {form.setFieldValue("startpointid", sPoint); form.setFieldValue("endpointid", ePoint)}, [ePoint, form, sPoint])}>Save</Button>
+              <Button mt="xl" type='submit' onClick={useCallback(() => { form.setFieldValue("startpointid", sPoint); form.setFieldValue("endpointid", ePoint) }, [ePoint, form, sPoint])}>Save</Button>
               <Link to="/guidearea">
                 <Button type="button" mt="xl" color="red">Cancel</Button>
               </Link>
@@ -269,22 +267,22 @@ const HikeForm: React.FC = () => {
 function EndsButtons({ selectedMarker, setSPoint, setEPoint }: { selectedMarker: number | null; setSPoint: React.Dispatch<React.SetStateAction<number | undefined>>; setEPoint: React.Dispatch<React.SetStateAction<number | undefined>> }) {
   const [startOpened, setStartOpened] = useState(false);
   const [endOpened, setEndOpened] = useState(false);
-  
+
   return <>
-  <Popover width={150} position="bottom" withArrow shadow="md" opened={startOpened} onChange={setStartOpened} >
+    <Popover width={150} position="bottom" withArrow shadow="md" opened={startOpened} onChange={setStartOpened} >
       <Popover.Target>
-    <Button type="button" onClick={useCallback(() => {   selectedMarker  &&  setSPoint(selectedMarker); if(selectedMarker !== null) {setStartOpened(true); } }, [selectedMarker, setSPoint,setStartOpened])}> Set as Start Point </Button>
-    </Popover.Target>
-    <Popover.Dropdown>
+        <Button type="button" onClick={useCallback(() => { selectedMarker && setSPoint(selectedMarker); if (selectedMarker !== null) { setStartOpened(true); } }, [selectedMarker, setSPoint, setStartOpened])}> Set as Start Point </Button>
+      </Popover.Target>
+      <Popover.Dropdown>
         <Text size="sm">Start Point set successfully!</Text>
       </Popover.Dropdown>
     </Popover>
 
     <Popover width={150} position="bottom" withArrow shadow="md" opened={endOpened} onChange={setEndOpened} >
       <Popover.Target>
-    <Button type="button" onClick={useCallback(() => { selectedMarker && setEPoint(selectedMarker); if(selectedMarker !== null) {setEndOpened(true); }}, [selectedMarker, setEPoint,setEndOpened])}> Set as End Point </Button>
-    </Popover.Target> 
-    <Popover.Dropdown>
+        <Button type="button" onClick={useCallback(() => { selectedMarker && setEPoint(selectedMarker); if (selectedMarker !== null) { setEndOpened(true); } }, [selectedMarker, setEPoint, setEndOpened])}> Set as End Point </Button>
+      </Popover.Target>
+      <Popover.Dropdown>
         <Text size="sm">End Point set successfully!</Text>
       </Popover.Dropdown>
     </Popover>
@@ -295,11 +293,11 @@ function ReferenceButtons({ newReferencePoint, selectedMarker, setReferencePoint
   const [refOpened, setRefOpened] = useState(false);
 
   return <>
-   <Popover width={150} position="bottom" withArrow shadow="md" opened={refOpened} onChange={setRefOpened} >
+    <Popover width={150} position="bottom" withArrow shadow="md" opened={refOpened} onChange={setRefOpened} >
       <Popover.Target>
-    <Button type="button" onClick={useCallback(() => { newReferencePoint && setReferencePointsEdit(current => ({ ...current, created: [...current.created, newReferencePoint] })); if(newReferencePoint!==undefined){setRefOpened(true);} }, [newReferencePoint, setReferencePointsEdit,setRefOpened])}> Add Point </Button>
-    </Popover.Target>
-    <Popover.Dropdown>
+        <Button type="button" onClick={useCallback(() => { newReferencePoint && setReferencePointsEdit(current => ({ ...current, created: [...current.created, newReferencePoint] })); if (newReferencePoint !== undefined) { setRefOpened(true); } }, [newReferencePoint, setReferencePointsEdit, setRefOpened])}> Add Point </Button>
+      </Popover.Target>
+      <Popover.Dropdown>
         <Text size="sm">Reference Point set successfully!</Text>
       </Popover.Dropdown>
     </Popover>
@@ -316,13 +314,13 @@ function HutsButtons({ selectedMarker, setHutsEdit }: {
   }>>
 }) {
   const [hutOpened, sethutOpened] = useState(false);
-  
+
   return <>
-  <Popover width={150} position="bottom" withArrow shadow="md" opened={hutOpened} onChange={sethutOpened} >
+    <Popover width={150} position="bottom" withArrow shadow="md" opened={hutOpened} onChange={sethutOpened} >
       <Popover.Target>
-    <Button type="button" onClick={useCallback(() => { selectedMarker && setHutsEdit(current => ({ ...current, created: [...current.created, selectedMarker] })); if(selectedMarker!==null){sethutOpened(true);} }, [selectedMarker, setHutsEdit,sethutOpened])}> Link Hut </Button>
-    </Popover.Target>
-    <Popover.Dropdown>
+        <Button type="button" onClick={useCallback(() => { selectedMarker && setHutsEdit(current => ({ ...current, created: [...current.created, selectedMarker] })); if (selectedMarker !== null) { sethutOpened(true); } }, [selectedMarker, setHutsEdit, sethutOpened])}> Link Hut </Button>
+      </Popover.Target>
+      <Popover.Dropdown>
         <Text size="sm">Hut linked successfully!</Text>
       </Popover.Dropdown>
     </Popover>
@@ -360,7 +358,14 @@ const handleSubmit = async (id: string | undefined, values: Fields, setError: Re
 
       await API.hike.createHike({
         ...values,
-        reference_points: JSON.stringify(referencePointsEdit),
+        reference_points: JSON.stringify({
+          created: referencePointsEdit.created.map(e => {
+            return {
+              latitude: e.latitude,
+              longitude: e.longitude,
+            }
+          })
+        }),
         huts: JSON.stringify(hutsEdit)
       })
       navigate('/hikelist');
@@ -388,12 +393,13 @@ const DisplayOwnHuts = memo(({ hike, setSelectedMarker }: { hike: fullHike | nul
 })
 
 const DisplayReferencePoints = memo(({ hike, referencePointsEdit, setSelectedMarker }: { hike: fullHike | null; referencePointsEdit: editArray, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) => {
-  if (!hike || !hike.reference_points) return (<></>)
-
-  const toDisplay = [...hike.reference_points, ...referencePointsEdit.created].filter(p => p.id ? !referencePointsEdit.deleted.includes(p.id) : true);
+  let toDisplay: Point[] = [...referencePointsEdit.created]
+  if (hike)
+    toDisplay = [...toDisplay, ...hike.reference_points]
+  toDisplay = toDisplay.filter(p => p.id ? !referencePointsEdit.deleted.includes(p.id) : true);
   return <>{toDisplay.map((point) => {
-      return <DisplayPoint point={point} key={point.id} setSelectedMarker={setSelectedMarker} />
-    })}</>
+    return <DisplayPoint point={point} key={point.id} setSelectedMarker={setSelectedMarker} />
+  })}</>
 })
 
 const DisplayHuts = memo(({ points, setSelectedMarker }: { points: Points[], setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) => {
@@ -412,7 +418,7 @@ const DisplayHutsAndParkinglots = memo(({ points, setSelectedMarker }: { points:
   </>
 })
 
-function DisplayPoint({point, setSelectedMarker}: {point: Points, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>>}) {
+function DisplayPoint({ point, setSelectedMarker }: { point: Points, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>> }) {
   let icon = new L.Icon.Default()
   if (point.hut)
     icon = L.icon({ iconUrl: cabin })
@@ -429,28 +435,6 @@ function DisplayPoint({point, setSelectedMarker}: {point: Points, setSelectedMar
   </Marker>;
 }
 
-
-
-
-/*function DisplayPoint(props: { point: Points }, setSelectedMarker: React.Dispatch<React.SetStateAction<number | null>>) {
-  const { point } = props
-  let icon = new L.Icon.Default()
-  if (point.hut)
-    icon = L.icon({ iconUrl: cabin })
-  else if (point.parkinglot)
-    icon = L.icon({ iconUrl: car })
-
-
-  return <Marker
-    position={[point.latitude!, point.longitude!]}
-    icon={icon}
-    eventHandlers={{ click: () => setSelectedMarker(point.id) }}>
-    <Popup>
-      {point.label}
-    </Popup>
-  </Marker>;
-}*/
-
 function ReferencePointClicker({ settingRP, newReferencePoint, setNewReferencePoint, track }: { settingRP: boolean, newReferencePoint: Point | undefined, setNewReferencePoint: React.Dispatch<React.SetStateAction<Points | undefined>>, track: [number, number][] }) {
   useMapEvents({
     click: (e) => {
@@ -462,7 +446,7 @@ function ReferencePointClicker({ settingRP, newReferencePoint, setNewReferencePo
         return (prevDistance < currDistance) ? prev : curr
       })
       setNewReferencePoint({
-        id: -1,
+        id: -10000 - Math.floor(Math.random()*1000),
         latitude: closest[0],
         longitude: closest[1],
         label: 'New Reference Point',
