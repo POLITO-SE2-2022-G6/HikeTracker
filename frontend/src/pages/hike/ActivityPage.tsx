@@ -56,7 +56,7 @@ const ActivityPage: React.FC = () => {
             setLoading(false)
             return
         }
-        if(!loggedIn) {
+        if (!loggedIn) {
             setError('You need to be logged in to view this page')
             setLoading(false)
             return
@@ -67,9 +67,8 @@ const ActivityPage: React.FC = () => {
                 if (!activity) return
                 const hike = activity.hike
 
-                setHike(activity.hike)
                 setActivity(activity)
-                
+
                 if (hike.gpstrack) {
                     console.log("Download track")
                     const xml = await axios.get(`http://localhost:3001/` + hike.gpstrack, { withCredentials: true })
@@ -79,7 +78,19 @@ const ActivityPage: React.FC = () => {
                     setTrack(points)
                     setCenter(points[0])
                     start()
+
+                    const sortedReferencePoints = hike.reference_points.map(p => {
+                        const index = points.findIndex(([lat, lon]) => lat === p.latitude && lon === p.longitude)
+                        return { p, index }
+                    })
+                        .sort((a, b) => a.index - b.index)
+                        .map(el => el.p)
+
+                    hike.reference_points = sortedReferencePoints
+
                 }
+                setHike(activity.hike)
+
             } catch (error: any) {
                 setError(error.message)
             }
@@ -88,6 +99,12 @@ const ActivityPage: React.FC = () => {
         if (loading) run()
 
     }, [id, start, loading, loggedIn])
+
+    const maskedReferencePoints = () => {
+        const index = hike?.reference_points.findIndex((p) => p.id == activity?.refPoint_id)
+        if (index == -1) return hike?.reference_points
+        return hike?.reference_points.slice(index)
+    }
 
     return (
         <>
@@ -121,7 +138,11 @@ const ActivityPage: React.FC = () => {
                                             hike?.end_point && <PointMarker point={hike.end_point} />]}
                                     </>
                                     , [hike?.start_point, hike?.end_point, center])}
-                                {useMemo(() => <DisplayReferencePoints points={hike?.reference_points || []} action={setSelected} current={activity?.refPoint_id} />, [activity?.refPoint_id, hike?.reference_points])}
+                                {useMemo(() => <DisplayReferencePoints
+                                    points={maskedReferencePoints() || []}
+                                    action={setSelected}
+                                    current={activity?.refPoint_id} />,
+                                    [activity?.refPoint_id, hike?.reference_points, selected])}
                                 {useMemo(() => <DisplayHuts huts={hike?.huts || []} />, [hike?.huts])}
                             </MapContainer>
                         </Box>
@@ -130,8 +151,7 @@ const ActivityPage: React.FC = () => {
                                 <>
                                     <Button disabled={!activity || activity.status !== "ongoing" || !selected} type="button" onClick={useCallback(() => {
                                         setActivity((a) => {
-                                            if (!a) return null
-                                            if (!selected) return a
+                                            if (!a || !selected) return a
                                             return { ...a, refPoint_id: selected }
                                         })
                                     }, [selected])}> Select Checkpoint </Button>
@@ -171,7 +191,7 @@ const ActivityPage: React.FC = () => {
 
 
 function DisplayReferencePoints({ points, action, current }: { points: Point[], action: Function, current?: number }) {
-    return <>{points.map((p) => <PointMarker point={p} key={p.id} clickEvent={action(p.id)} icon={current === p.id ? greenIcon : undefined} />)}</>
+    return <>{points.map((p) => <PointMarker point={p} key={p.id} clickEvent={() => action(p.id)} icon={current === p.id ? greenIcon : undefined} />)}</>
 }
 
 function DisplayHuts({ huts }: { huts: withPoint<Hut>[] }) {
@@ -186,6 +206,7 @@ function PointMarker({ point, clickEvent, icon }: { point: Point, clickEvent?: (
         position={[point.latitude, point.longitude]}
         eventHandlers={{
             click: clickEvent || (() => { })
+            /*click: () => {action(p.id)}*/
         }}
         icon={icon || new L.Icon.Default()}
     >

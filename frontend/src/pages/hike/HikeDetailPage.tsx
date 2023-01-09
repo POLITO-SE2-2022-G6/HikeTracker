@@ -1,6 +1,6 @@
 import { Container, Paper, Title, Text, Space, Blockquote, Group, Stack, Box, Button, LoadingOverlay } from '@mantine/core';
 import axios from 'axios';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import s from './HikeDetailPage.module.css';
 import { MapContainer, TileLayer, useMap, Polyline, Marker, Popup } from 'react-leaflet'
@@ -138,11 +138,13 @@ const HikeDetailPage: React.FC = () => {
               <Polyline pathOptions={{ dashArray: '10', dashOffset: offset.toString() }} positions={track || []} />
               <MapSetter center={center} />
               {
-                [hike?.start_point && PointMarker(hike.start_point),
-                hike?.end_point && PointMarker(hike.end_point)]
+                useMemo(() => {
+                  return [hike?.start_point && PointMarker(hike.start_point),
+                  hike?.end_point && PointMarker(hike.end_point)]
+                }, [hike?.start_point, hike?.end_point])
               }
-              <DisplayReferencePoints points={hike?.reference_points || []} />
-              <DisplayHuts huts={hike?.huts || []} />
+              {useMemo(() => <DisplayReferencePoints points={hike?.reference_points || []} />, [hike?.reference_points])}
+              {useMemo(() => <DisplayHuts huts={hike?.huts || []} />, [hike?.huts])}
             </MapContainer>
           </Box>
         </Paper>
