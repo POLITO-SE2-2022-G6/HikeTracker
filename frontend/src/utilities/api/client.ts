@@ -62,15 +62,10 @@ export class Client {
     })
       .then(res => res.data)
       .catch(err => {
-        console.log("Primary: ", JSON.stringify(err.response))
         if (axios.isAxiosError(err)) {
-          console.log("Is axios")
-          if (err.response) {
-            console.log("Has response")
-            console.log("Secondary: ", JSON.stringify(err.response))
+          if (err.response && err.response.data) {
             throw err.response.data;
           }
-          console.log("No response")
           throw new Error(err.message);
         }
       })
