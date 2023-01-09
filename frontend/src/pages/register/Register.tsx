@@ -39,10 +39,16 @@ const Register: React.FC = () => {
       navigate('/login');
 
     } catch (err: any) {
-      setError('Something went wrong: ' + err.message);
-    }
+      console.log(err);
+      let listOfErrors = err.errors.map((error: any) => error.msg);
 
+      console.log(listOfErrors);
+      setError(listOfErrors.join('\n'));
+      return;
+    }
   }
+
+
 
 
   return (
@@ -69,7 +75,7 @@ const Register: React.FC = () => {
 
           {
             error && <>
-              <Space h={'md'}/>
+              <Space h={'md'} />
               <Alert title="Errore" color={'red'}>
                 {error}
               </Alert>
