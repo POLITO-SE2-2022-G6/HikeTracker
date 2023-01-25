@@ -1,5 +1,5 @@
 export function formatDifficulty(value: number) {
-  return ['Beginner', 'Easy', 'Intermediate', 'Hard', 'Expert'][value - 1];
+  return ['Beginner', 'Easy', 'Intermediate', 'Hiker', 'Expert'][value - 1];
 }
 
 export function formatTime(value: number) {

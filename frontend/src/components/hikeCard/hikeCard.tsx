@@ -44,7 +44,7 @@ export const HikeCard = (props: HikeCardProps) => {
         <Group position="apart" my={'sm'}>
           <Title order={4}>{hike.title}</Title>
           <Badge color={difficultyColor[hike.difficulty]}>
-            {['Beginner', 'Easy', 'Intermediate', 'Hard', 'Expert'][hike.difficulty]}
+            {['Beginner', 'Easy', 'Intermediate', 'Hiker', 'Expert'][hike.difficulty]}
           </Badge>
         </Group>
 

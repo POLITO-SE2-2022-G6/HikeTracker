@@ -22,7 +22,7 @@ export async function hikesList(fields: HikeQuery) {
       AND: [
         {
           difficulty: {
-            lt: fields.difficulty
+            equals: fields.difficulty && (fields.difficulty - 1)
           },
           length: {
             lt: fields.length

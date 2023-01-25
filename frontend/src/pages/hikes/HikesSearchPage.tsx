@@ -33,10 +33,6 @@ const HikesSearchPage: React.FC = () => {
     },
   })
 
-  useEffect(() => {
-    handleSubmit(form.values)
-  }, [])
-
   const handleSubmit = async (values: Fields) => {
     setLoading(true)
     console.log(values)
@@ -69,19 +65,54 @@ const HikesSearchPage: React.FC = () => {
     console.log(res.data)
   }
 
+  useEffect(() => {
+    const pressSubmit = async (values: Fields) => {
+      setLoading(true)
+      console.log(values)
+      let len = 0
+      if (values.length && values.length < 1000) {
+        len = values.length * 1000
+      }
+      setParams({
+        region: values.region || '',
+        province: values.province || '',
+        difficulty: values.difficulty?.toString() || '',
+        length: values.length?.toString() || '',
+        duration: values.expected_time?.toString() || '',
+      })
+
+
+
+      const res = await axios.get('http://localhost:3001/api/hike', {
+        params: {
+          difficulty: values.difficulty || undefined,
+          length: len || undefined,
+          expected_time: values.expected_time || undefined,
+          region: values.region || undefined,
+          province: values.province || undefined
+        }
+      })
+
+      setResult(res.data)
+      setLoading(false)
+      console.log(res.data)
+    }
+
+    pressSubmit(form.values)
+  }, [setParams, form.values])
 
   return (
     <Container size="lg">
       <Title >Search a Hike</Title>
       <Box sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "flex-start"
-        } as CSSObject}>
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "flex-start"
+      } as CSSObject}>
         <Paper withBorder shadow={'md'} p={'md'} m={'md'} radius={'md'} sx={{
-              flexGrow: 1,
-              flexShrink: 0,
-            } as CSSObject}>
+          flexGrow: 1,
+          flexShrink: 0,
+        } as CSSObject}>
           <form onSubmit={form.onSubmit(handleSubmit)} className={s.form}>
             <TextInput
               label="Region"
@@ -154,10 +185,10 @@ const HikesSearchPage: React.FC = () => {
           </form>
         </Paper>
         <Paper withBorder radius={'md'} m={'md'} p={'md'} sx={{
-              flexGrow: 3,
-              flexBasis: '60%',
-              overflow: 'hidden'
-            } as CSSObject}>
+          flexGrow: 3,
+          flexBasis: '60%',
+          overflow: 'hidden'
+        } as CSSObject}>
           <HikeCardGrid hikes={result.slice((page - 1) * elementsPerPage, elementsPerPage * page)} />
           <Center>
             {loading && <Loader />}
