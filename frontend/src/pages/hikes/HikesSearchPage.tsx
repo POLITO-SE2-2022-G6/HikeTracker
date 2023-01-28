@@ -175,7 +175,7 @@ const HikesSearchPage: React.FC = () => {
             <Slider
               py={'md'}
               min={1}
-              max={24 * 60}
+              max={24 * 60*5}
               step={30}
               label={formatTime}
               {...form.getInputProps('expected_time')}

@@ -173,7 +173,7 @@ const HikeForm: React.FC = () => {
               {...form.getInputProps('length')} />
             <NumberInput
               label="Expected Time"
-              description="In days"
+              description="In hours"
               placeholder="10"
               min={1}
               {...form.getInputProps('expected_time')} />
