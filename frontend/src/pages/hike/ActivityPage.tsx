@@ -155,12 +155,17 @@ const ActivityPage: React.FC = () => {
                                             return { ...a, refPoint_id: selected }
                                         })
                                     }, [selected])}> Select Checkpoint </Button>
-                                    <Button disabled={activity?.status !== "ongoing"} type="button" color="red" onClick={useCallback(() => {
-                                        setActivity((a) => {
-                                            if (!a) return null
-                                            return { ...a, status: "completed" }
-                                        })
-                                    }, [])}> Finish Activity </Button>
+                                    <Button disabled={activity?.status !== "ongoing"} type="button" color="red" onClick={useCallback(async() => {
+                                        
+                                        try {
+                                            id && activity && await API.hiker.updateActivity(id, activity.refPoint_id, "completed")
+                                        } catch (e) {
+                                            setError('Error while updating activity')
+                                        }
+                                        return navigate('/hikerarea')
+
+                                    }, [id, activity,navigate])}>Finish Activity</Button>
+                                   
                                 </>
                                 <Text fw={700}>Current Checkpoint:</Text>
                                 <>{selected || activity?.refPoint_id}</>
