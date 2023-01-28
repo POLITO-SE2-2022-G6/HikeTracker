@@ -369,7 +369,7 @@ const handleSubmit = async (id: string | undefined, values: Fields, setError: Re
         }),
         huts: JSON.stringify(hutsEdit)
       })
-      navigate('/hikelist');
+      navigate('/guidearea');
     }
   } catch (error: any) {
     setError(id ? "Error while editing hike: " + error : "Error while creating hike: " + error.message);
