@@ -54,7 +54,7 @@ export const HutCard = (props: HutCardProps) => {
         </Card.Section>
         <Card.Section p="md">
           {IconWithText({ icon: <IconMap2 />, text: <Text>{hut.point.region}, {hut.point.province}</Text> })}
-          {IconWithText({ icon: <IconMountain />, text: <Text><b>{hut.point.elevation}</b> m</Text> })}
+          {IconWithText({ icon: <IconMountain />, text: <Text><b>{hut.altitude}</b> m</Text> })}
           {IconWithText({ icon: <IconBed />, text: <Text><b>{hut.beds}</b> beds</Text> })}
           {IconWithText({ icon: <IconPhone />, text: <Text>{hut.phone}</Text> })}
           {IconWithText({ icon: <IconWorldWww />, text: <Text>{hut.website}</Text> })}
