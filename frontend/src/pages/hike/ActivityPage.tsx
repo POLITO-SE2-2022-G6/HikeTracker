@@ -101,8 +101,8 @@ const ActivityPage: React.FC = () => {
     }, [id, start, loading, loggedIn])
 
     const maskedReferencePoints = () => {
-        const index = hike?.reference_points.findIndex((p) => p.id == activity?.refPoint_id)
-        if (index == -1) return hike?.reference_points
+        const index = hike?.reference_points.findIndex((p) => p.id === activity?.refPoint_id)
+        if (index === -1) return hike?.reference_points
         return hike?.reference_points.slice(index)
     }
 
@@ -142,7 +142,7 @@ const ActivityPage: React.FC = () => {
                                     points={maskedReferencePoints() || []}
                                     action={setSelected}
                                     current={activity?.refPoint_id} />,
-                                    [activity?.refPoint_id, hike?.reference_points, selected])}
+                                    [activity?.refPoint_id])}
                                 {useMemo(() => <DisplayHuts huts={hike?.huts || []} />, [hike?.huts])}
                             </MapContainer>
                         </Box>
