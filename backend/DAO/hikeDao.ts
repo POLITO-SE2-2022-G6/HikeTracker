@@ -108,7 +108,7 @@ export const createHike = async (hike: newHike) => {
             id: endpointid
           }
         } : undefined,
-        huts: huts ? { connect: huts.created.map((p) => ({ id: p })) } : undefined,
+        huts: huts ? { connect: huts.created.map((p) => ({ pointid: p })) } : undefined,
         reference_points: { create: reference_points.created },  //here it's not working 
         localguide: localguideid ? { connect: { id: localguideid } } : undefined,
       },
